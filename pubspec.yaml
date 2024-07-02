@@ -5,6 +5,8 @@ dependencies:
   auto_route: ^4.0.0
   dio: ^4.0.0
   json_annotation: ^4.3.0
+  sqflite: ^2.0.0+4
+  path_provider: ^2.0.0
 
 dev_dependencies:
   flutter_test:
