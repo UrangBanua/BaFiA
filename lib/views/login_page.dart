@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:baFia/controllers/auth_controller.dart';
+import 'package:bafia/controllers/auth_controller.dart';
 
 class LoginPage extends StatelessWidget {
   final AuthController authController = Get.put(AuthController());

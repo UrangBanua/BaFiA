@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:baFia/services/auth_service.dart';
+import 'package:bafia/services/auth_service.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();

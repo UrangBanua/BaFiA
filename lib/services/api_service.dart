@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:baFia/models/item_model.dart';
-import 'package:baFia/models/user_model.dart';
+import 'package:bafia/models/item_model.dart';
+import 'package:bafia/models/user_model.dart';
 
 class ApiService {
   final Dio _dio = Dio();

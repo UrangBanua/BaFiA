@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:baFia/controllers/profile_controller.dart';
+import 'package:bafia/controllers/profile_controller.dart';
 
 class ProfilePage extends StatelessWidget {
   final ProfileController profileController = Get.put(ProfileController());

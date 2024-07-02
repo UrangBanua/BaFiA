@@ -1,7 +1,9 @@
+import 'package:bafia/views/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:baFia/routes/app_router.gr.dart';
-import 'package:baFia/controllers/auth_controller.dart';
+import 'routes/app_router.dart';
+//import 'package:baFia/routes/app_router.gr.dart';
+import 'package:bafia/controllers/auth_controller.dart';
 
 void main() {
   runApp(MyApp());

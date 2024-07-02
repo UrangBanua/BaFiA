@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:baFia/controllers/item_controller.dart';
+import 'package:bafia/controllers/item_controller.dart';
 
 class ItemPage extends StatelessWidget {
   final ItemController itemController = Get.put(ItemController());

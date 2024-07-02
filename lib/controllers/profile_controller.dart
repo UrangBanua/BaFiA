@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:baFia/models/user_model.dart';
-import 'package:baFia/services/auth_service.dart';
-import 'package:baFia/services/db_helper.dart';
+import 'package:bafia/models/user_model.dart';
+import 'package:bafia/services/auth_service.dart';
+import 'package:bafia/services/db_helper.dart';
 
 class ProfileController extends GetxController {
   final AuthService _authService = AuthService();

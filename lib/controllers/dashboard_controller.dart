@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:baFia/models/item_model.dart';
-import 'package:baFia/services/api_service.dart';
-import 'package:baFia/services/db_helper.dart';
+import 'package:bafia/models/item_model.dart';
+import 'package:bafia/services/api_service.dart';
+import 'package:bafia/services/db_helper.dart';
 
 class DashboardController extends GetxController {
   final ApiService _apiService = ApiService();

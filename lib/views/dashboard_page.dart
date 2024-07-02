@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:baFia/controllers/dashboard_controller.dart';
+import 'package:bafia/controllers/dashboard_controller.dart';
 
 class DashboardPage extends StatelessWidget {
   final DashboardController dashboardController =

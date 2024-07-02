@@ -1,17 +1,13 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:baFia/views/login_page.dart';
-import 'package:baFia/views/dashboard_page.dart';
-import 'package:baFia/views/item_page.dart';
-import 'package:baFia/views/profile_page.dart';
-import 'package:baFia/views/about_page.dart';
+import 'package:bafia/views/login_page.dart';
 
-@MaterialAutoRouter(
-  routes: <AutoRoute>[
-    AutoRoute(page: LoginPage, initial: true),
-    AutoRoute(page: DashboardPage),
-    AutoRoute(page: ItemPage),
-    AutoRoute(page: ProfilePage),
-    AutoRoute(page: AboutPage),
-  ],
-)
-class $AppRouter {}
+part 'app_router.gr.dart';
+
+@AutoRouterConfig()
+class AppRouter extends _$AppRouter {
+  @override
+  List<AutoRoute> get routes => [
+        // add your routes here
+        AutoRoute(page: LoginPage, initial: true)
+      ];
+}
