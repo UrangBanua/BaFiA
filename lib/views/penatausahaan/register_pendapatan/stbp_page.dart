@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AboutPage extends StatelessWidget {
+class RPStbpPPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About'),
+        title: Text('Register Pendapatan - STBP'),
       ),
       body: Center(
-        child: Text('About Page Content'),
+        child: Text('Register Pendapatan - STBP Page Content'),
       ),
     );
   }

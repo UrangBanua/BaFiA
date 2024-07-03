@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AboutPage extends StatelessWidget {
+class NeracaSaldoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About'),
+        title: Text('Neraca Saldo Page'),
       ),
       body: Center(
-        child: Text('About Page Content'),
+        child: Text('Neraca Saldo Page Content'),
       ),
     );
   }

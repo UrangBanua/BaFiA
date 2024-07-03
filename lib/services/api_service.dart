@@ -1,17 +1,102 @@
-import 'package:dio/dio.dart';
-import 'package:bafia/models/item_model.dart';
-import 'package:bafia/models/user_model.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
+import 'local_storage_service.dart';
 
 class ApiService {
-  final Dio _dio = Dio();
+  static var client = http.Client();
 
-  Future<List<Item>> fetchItems() async {
-    final response = await _dio.get('https://api.example.com/items');
-    return (response.data as List).map((item) => Item.fromJson(item)).toList();
+  static const _timeoutUserDuration =
+      Duration(seconds: 30); // Set timeout to 30 detik
+
+  static Future<Map<String, dynamic>?> login(
+      String year, String username, String password) async {
+    Get.dialog(Center(child: CircularProgressIndicator()),
+        barrierDismissible: false);
+    try {
+      var response = await client.post(
+        Uri.parse('https://service.sipd.kemendagri.go.id/auth/auth/pre-login'),
+        body: {
+          'username': username,
+          'password': password,
+          'tahun': year,
+        },
+      ).timeout(_timeoutUserDuration);
+      Get.back(); // Close loading progress
+
+      if (response.statusCode == 200) {
+        // Assume response is a list and take the first item
+        var data = json.decode(response.body);
+        return data.isNotEmpty ? data[0] : null;
+      }
+    } on TimeoutException {
+      Get.back(); // Close loading progress
+      Get.snackbar('Error', 'Service belum bisa merespon, coba lagi nanti.');
+    }
+    return null;
   }
 
-  Future<User> getUserProfile() async {
-    final response = await _dio.get('https://api.example.com/user/profile');
-    return User.fromJson(response.data);
+  static Future<Map<String, dynamic>?> getUserToken({
+    required int idDaerah,
+    required int idRole,
+    required int idSkpd,
+    required int idPegawai,
+    required String password,
+    required int year,
+    required String username,
+  }) async {
+    Get.dialog(Center(child: CircularProgressIndicator()),
+        barrierDismissible: false);
+    try {
+      var response = await client.post(
+        Uri.parse('https://service.sipd.kemendagri.go.id/auth/auth/login'),
+        body: json.encode({
+          'id_daerah': idDaerah,
+          'id_role': idRole,
+          'id_skpd': idSkpd,
+          'id_pegawai': idPegawai,
+          'password': password,
+          'tahun': year,
+          'username': username,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      ).timeout(_timeoutUserDuration);
+      Get.back(); // Close loading progress
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+    } on TimeoutException {
+      Get.back(); // Close loading progress
+      Get.snackbar('Error', 'Service timeout, coba lagi nanti.');
+    }
+    return null;
+  }
+
+  static Future<void> syncDataToLocalDB(Database db) async {
+    Get.dialog(Center(child: CircularProgressIndicator()),
+        barrierDismissible: false);
+    try {
+      var response = await client
+          .get(
+            Uri.parse(
+                'https://service.sipd.kemendagri.go.id/pengeluaran/strict/dashboard/statistik-belanja'),
+          )
+          .timeout(_timeoutUserDuration);
+      Get.back(); // Close loading progress
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        LocalStorageService.saveDashboardData(db, data);
+      }
+    } on TimeoutException {
+      Get.back(); // Close loading progress
+      Get.snackbar('Error', 'Service timeout, coba lagi nanti.');
+    }
   }
 }

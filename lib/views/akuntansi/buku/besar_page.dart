@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AboutPage extends StatelessWidget {
+class BukuBesarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About'),
+        title: Text('Buku Besar'),
       ),
       body: Center(
-        child: Text('About Page Content'),
+        child: Text('Buku Besar Page Content'),
       ),
     );
   }

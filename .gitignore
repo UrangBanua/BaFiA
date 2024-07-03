@@ -5,6 +5,4 @@
 /web
 .flutter-plugins
 .flutter-plugins-dependencies
-.metadata
-bafia.iml
 pubspec.lock

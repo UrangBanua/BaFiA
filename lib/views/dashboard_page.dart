@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:bafia/controllers/dashboard_controller.dart';
+import '../controllers/dashboard_controller.dart';
+import 'drawer_menu.dart';
 
 class DashboardPage extends StatelessWidget {
   final DashboardController dashboardController =
@@ -9,29 +10,27 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
-      ),
+      appBar: AppBar(title: Text('Dashboard')),
+      drawer: DrawerMenu(),
       body: Obx(() {
-        if (dashboardController.items.isEmpty) {
+        if (dashboardController.isLoading.value) {
           return Center(child: CircularProgressIndicator());
+        } else if (dashboardController.hasError.value) {
+          return Center(child: Text('Failed to load data'));
         } else {
+          // Display dashboard data
           return ListView.builder(
-            itemCount: dashboardController.items.length,
+            itemCount: dashboardController.dashboardData.length,
             itemBuilder: (context, index) {
-              final item = dashboardController.items[index];
+              var data = dashboardController.dashboardData[index];
               return ListTile(
-                title: Text(item.name),
-                subtitle: Text(item.description),
+                title: Text(data['nama_skpd']),
+                subtitle: Text('Realisasi: ${data['realisasi_rill']}'),
               );
             },
           );
         }
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: dashboardController.synchronize,
-        child: Icon(Icons.sync),
-      ),
     );
   }
 }

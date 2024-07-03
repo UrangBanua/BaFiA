@@ -1,33 +1,23 @@
-import 'package:bafia/views/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'routes/app_router.dart';
-//import 'package:baFia/routes/app_router.gr.dart';
-import 'package:bafia/controllers/auth_controller.dart';
+import 'controllers/auth_controller.dart';
+import 'routes.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(BafiaApp());
 }
 
-class MyApp extends StatelessWidget {
-  final _appRouter = AppRouter();
-
+class BafiaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final authController = Get.put(AuthController());
-
-    return Obx(() {
-      return MaterialApp.router(
-        routerDelegate: _appRouter.delegate(),
-        routeInformationParser: _appRouter.defaultRouteParser(),
-        title: 'BaFia',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        builder: (context, router) {
-          return authController.isLoggedIn.value ? router! : LoginPage();
-        },
-      );
-    });
+    return GetMaterialApp(
+      title: 'Bafia',
+      initialBinding: BindingsBuilder(() {
+        Get.put(
+            AuthController()); // Sediakan AuthController saat app diluncurkan
+      }),
+      initialRoute: '/login',
+      getPages: appRoutes(),
+    );
   }
 }

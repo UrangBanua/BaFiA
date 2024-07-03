@@ -1,31 +1,24 @@
 name: bafia
-description: Barabai Financial Assistant (BaFiA)
-
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
+description: Barabai Financial Assistant
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  get: ^4.6.5
-  auto_route: ^8.2.0
-  dio: ^5.4.3+1
-  json_annotation: 4.9.0
+  get: ^4.3.8
   sqflite: ^2.0.0+4
-  path_provider: ^2.0.0
-  connectivity_plus: ^6.0.3
-  shared_preferences: ^2.0.0
+  sqflite_common_ffi: ^2.0.1+1
+  sqflite_common_ffi_web: ^0.4.3+1
+  path: ^1.8.0
+  http: ^1.2.1
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.4
-  auto_route_generator: 8.0.0
-  json_serializable: ^6.8.0
 
 flutter:
   uses-material-design: true
