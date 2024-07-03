@@ -14,6 +14,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>?> login(
       String year, String username, String password) async {
+    print('Login started');
     Get.dialog(Center(child: CircularProgressIndicator()),
         barrierDismissible: false);
     try {
@@ -30,12 +31,15 @@ class ApiService {
       if (response.statusCode == 200) {
         // Assume response is a list and take the first item
         var data = json.decode(response.body);
+        print('Login successful');
         return data.isNotEmpty ? data[0] : null;
       }
     } on TimeoutException {
       Get.back(); // Close loading progress
+      print('Login timed out');
       Get.snackbar('Error', 'Service belum bisa merespon, coba lagi nanti.');
     }
+    print('Login failed');
     return null;
   }
 
@@ -48,6 +52,7 @@ class ApiService {
     required int year,
     required String username,
   }) async {
+    print('Getting user token');
     Get.dialog(Center(child: CircularProgressIndicator()),
         barrierDismissible: false);
     try {
@@ -69,16 +74,21 @@ class ApiService {
       Get.back(); // Close loading progress
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        var data = json.decode(response.body);
+        print('User token obtained');
+        return data;
       }
     } on TimeoutException {
       Get.back(); // Close loading progress
+      print('Getting user token timed out');
       Get.snackbar('Error', 'Service timeout, coba lagi nanti.');
     }
+    print('Failed to get user token');
     return null;
   }
 
   static Future<void> syncDataToLocalDB(Database db) async {
+    print('Syncing data to local DB');
     Get.dialog(Center(child: CircularProgressIndicator()),
         barrierDismissible: false);
     try {
@@ -92,10 +102,12 @@ class ApiService {
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
+        print('Data synced to local DB');
         LocalStorageService.saveDashboardData(db, data);
       }
     } on TimeoutException {
       Get.back(); // Close loading progress
+      print('Syncing data to local DB timed out');
       Get.snackbar('Error', 'Service timeout, coba lagi nanti.');
     }
   }

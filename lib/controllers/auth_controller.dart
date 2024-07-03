@@ -7,10 +7,14 @@ class AuthController extends GetxController {
   var isLoggedIn = false.obs;
 
   void login(String year, String username, String password) async {
+    print('Login started: $username');
     var response = await ApiService.login(year, username, password);
     if (response != null) {
       var role = response['nama_role'];
       var skpd = response['nama_skpd'];
+
+      print('Login successful: $username');
+      print('User data: $response');
 
       Get.dialog(
         AlertDialog(
@@ -20,6 +24,7 @@ class AuthController extends GetxController {
             TextButton(
               onPressed: () {
                 Get.back();
+                print('Login cancelled: $username');
               },
               child: Text('Cancel'),
             ),
@@ -39,11 +44,19 @@ class AuthController extends GetxController {
                   // Merge token response with user data and save to local storage
                   response['token'] = tokenResponse['token'];
                   response['refresh_token'] = tokenResponse['refresh_token'];
-                  LocalStorageService.saveUserData(response);
+                  try {
+                    LocalStorageService.saveUserData(response);
+                    print('Save User data to db success');
+                  } catch (error) {
+                    print('Error saveUserData: $error');
+                  }
                   isLoggedIn.value = true;
                   Get.offAllNamed('/dashboard');
+                  print('Login completed: $username');
+                  //print('User data: $response');
                 } else {
                   Get.snackbar('Login Failed', 'Unable to retrieve token');
+                  print('Token fetch failed for: $username');
                 }
               },
               child: Text('Pilih'),
@@ -52,7 +65,9 @@ class AuthController extends GetxController {
         ),
       );
     } else {
+      print('Login failed: Invalid username or password');
       Get.snackbar('Login Failed', 'Invalid username or password');
+      print('Login failed: $username');
     }
   }
 
@@ -64,6 +79,7 @@ class AuthController extends GetxController {
       String password,
       int year,
       String username) async {
+    print('Fetching user token for: $username');
     var response = await ApiService.getUserToken(
       idDaerah: idDaerah,
       idRole: idRole,
@@ -76,13 +92,19 @@ class AuthController extends GetxController {
     if (response != null &&
         response['token'] != null &&
         response['refresh_token'] != null) {
+      print('Token fetched successfully for: $username');
+      //print('Token response: $response');
       return response;
+    } else {
+      print('Token fetch failed for: $username');
+      return null;
     }
-    return null;
   }
 
   void logout() {
+    print('Logout started');
     isLoggedIn.value = false;
     Get.offAllNamed('/login');
+    print('Logout completed');
   }
 }

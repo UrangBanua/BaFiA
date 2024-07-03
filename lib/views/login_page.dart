@@ -14,6 +14,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('LoginPage build started');
     return Scaffold(
       appBar: AppBar(title: Text('Login')),
       body: Padding(

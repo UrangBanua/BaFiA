@@ -9,23 +9,28 @@ class LocalStorageService {
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
+    print('Database not initialized, initializing now...');
     _database = await _initDB();
+    print('Database initialized');
     return _database!;
   }
 
   static Future<Database> _initDB() async {
     if (kIsWeb) {
+      print('Initializing database for web');
       var factory = databaseFactoryFfiWeb;
       return await factory.openDatabase('bafia.db',
           options: OpenDatabaseOptions(version: 1, onCreate: _onCreate));
     } else {
       if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        print('Initializing database for desktop');
         sqfliteFfiInit();
         var factory = databaseFactoryFfi;
         String path = join(await getDatabasesPath(), 'bafia.db');
         return await factory.openDatabase(path,
             options: OpenDatabaseOptions(version: 1, onCreate: _onCreate));
       } else {
+        print('Initializing database for mobile');
         String path = join(await getDatabasesPath(), 'bafia.db');
         return await openDatabase(path, version: 1, onCreate: _onCreate);
       }
@@ -33,6 +38,7 @@ class LocalStorageService {
   }
 
   static Future<void> _onCreate(Database db, int version) async {
+    print('Creating tables');
     await db.execute('''
       CREATE TABLE user (
         username TEXT PRIMARY KEY,
@@ -64,6 +70,7 @@ class LocalStorageService {
   }
 
   static Future<Map<String, dynamic>?> getUserData() async {
+    print('Getting user data');
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('user');
     if (maps.isNotEmpty) {
@@ -73,6 +80,7 @@ class LocalStorageService {
   }
 
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
+    print('Saving user data');
     final db = await database;
     await db.insert('user', userData,
         conflictAlgorithm: ConflictAlgorithm.replace);
@@ -80,6 +88,7 @@ class LocalStorageService {
 
   static Future<void> saveDashboardData(
       Database db, List<dynamic> dashboardData) async {
+    print('Saving dashboard data');
     for (var data in dashboardData) {
       await db.insert('dashboard', data,
           conflictAlgorithm: ConflictAlgorithm.replace);
