@@ -36,21 +36,15 @@ class LocalStorageService {
     }
   }
 
-  static Future<void> deleteDatabase() async {
-    String path = join(await getDatabasesPath(), 'bafia.db');
-    await databaseFactory.deleteDatabase(path);
-    print('Database deleted');
-  }
-
   static Future<void> _onCreate(Database db, int version) async {
     print('Creating tables...');
     await db.execute('''
       CREATE TABLE user (
-        id_user INTEGER,
+        id_user INTEGER PRIMARY KEY,
         username TEXT,
         password TEXT,
         tahun INTEGER,
-        id_pegawai INTEGER PRIMARY KEY,
+        id_pegawai INTEGER,
         nama_pegawai TEXT DEFAULT '-',
         id_role INTEGER,
         nama_role TEXT,
@@ -72,13 +66,23 @@ class LocalStorageService {
         nama_skpd TEXT,
         anggaran REAL,
         realisasi_rencana REAL,
-        realisasi_rill REAL
+        realisasi_rill REAL,
+        time_update datetime DEFAULT CURRENT_TIMESTAMP
       )
     ''');
 
     print('Tables created.');
     await _logTableStructure(db, 'user');
     await _logTableStructure(db, 'dashboard');
+  }
+
+  static Future<void> deleteDatabase() async {
+    final db = await database;
+    await db.close();
+    final path = await getDatabasesPath();
+    final file = File('$path/bafia.db');
+    await file.delete();
+    print("Database deleted.");
   }
 
   static Future<void> _logTableStructure(Database db, String tableName) async {
@@ -108,8 +112,8 @@ class LocalStorageService {
     // Periksa apakah user dengan id_user sudah ada
     List<Map<String, dynamic>> existingUser = await db.query(
       'user',
-      where: 'id_pegawai = ?',
-      whereArgs: [userData['id_pegawai']],
+      where: 'id_user = ?',
+      whereArgs: [userData['id_user']],
     );
 
     if (existingUser.isNotEmpty) {
@@ -117,8 +121,8 @@ class LocalStorageService {
       await db.update(
         'user',
         userData,
-        where: 'id_pegawai = ?',
-        whereArgs: [userData['id_pegawai']],
+        where: 'id_user = ?',
+        whereArgs: [userData['id_user']],
       );
       print("User data updated.");
     } else {
@@ -130,6 +134,12 @@ class LocalStorageService {
       );
       print("User data inserted.");
     }
+  }
+
+  static Future<void> deleteUserData() async {
+    final db = await database;
+    await db.delete('user');
+    print("User data deleted.");
   }
 
   static Future<void> saveDashboardData(

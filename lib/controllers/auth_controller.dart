@@ -5,27 +5,47 @@ import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   var isLoggedIn = false.obs;
-  var refreshToken = '';
+  var userData = {}.obs;
+  var userToken = {}.obs;
 
-  get userData => null;
+  @override
+  void onInit() {
+    super.onInit();
+    _checkUserData();
+  }
+
+  Future<void> _checkUserData() async {
+    var data = await LocalStorageService.getUserData();
+    if (data != null) {
+      userData.value = data;
+      isLoggedIn.value = true;
+      userToken = ({
+        'token': userData['token'],
+        'refresh_token': userData['refresh_token']
+      }).obs;
+      print('User token: ' + userToken['refresh_token']);
+    }
+  }
 
   void login(String year, String username, String password) async {
-    print('Login started: $username');
     var response = await ApiService.login(year, username, password);
     if (response != null) {
+      var id_pegawai = response['id_pegawai'];
+      var tahun = year;
       var role = response['nama_role'];
       var skpd = response['nama_skpd'];
-      var tahun = year;
 
       print('Login successful: $username');
       LocalStorageService.saveUserData(response);
       LocalStorageService.saveUserData({
-        'id_pegawai': response['id_pegawai'],
+        'id_pegawai': id_pegawai,
         'username': username,
         'password': password,
         'tahun': tahun
       });
       print('User data pre-login saved to db: $response');
+      userData.value = response;
+      print('Simpan variable data user login');
 
       Get.dialog(
         AlertDialog(
@@ -53,18 +73,19 @@ class AuthController extends GetxController {
 
                 if (tokenResponse != null) {
                   // Merge token response with user data and save to local storage
+                  response['username'] = username;
+                  response['password'] = password;
+                  response['tahun'] = int.parse(tahun);
                   response['token'] = tokenResponse['token'];
                   response['refresh_token'] = tokenResponse['refresh_token'];
-                  try {
-                    LocalStorageService.saveUserData(response);
-                    print('Save User data login to db success');
-                  } catch (error) {
-                    print('Error saveUserData: $error');
-                  }
+                  await LocalStorageService.saveUserData(response);
+                  userData.value = response;
+                  print('userData Merger: ' + userData.obs.toString());
+                  userToken = (tokenResponse).obs;
+                  print('Simpan variable data user token');
                   isLoggedIn.value = true;
                   Get.offAllNamed('/dashboard');
                   print('Login completed: $username');
-                  //print('User data: $response');
                 } else {
                   Get.snackbar('Login Failed', 'Unable to retrieve token');
                   print('Token fetch failed for: $username');
@@ -78,7 +99,6 @@ class AuthController extends GetxController {
     } else {
       print('Login failed: Invalid username or password');
       Get.snackbar('Login Failed', 'Invalid username or password');
-      print('Login failed: $username');
     }
   }
 
@@ -104,8 +124,6 @@ class AuthController extends GetxController {
         response['token'] != null &&
         response['refresh_token'] != null) {
       print('Token fetched successfully for: $username');
-      //print('Token response: $response');
-      refreshToken = response['refresh_token'];
       return response;
     } else {
       print('Token fetch failed for: $username');
@@ -113,9 +131,12 @@ class AuthController extends GetxController {
     }
   }
 
-  void logout() {
-    print('Logout started');
+  void logout() async {
+    await LocalStorageService
+        .deleteUserData(); // Tambahkan fungsi untuk menghapus data user
     isLoggedIn.value = false;
+    userData.value =
+        {}.obs; // Membuat objek RxMap baru untuk mengosongkan userData
     Get.offAllNamed('/login');
     print('Logout completed');
   }

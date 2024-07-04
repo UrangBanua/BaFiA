@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../controllers/user_controller.dart';
 
 class ProfileUserPage extends StatelessWidget {
   final UserController userController = Get.put(UserController());
+
+  Future<void> _updateProfilePhotoAndReplaceDefault() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      userController.updateProfilePhotoAndReplaceDefault(pickedFile.path);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +29,25 @@ class ProfileUserPage extends StatelessWidget {
           return ListView(
             padding: EdgeInsets.all(16.0),
             children: [
+              Center(
+                child: Container(
+                  width: 100.0,
+                  height: 100.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/images/default_profile_image.jpg'), // Ganti dengan path gambar default
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _updateProfilePhotoAndReplaceDefault,
+                child: Text('Perbarui Photo Profil'),
+              ),
+              SizedBox(height: 16.0),
               ListTile(
                 title: Text('Username'),
                 subtitle: Text(user['username']),
@@ -44,11 +73,7 @@ class ProfileUserPage extends StatelessWidget {
                 subtitle: Text(user['nama_daerah']),
               ),
               ListTile(
-                title: Text('Token'),
-                subtitle: Text(userController.maskString(user['token'])),
-              ),
-              ListTile(
-                title: Text('Refresh Token'),
+                title: Text('Token OK - Belum Expired ⌛'),
                 subtitle:
                     Text(userController.maskString(user['refresh_token'])),
               ),

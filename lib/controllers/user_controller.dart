@@ -25,4 +25,9 @@ class UserController extends GetxController {
     if (input.length <= 3) return input;
     return input.substring(0, 3) + '*' * (input.length - 3);
   }
+
+  void updateProfilePhotoAndReplaceDefault(String imagePath) {
+    // Implement logic to update the profile photo and replace the default image
+    // For example, you can save the new image path to user data
+  }
 }

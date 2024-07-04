@@ -6,20 +6,26 @@ import 'services/local_storage_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Delete db if it exists (untuk testing)
+  //await LocalStorageService.deleteDatabase();
+  // Variable to store user data
+  Map<String, dynamic>? userData;
 
   try {
-    await LocalStorageService
-        .deleteDatabase(); // Hapus database untuk debugging
-    await LocalStorageService.database;
+    userData = await LocalStorageService.getUserData();
     print('Database is ready');
   } catch (error) {
     print('Error during app initialization: $error');
   }
 
-  runApp(BafiaApp());
+  runApp(BafiaApp(userData: userData));
 }
 
 class BafiaApp extends StatelessWidget {
+  final Map<String, dynamic>? userData;
+
+  BafiaApp({this.userData});
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -49,7 +55,7 @@ class BafiaApp extends StatelessWidget {
               Get.put(
                   AuthController()); // Sediakan AuthController saat app diluncurkan
             }),
-            initialRoute: '/login',
+            initialRoute: userData == null ? '/login' : '/dashboard',
             getPages: appRoutes(),
           );
         }
