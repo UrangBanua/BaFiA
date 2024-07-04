@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   var isLoggedIn = false.obs;
-  var userData = {}.obs;
+  var userData = <String, dynamic>{}.obs;
   var userToken = {}.obs;
 
   @override
@@ -135,8 +135,8 @@ class AuthController extends GetxController {
     await LocalStorageService
         .deleteUserData(); // Tambahkan fungsi untuk menghapus data user
     isLoggedIn.value = false;
-    userData.value =
-        {}.obs; // Membuat objek RxMap baru untuk mengosongkan userData
+    userData.value = <String, dynamic>{}
+        .obs; // Membuat objek RxMap baru untuk mengosongkan userData
     Get.offAllNamed('/login');
     print('Logout completed');
   }

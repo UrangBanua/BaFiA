@@ -36,8 +36,8 @@ class ProfileUserPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: AssetImage(
-                          'assets/images/default_profile_image.jpg'), // Ganti dengan path gambar default
+                      image: NetworkImage(
+                          'https://static.vecteezy.com/system/resources/thumbnails/019/879/198/small_2x/user-icon-on-transparent-background-free-png.png'), // Ganti dengan path gambar default
                       fit: BoxFit.cover,
                     ),
                   ),
