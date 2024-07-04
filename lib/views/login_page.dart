@@ -16,21 +16,36 @@ class _LoginPageState extends State<LoginPage>
   final TextEditingController yearController = TextEditingController();
   bool isLoading = false;
   late AnimationController _controller;
-  late Animation<double> _animation;
+  late Animation<Offset> _positionAnimation;
+  late Animation<double> _rotationAnimation;
 
   @override
   void initState() {
     super.initState();
     yearController.text = DateTime.now().year.toString();
+
     _controller = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     );
-    _animation = CurvedAnimation(
+
+    _positionAnimation = Tween<Offset>(
+      begin: Offset(0, -1.5),
+      end: Offset(0, 0),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.bounceOut,
+    ));
+
+    _rotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 4 * 3.1416,
+    ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
-    );
-    _controller.repeat(reverse: true);
+    ));
+
+    _controller.forward();
   }
 
   @override
@@ -61,16 +76,21 @@ class _LoginPageState extends State<LoginPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FadeTransition(
-                opacity: _animation,
-                child: Text(
-                  'BaFiA \nBarabai Financial Assistant',
-                  // set alignment center
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue),
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: _positionAnimation.value *
+                        MediaQuery.of(context).size.width,
+                    child: Transform.rotate(
+                      angle: _rotationAnimation.value,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Image.network(
+                  'https://github.com/UrangBanua/BaFiA/assets/58909061/2ee7195c-e7c1-417f-89fc-f1e560cf8677',
+                  height: 230, // Adjust the height as needed
                 ),
               ),
               SizedBox(height: 40),
@@ -79,6 +99,7 @@ class _LoginPageState extends State<LoginPage>
                 child: Column(
                   children: [
                     TextField(
+                      readOnly: true,
                       controller: yearController,
                       decoration: InputDecoration(
                         labelText: 'Tahun',
@@ -95,6 +116,7 @@ class _LoginPageState extends State<LoginPage>
                       controller: usernameController,
                       decoration: InputDecoration(
                         labelText: 'Username',
+                        hintText: 'nip',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -108,6 +130,7 @@ class _LoginPageState extends State<LoginPage>
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
+                        hintText: 'password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
