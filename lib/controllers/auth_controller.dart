@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   var isLoggedIn = false.obs;
-  var userData = <String, dynamic>{}.obs;
+  var userData = {}.obs;
   var userToken = {}.obs;
 
   @override
@@ -27,7 +27,7 @@ class AuthController extends GetxController {
     }
   }
 
-  void login(String year, String username, String password) async {
+  Future<void> login(String year, String username, String password) async {
     var response = await ApiService.login(year, username, password);
     if (response != null) {
       var id_pegawai = response['id_pegawai'];
@@ -131,13 +131,31 @@ class AuthController extends GetxController {
     }
   }
 
-  void logout() async {
-    await LocalStorageService
-        .deleteUserData(); // Tambahkan fungsi untuk menghapus data user
-    isLoggedIn.value = false;
-    userData.value = <String, dynamic>{}
-        .obs; // Membuat objek RxMap baru untuk mengosongkan userData
-    Get.offAllNamed('/login');
-    print('Logout completed');
+  void logout() {
+    Get.dialog(
+      AlertDialog(
+        title: Text('Apakah Anda yakin ingin logout?'),
+        content: Text('token yg lama akan hilang❗ diperlukan login kembali'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back(); // Tutup dialog jika pengguna memilih 'Tidak'
+            },
+            child: Text('Tidak'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Get.back(); // Tutup dialog jika pengguna memilih 'Yakin'
+              await LocalStorageService.deleteUserData(); // Hapus data user
+              isLoggedIn = false.obs;
+              userData.value = {}.obs; // Mengosongkan userData
+              Get.offAllNamed('/login');
+              print('Logout completed');
+            },
+            child: Text('Yakin'),
+          ),
+        ],
+      ),
+    );
   }
 }

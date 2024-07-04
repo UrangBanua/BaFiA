@@ -39,11 +39,11 @@ class DashboardController extends GetxController {
     } catch (e) {
       print('[DashboardController] Error: $e');
       hasError(true);
-      var db = await LocalStorageService.database;
-      var data = await db.query('dashboard');
-      print('[DashboardController] Dashboard data loaded from local DB');
-      dashboardData.assignAll(data);
-      print('[DashboardController] Dashboard data local DB assigned');
+      //var db = await LocalStorageService.database;
+      //var data = await db.query('dashboard');
+      //print('[DashboardController] Dashboard data loaded from local DB');
+      //dashboardData.assignAll(data);
+      //print('[DashboardController] Dashboard data local DB assigned');
       Get.snackbar('Error', 'Connection problem, data loaded from local DB');
     } finally {
       isLoading(false);
