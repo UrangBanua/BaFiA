@@ -4,12 +4,14 @@ import 'controllers/auth_controller.dart';
 import 'routes.dart';
 import 'services/local_storage_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   try {
-    LocalStorageService.database.then((database) {
-      print('Database is ready');
-        });
+    await LocalStorageService
+        .deleteDatabase(); // Hapus database untuk debugging
+    await LocalStorageService.database;
+    print('Database is ready');
   } catch (error) {
     print('Error during app initialization: $error');
   }
@@ -20,14 +22,38 @@ void main() {
 class BafiaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Bafia',
-      initialBinding: BindingsBuilder(() {
-        Get.put(
-            AuthController()); // Sediakan AuthController saat app diluncurkan
-      }),
-      initialRoute: '/login',
-      getPages: appRoutes(),
+    return FutureBuilder(
+      future: LocalStorageService.database,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child:
+                    Text('Error initializing the database: ${snapshot.error}'),
+              ),
+            ),
+          );
+        } else {
+          return GetMaterialApp(
+            title: 'Bafia',
+            initialBinding: BindingsBuilder(() {
+              Get.put(
+                  AuthController()); // Sediakan AuthController saat app diluncurkan
+            }),
+            initialRoute: '/login',
+            getPages: appRoutes(),
+          );
+        }
+      },
     );
   }
 }

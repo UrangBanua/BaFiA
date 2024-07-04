@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   var isLoggedIn = false.obs;
+  var refreshToken = '';
+
+  get userData => null;
 
   void login(String year, String username, String password) async {
     print('Login started: $username');
@@ -12,9 +15,17 @@ class AuthController extends GetxController {
     if (response != null) {
       var role = response['nama_role'];
       var skpd = response['nama_skpd'];
+      var tahun = year;
 
       print('Login successful: $username');
-      print('User data: $response');
+      LocalStorageService.saveUserData(response);
+      LocalStorageService.saveUserData({
+        'id_pegawai': response['id_pegawai'],
+        'username': username,
+        'password': password,
+        'tahun': tahun
+      });
+      print('User data pre-login saved to db: $response');
 
       Get.dialog(
         AlertDialog(
@@ -46,7 +57,7 @@ class AuthController extends GetxController {
                   response['refresh_token'] = tokenResponse['refresh_token'];
                   try {
                     LocalStorageService.saveUserData(response);
-                    print('Save User data to db success');
+                    print('Save User data login to db success');
                   } catch (error) {
                     print('Error saveUserData: $error');
                   }
@@ -94,6 +105,7 @@ class AuthController extends GetxController {
         response['refresh_token'] != null) {
       print('Token fetched successfully for: $username');
       //print('Token response: $response');
+      refreshToken = response['refresh_token'];
       return response;
     } else {
       print('Token fetch failed for: $username');

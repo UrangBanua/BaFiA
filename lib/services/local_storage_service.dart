@@ -9,48 +9,56 @@ class LocalStorageService {
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
-    print('Database not initialized, initializing now...');
     _database = await _initDB();
-    print('Database initialized');
     return _database!;
   }
 
   static Future<Database> _initDB() async {
+    print('Initializing database...');
     if (kIsWeb) {
-      print('Initializing database for web');
       var factory = databaseFactoryFfiWeb;
+      print("Using web database");
       return await factory.openDatabase('bafia.db',
           options: OpenDatabaseOptions(version: 1, onCreate: _onCreate));
     } else {
       if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        print('Initializing database for desktop');
         sqfliteFfiInit();
         var factory = databaseFactoryFfi;
         String path = join(await getDatabasesPath(), 'bafia.db');
+        print("Using FFI database");
         return await factory.openDatabase(path,
             options: OpenDatabaseOptions(version: 1, onCreate: _onCreate));
       } else {
-        print('Initializing database for mobile');
         String path = join(await getDatabasesPath(), 'bafia.db');
+        print("Using mobile database");
         return await openDatabase(path, version: 1, onCreate: _onCreate);
       }
     }
   }
 
+  static Future<void> deleteDatabase() async {
+    String path = join(await getDatabasesPath(), 'bafia.db');
+    await databaseFactory.deleteDatabase(path);
+    print('Database deleted');
+  }
+
   static Future<void> _onCreate(Database db, int version) async {
-    print('Creating tables');
+    print('Creating tables...');
     await db.execute('''
       CREATE TABLE user (
-        username TEXT PRIMARY KEY,
+        id_user INTEGER,
+        username TEXT,
         password TEXT,
-        id_pegawai INTEGER,
-        nama_pegawai TEXT,
+        tahun INTEGER,
+        id_pegawai INTEGER PRIMARY KEY,
+        nama_pegawai TEXT DEFAULT '-',
         id_role INTEGER,
         nama_role TEXT,
         id_skpd INTEGER,
+        kode_skpd INTEGER,
         nama_skpd TEXT,
         id_daerah INTEGER,
-        nama_daerah TEXT,
+        nama_daerah TEXT DEFAULT '-',
         token TEXT,
         refresh_token TEXT
       )
@@ -67,31 +75,69 @@ class LocalStorageService {
         realisasi_rill REAL
       )
     ''');
+
+    print('Tables created.');
+    await _logTableStructure(db, 'user');
+    await _logTableStructure(db, 'dashboard');
+  }
+
+  static Future<void> _logTableStructure(Database db, String tableName) async {
+    final result = await db.rawQuery('PRAGMA table_info($tableName)');
+    print('Structure of $tableName:');
+    result.forEach((row) {
+      print(row);
+    });
   }
 
   static Future<Map<String, dynamic>?> getUserData() async {
-    print('Getting user data');
     final db = await database;
+    print("Fetching user data...");
     final List<Map<String, dynamic>> maps = await db.query('user');
     if (maps.isNotEmpty) {
+      print("Data from DB: ${maps.first}");
       return maps.first;
     }
+    print("No data found in DB.");
     return null;
   }
 
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
-    print('Saving user data');
     final db = await database;
-    await db.insert('user', userData,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    print("Saving user data: $userData");
+
+    // Periksa apakah user dengan id_user sudah ada
+    List<Map<String, dynamic>> existingUser = await db.query(
+      'user',
+      where: 'id_pegawai = ?',
+      whereArgs: [userData['id_pegawai']],
+    );
+
+    if (existingUser.isNotEmpty) {
+      // Jika user dengan id_user sudah ada, lakukan update
+      await db.update(
+        'user',
+        userData,
+        where: 'id_pegawai = ?',
+        whereArgs: [userData['id_pegawai']],
+      );
+      print("User data updated.");
+    } else {
+      // Jika user dengan id_user belum ada, lakukan insert
+      await db.insert(
+        'user',
+        userData,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      print("User data inserted.");
+    }
   }
 
   static Future<void> saveDashboardData(
       Database db, List<dynamic> dashboardData) async {
-    print('Saving dashboard data');
     for (var data in dashboardData) {
       await db.insert('dashboard', data,
           conflictAlgorithm: ConflictAlgorithm.replace);
+      print("Dashboard data saved: $data");
     }
   }
 }

@@ -87,17 +87,18 @@ class ApiService {
     return null;
   }
 
-  static Future<void> syncDataToLocalDB(Database db) async {
-    print('Syncing data to local DB');
+  static Future<void> syncDashboardToLocalDB(Database db, String token) async {
+    print('Syncing Dashboard to local DB');
     Get.dialog(Center(child: CircularProgressIndicator()),
         barrierDismissible: false);
     try {
-      var response = await client
-          .get(
-            Uri.parse(
-                'https://service.sipd.kemendagri.go.id/pengeluaran/strict/dashboard/statistik-belanja'),
-          )
-          .timeout(_timeoutUserDuration);
+      var response = await client.get(
+        Uri.parse(
+            'https://service.sipd.kemendagri.go.id/pengeluaran/strict/dashboard/statistik-belanja'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(_timeoutUserDuration);
       Get.back(); // Close loading progress
 
       if (response.statusCode == 200) {
