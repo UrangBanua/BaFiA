@@ -68,6 +68,11 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
+  void _handleLogoTap() {
+    _controller.reset(); // Reset the animation
+    _controller.forward(); // Start the animation again
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,21 +81,24 @@ class _LoginPageState extends State<LoginPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: _positionAnimation.value *
-                        MediaQuery.of(context).size.width,
-                    child: Transform.rotate(
-                      angle: _rotationAnimation.value,
-                      child: child,
-                    ),
-                  );
-                },
-                child: Image.network(
-                  'https://github.com/UrangBanua/BaFiA/assets/58909061/2ee7195c-e7c1-417f-89fc-f1e560cf8677',
-                  height: 230, // Adjust the height as needed
+              GestureDetector(
+                onTap: _handleLogoTap, // Add tap listener
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: _positionAnimation.value *
+                          MediaQuery.of(context).size.width,
+                      child: Transform.rotate(
+                        angle: _rotationAnimation.value,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Image.network(
+                    'https://github.com/UrangBanua/BaFiA/assets/58909061/4b8aa7e9-ef0b-4f14-86ba-32641fd99330',
+                    height: 230, // Adjust the height as needed
+                  ),
                 ),
               ),
               SizedBox(height: 40),
