@@ -1,3 +1,4 @@
+import 'package:bafia/controllers/auth_controller.dart';
 import 'package:get/get.dart';
 import '../services/local_storage_service.dart';
 
@@ -29,5 +30,25 @@ class UserController extends GetxController {
   void updateProfilePhotoAndReplaceDefault(String imagePath) {
     // Implement logic to update the profile photo and replace the default image
     // For example, you can save the new image path to user data
+  }
+
+  Future<void> saveTheme(bool isDarkMode) async {
+    final db = await LocalStorageService.database;
+    await db.update(
+      'User',
+      {'isDarkMode': isDarkMode ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [userData['id']],
+    );
+  }
+
+  Future<bool> getTheme() async {
+    final db = await LocalStorageService.database;
+    final user =
+        await db.query('User', where: 'id = ?', whereArgs: [userData['id']]);
+    if (user.isNotEmpty) {
+      return user.first['isDarkMode'] == 1;
+    }
+    return false; // Default to light mode
   }
 }

@@ -54,7 +54,9 @@ class LocalStorageService {
         id_daerah INTEGER,
         nama_daerah TEXT DEFAULT '-',
         token TEXT,
-        refresh_token TEXT
+        refresh_token TEXT,
+        isDarkMode INTEGER DEFAULT 0,
+        time_update datetime DEFAULT CURRENT_TIMESTAMP
       )
     ''');
     await db.execute('''

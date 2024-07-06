@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
 import 'routes.dart';
+import 'theme_provider.dart';
 import 'services/local_storage_service.dart';
 
 void main() async {
@@ -18,7 +20,12 @@ void main() async {
     print('Error during app initialization: $error');
   }
 
-  runApp(BafiaApp(userData: userData));
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: BafiaApp(userData: userData),
+    ),
+  );
 }
 
 class BafiaApp extends StatelessWidget {
@@ -57,6 +64,7 @@ class BafiaApp extends StatelessWidget {
             }),
             initialRoute: userData == null ? '/login' : '/dashboard',
             getPages: appRoutes(),
+            theme: context.watch<ThemeProvider>().currentTheme,
           );
         }
       },
