@@ -55,6 +55,7 @@ class LocalStorageService {
         nama_daerah TEXT DEFAULT '-',
         token TEXT,
         refresh_token TEXT,
+        profile_photo TEXT DEFAULT '/assets/images/default_profile.png',
         isDarkMode INTEGER DEFAULT 0,
         time_update datetime DEFAULT CURRENT_TIMESTAMP
       )
@@ -100,7 +101,7 @@ class LocalStorageService {
     print("Fetching user data...");
     final List<Map<String, dynamic>> maps = await db.query('user');
     if (maps.isNotEmpty) {
-      print("Data from DB: ${maps.first}");
+      print("Get Data from DB - User");
       return maps.first;
     }
     print("No data found in DB.");
@@ -109,7 +110,7 @@ class LocalStorageService {
 
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
     final db = await database;
-    print("Saving user data: $userData");
+    print("Saving user data");
 
     // Periksa apakah user dengan id_user sudah ada
     List<Map<String, dynamic>> existingUser = await db.query(

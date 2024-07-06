@@ -95,8 +95,9 @@ class _LoginPageState extends State<LoginPage>
                       ),
                     );
                   },
-                  child: Image.network(
-                    'https://github.com/UrangBanua/BaFiA/assets/58909061/4b8aa7e9-ef0b-4f14-86ba-32641fd99330',
+                  // load images from assets/icons/logo.png
+                  child: Image.asset(
+                    'assets/icons/logo.png',
                     height: 230, // Adjust the height as needed
                   ),
                 ),

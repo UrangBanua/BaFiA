@@ -29,7 +29,7 @@ class DashboardController extends GetxController {
       isLoading(true);
       var db = await LocalStorageService.database;
       var refreshToken = userData['refresh_token'];
-      print('[DashboardController] Database fetched with token: $refreshToken');
+      //print('[DashboardController] Database fetched with token: $refreshToken');
       await ApiService.syncDashboardToLocalDB(db, refreshToken);
       print('[DashboardController] Dashboard synced to local DB');
       var data = await db.query('dashboard');

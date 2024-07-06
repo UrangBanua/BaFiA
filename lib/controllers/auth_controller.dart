@@ -23,7 +23,7 @@ class AuthController extends GetxController {
         'token': userData['token'],
         'refresh_token': userData['refresh_token']
       }).obs;
-      print('User token: ' + userToken['refresh_token']);
+      //print('User token: ' + userToken['refresh_token']);
     }
   }
 
@@ -80,7 +80,7 @@ class AuthController extends GetxController {
                   response['refresh_token'] = tokenResponse['refresh_token'];
                   await LocalStorageService.saveUserData(response);
                   userData.value = response;
-                  print('userData Merger: ' + userData.obs.toString());
+                  print('userData Merger: ');
                   userToken = (tokenResponse).obs;
                   print('Simpan variable data user token');
                   isLoggedIn.value = true;

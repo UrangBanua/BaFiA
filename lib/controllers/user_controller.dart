@@ -1,4 +1,3 @@
-import 'package:bafia/controllers/auth_controller.dart';
 import 'package:get/get.dart';
 import '../services/local_storage_service.dart';
 
@@ -27,9 +26,10 @@ class UserController extends GetxController {
     return input.substring(0, 3) + '*' * (input.length - 3);
   }
 
-  void updateProfilePhotoAndReplaceDefault(String imagePath) {
-    // Implement logic to update the profile photo and replace the default image
-    // For example, you can save the new image path to user data
+  Future<void> updateProfilePhotoAndReplaceDefault(String imageHash) async {
+    print(imageHash);
+
+    // Save the updated user data to local storage
   }
 
   Future<void> saveTheme(bool isDarkMode) async {

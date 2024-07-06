@@ -40,8 +40,10 @@ class ProfileUserPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: NetworkImage(
-                              'https://static.vecteezy.com/system/resources/thumbnails/019/879/198/small_2x/user-icon-on-transparent-background-free-png.png'), // Ganti dengan path gambar default
+                          image:
+                              AssetImage('assets/images/default_profile.png'),
+                          //image: NetworkImage(
+                          //    'https://static.vecteezy.com/system/resources/thumbnails/019/879/198/small_2x/user-icon-on-transparent-background-free-png.png'), // Ganti dengan path gambar default
                           fit: BoxFit.cover,
                         ),
                       ),
