@@ -32,20 +32,21 @@ class UserController extends GetxController {
     // Save the updated user data to local storage
   }
 
-  Future<void> saveTheme(bool isDarkMode) async {
+  Future<void> saveTheme(id_user, bool isDarkMode) async {
     final db = await LocalStorageService.database;
+    print('user_id update:' + id_user.toString());
     await db.update(
       'User',
       {'isDarkMode': isDarkMode ? 1 : 0},
-      where: 'id = ?',
-      whereArgs: [userData['id']],
+      where: 'id_user = ?',
+      whereArgs: [id_user],
     );
   }
 
   Future<bool> getTheme() async {
     final db = await LocalStorageService.database;
-    final user =
-        await db.query('User', where: 'id = ?', whereArgs: [userData['id']]);
+    final user = await db
+        .query('User', where: 'id_user = ?', whereArgs: [userData['id_user']]);
     if (user.isNotEmpty) {
       return user.first['isDarkMode'] == 1;
     }

@@ -153,4 +153,10 @@ class LocalStorageService {
       print("Dashboard data saved: $data");
     }
   }
+
+  static Future<void> deleteDashboardData() async {
+    final db = await database;
+    await db.delete('dashboard');
+    print("Dashboard data cleared.");
+  }
 }

@@ -42,8 +42,6 @@ class ProfileUserPage extends StatelessWidget {
                         image: DecorationImage(
                           image:
                               AssetImage('assets/images/default_profile.png'),
-                          //image: NetworkImage(
-                          //    'https://static.vecteezy.com/system/resources/thumbnails/019/879/198/small_2x/user-icon-on-transparent-background-free-png.png'), // Ganti dengan path gambar default
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -82,13 +80,13 @@ class ProfileUserPage extends StatelessWidget {
                     title: Text('Tema'),
                     value: themeProvider.isDarkMode,
                     onChanged: (value) {
-                      themeProvider.toggleTheme();
+                      themeProvider.toggleTheme(user['id_user']);
                       print(
                           'Tema: ${themeProvider.isDarkMode ? 'Gelap' : 'Terang'}');
                     },
                   ),
                   ListTile(
-                    title: Text('Token OK - Belum Expired ⌛'),
+                    title: Text('Token OK - ⌛'),
                     subtitle:
                         Text(userController.maskString(user['refresh_token'])),
                   ),
