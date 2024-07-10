@@ -7,7 +7,7 @@ class ApiService {
   static final client = http.Client();
 
   static Future<Map<String, dynamic>?> login(
-      String year, String username, String password) async {
+      String year, String username, String password, String captcha) async {
     final response = await client.post(
         Uri.parse('https://service.sipd.kemendagri.go.id/auth/auth/pre-login'),
         body: {
@@ -32,6 +32,8 @@ class ApiService {
     required String password,
     required int year,
     required String username,
+    required String captcha_id,
+    required String captcha_solution,
   }) async {
     final response = await client.post(
       Uri.parse('https://service.sipd.kemendagri.go.id/auth/auth/login'),
@@ -43,6 +45,9 @@ class ApiService {
         'password': password,
         'tahun': year,
         'username': username,
+        'captcha_id': captcha_id,
+        'captcha_solution': captcha_solution,
+        'remember_me': 'true'
       }),
       headers: {'Content-Type': 'application/json'},
     ).timeout(Duration(seconds: 10));
@@ -65,6 +70,21 @@ class ApiService {
       await LocalStorageService.deleteDashboardData();
       await LocalStorageService.saveDashboardData(
           db, json.decode(response.body));
+    }
+  }
+
+  static Future<Map<String, dynamic>?> getCaptchaImage() async {
+    final response = await client.get(
+      Uri.parse('https://service.sipd.kemendagri.go.id/auth/captcha/new'),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get captcha image');
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
@@ -7,6 +9,7 @@ class AuthController extends GetxController {
   var isLoggedIn = false.obs;
   var userData = {}.obs;
   var userToken = {}.obs;
+  var captchaData = {}.obs;
 
   @override
   void onInit() {
@@ -27,30 +30,57 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> login(String year, String username, String password) async {
-    var response = await ApiService.login(year, username, password);
+  Future<void> _fetchCaptchaImage() async {
+    var response = await ApiService.getCaptchaImage();
+    if (response != null && response['base64'] != null) {
+      captchaData.value = response;
+    } else {
+      print('Captcha image fetch failed');
+    }
+  }
+
+  Future<void> login(
+      String year, String username, String password, String captcha) async {
+    var response = await ApiService.login(year, username, password, captcha);
     if (response != null) {
-      var id_pegawai = response['id_pegawai'];
+      var kode_skpd = response['kode_skpd'];
+      var nama_skpd = response['nama_skpd'];
+      var nama_role = response['nama_role'];
       var tahun = year;
-      var role = response['nama_role'];
-      var skpd = response['nama_skpd'];
 
       print('Login successful: $username');
-      LocalStorageService.saveUserData(response);
-      LocalStorageService.saveUserData({
-        'id_pegawai': id_pegawai,
-        'username': username,
-        'password': password,
-        'tahun': tahun
-      });
-      print('User data pre-login saved to db: $response');
+
+      // Set variable userData
       userData.value = response;
-      print('Simpan variable data user login');
+      print('Set variable userData');
+
+      // // User data pre-login saved to db
+      // await LocalStorageService.saveUserData({
+      //   'id_pegawai': id_pegawai,
+      //   'username': username,
+      //   'password': password,
+      //   'tahun': tahun
+      // });
+      //print('User data pre-login saved to db: $response');
+
+      // ambil captcha image
+      await _fetchCaptchaImage();
+      print('Captcha image fetched id: ' + captchaData['id'].toString());
 
       Get.dialog(
         AlertDialog(
           title: Text('Konfirmasi Login'),
-          content: Text('Role: $role\nSKPD: $skpd'),
+          content: Column(
+            children: [
+              Text(
+                  'Role: $nama_role\nKode SKPD: $kode_skpd\nSKPD: $nama_skpd\n'),
+              Image.memory(base64Decode(captchaData['base64'])),
+              TextField(
+                decoration: InputDecoration(labelText: 'Masukkan Captcha'),
+                onChanged: (value) => captcha = value,
+              ),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -62,14 +92,15 @@ class AuthController extends GetxController {
             TextButton(
               onPressed: () async {
                 var tokenResponse = await fetchUserToken(
-                  response['id_daerah'],
-                  response['id_role'],
-                  response['id_skpd'],
-                  response['id_pegawai'],
-                  password,
-                  int.parse(year), // Convert year to integer
-                  username,
-                );
+                    response['id_daerah'],
+                    response['id_role'],
+                    response['id_skpd'],
+                    response['id_pegawai'],
+                    password,
+                    int.parse(year), // Convert year to integer
+                    username,
+                    captchaData['id'],
+                    captcha);
 
                 if (tokenResponse != null) {
                   // Merge token response with user data and save to local storage
@@ -109,17 +140,20 @@ class AuthController extends GetxController {
       int idPegawai,
       String password,
       int year,
-      String username) async {
+      String username,
+      String capcaptcha_id,
+      String capcaptcha_solution) async {
     print('Fetching user token for: $username');
     var response = await ApiService.getUserToken(
-      idDaerah: idDaerah,
-      idRole: idRole,
-      idSkpd: idSkpd,
-      idPegawai: idPegawai,
-      password: password,
-      year: year,
-      username: username,
-    );
+        idDaerah: idDaerah,
+        idRole: idRole,
+        idSkpd: idSkpd,
+        idPegawai: idPegawai,
+        password: password,
+        year: year,
+        username: username,
+        captcha_id: capcaptcha_id,
+        captcha_solution: capcaptcha_solution);
     if (response != null &&
         response['token'] != null &&
         response['refresh_token'] != null) {
