@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import '../controllers/user_controller.dart';
 import 'package:provider/provider.dart';
+import '../controllers/user_controller.dart';
 import '../theme_provider.dart';
+import 'package:logging/logging.dart';
 
 class ProfileUserPage extends StatelessWidget {
   final UserController userController = Get.put(UserController());
+  final _logger = Logger('ProfileUserPage');
+
+  ProfileUserPage({super.key});
 
   Future<void> _updateProfilePhotoAndReplaceDefault() async {
     final picker = ImagePicker();
@@ -23,21 +27,21 @@ class ProfileUserPage extends StatelessWidget {
       builder: (context, themeProvider, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Profile User'),
+            title: const Text('Profile User'),
           ),
           body: Obx(() {
             if (userController.userData.isEmpty) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else {
               var user = userController.userData;
               return ListView(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 children: [
                   Center(
                     child: Container(
                       width: 100.0,
                       height: 100.0,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           image:
@@ -49,44 +53,44 @@ class ProfileUserPage extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: _updateProfilePhotoAndReplaceDefault,
-                    child: Text('Perbarui Photo Profil'),
+                    child: const Text('Perbarui Photo Profil'),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   ListTile(
-                    title: Text('Username'),
+                    title: const Text('Username'),
                     subtitle: Text(user['username']),
                   ),
                   ListTile(
-                    title: Text('Password'),
+                    title: const Text('Password'),
                     subtitle: Text(userController.maskString(user['password'])),
                   ),
                   ListTile(
-                    title: Text('Nama Pegawai'),
+                    title: const Text('Nama Pegawai'),
                     subtitle: Text(user['nama_pegawai']),
                   ),
                   ListTile(
-                    title: Text('Role'),
+                    title: const Text('Role'),
                     subtitle: Text(user['nama_role']),
                   ),
                   ListTile(
-                    title: Text('SKPD'),
+                    title: const Text('SKPD'),
                     subtitle: Text(user['nama_skpd']),
                   ),
                   ListTile(
-                    title: Text('Daerah'),
+                    title: const Text('Daerah'),
                     subtitle: Text(user['nama_daerah']),
                   ),
                   SwitchListTile(
-                    title: Text('Tema'),
+                    title: const Text('Tema'),
                     value: themeProvider.isDarkMode,
                     onChanged: (value) {
                       themeProvider.toggleTheme(user['id_user']);
-                      print(
+                      _logger.info(
                           'Tema: ${themeProvider.isDarkMode ? 'Gelap' : 'Terang'}');
                     },
                   ),
                   ListTile(
-                    title: Text('Token OK - ⌛'),
+                    title: const Text('Token OK - ⌛'),
                     subtitle:
                         Text(userController.maskString(user['refresh_token'])),
                   ),

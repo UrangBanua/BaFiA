@@ -12,13 +12,13 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard')),
+      appBar: AppBar(title: const Text('Dashboard')),
       drawer: DrawerMenu(),
       body: Obx(() {
         if (dashboardController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (dashboardController.hasError.value) {
-          return Center(child: Text('Failed to load data'));
+          return const Center(child: Text('Failed to load data'));
         } else {
           return RefreshIndicator(
             onRefresh: dashboardController.fetchDashboardData,
@@ -43,24 +43,22 @@ class DashboardPage extends StatelessWidget {
                     .format(data['realisasi_rill']);
                 return Column(
                   children: [
-                    Text('\nSerapan Realisasi Anggaran',
+                    const Text('\nSerapan Realisasi Anggaran',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         )),
                     Text(
-                        '\n' +
-                            DateFormat('dd MMMM y', 'id')
-                                .format(DateTime.parse(data['time_update'])),
+                        '\n${DateFormat('dd MMMM y', 'id').format(DateTime.parse(data['time_update']))}',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         )),
                     Text('${data['nama_skpd']}',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         )),
@@ -95,6 +93,8 @@ class DashboardPage extends StatelessWidget {
                             NeedlePointer(
                                 enableAnimation: true,
                                 animationType: AnimationType.easeOutBack,
+                                animationDuration:
+                                    3000, // add animation duration
                                 value: (data['realisasi_rill'] /
                                         data['anggaran']) *
                                     100),
@@ -106,16 +106,16 @@ class DashboardPage extends StatelessWidget {
                                 widget: Text(
                                     '${((data['realisasi_rill'] / data['anggaran']) * 100).toStringAsFixed(2)} %',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold))),
                             GaugeAnnotation(
                               angle: 90,
                               positionFactor: 0.7,
                               widget: Text(
-                                'Total Anggaran\n${nilaiAnggaran}',
+                                'Total Anggaran\n$nilaiAnggaran',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             ),
@@ -123,9 +123,9 @@ class DashboardPage extends StatelessWidget {
                               angle: 90,
                               positionFactor: 1.2,
                               widget: Text(
-                                'Total Pengajuan Realisasi\n${nilaiPengajuan}',
+                                'Total Pengajuan Realisasi\n$nilaiPengajuan',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             ),
@@ -133,9 +133,9 @@ class DashboardPage extends StatelessWidget {
                               angle: 90,
                               positionFactor: 1.7,
                               widget: Text(
-                                'Total Pencairan Realisasi\n${nilaiRealisasi}',
+                                'Total Pencairan Realisasi\n$nilaiRealisasi',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             )

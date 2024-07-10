@@ -4,6 +4,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../controllers/auth_controller.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -30,8 +32,8 @@ class _LoginPageState extends State<LoginPage>
     );
 
     _positionAnimation = Tween<Offset>(
-      begin: Offset(0, -1.5),
-      end: Offset(0, 0),
+      begin: const Offset(0, -1.5),
+      end: const Offset(0, 0),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.bounceOut,
@@ -102,7 +104,7 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
@@ -115,12 +117,12 @@ class _LoginPageState extends State<LoginPage>
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
                       ),
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     TextField(
                       controller: usernameController,
                       decoration: InputDecoration(
@@ -129,12 +131,12 @@ class _LoginPageState extends State<LoginPage>
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
                       ),
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     TextField(
                       controller: passwordController,
                       decoration: InputDecoration(
@@ -143,25 +145,25 @@ class _LoginPageState extends State<LoginPage>
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
                       ),
                       obscureText: true,
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: isLoading ? null : _login,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
+                      ),
                       child: isLoading
-                          ? SpinKitCircle(
+                          ? const SpinKitCircle(
                               color: Colors.white,
                               size: 24.0,
                             )
-                          : Text('Login'),
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                      ),
+                          : const Text('Login'),
                     ),
                   ],
                 ),

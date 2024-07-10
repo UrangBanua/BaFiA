@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 import '../services/local_storage_service.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('UserController');
 
 class UserController extends GetxController {
   var userData = {}.obs;
@@ -11,13 +14,13 @@ class UserController extends GetxController {
   }
 
   Future<void> fetchUserData() async {
-    print("Fetching user data...");
+    _logger.info('Fetching user data...');
     var data = await LocalStorageService.getUserData();
     if (data != null) {
-      print("User data fetched: $data");
+      _logger.info('User data fetched: $data');
       userData.value = data;
     } else {
-      print("No user data found.");
+      _logger.info('No user data found.');
     }
   }
 
@@ -27,14 +30,15 @@ class UserController extends GetxController {
   }
 
   Future<void> updateProfilePhotoAndReplaceDefault(String imageHash) async {
-    print(imageHash);
+    _logger.info('Image hash: $imageHash');
 
     // Save the updated user data to local storage
   }
 
-  Future<void> saveTheme(id_user, bool isDarkMode) async {
+  Future<void> saveTheme(int id_user, bool isDarkMode) async {
     final db = await LocalStorageService.database;
-    print('user_id update:' + id_user.toString());
+    _logger
+        .info('Updating user theme. User ID: $id_user, Dark Mode: $isDarkMode');
     await db.update(
       'User',
       {'isDarkMode': isDarkMode ? 1 : 0},

@@ -6,27 +6,27 @@ import 'controllers/auth_controller.dart';
 import 'routes.dart';
 import 'theme_provider.dart';
 import 'services/local_storage_service.dart';
+import 'package:logging/logging.dart';
+
+final Logger _logger = Logger('Bafia');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize ThemeProvider and load theme
-  ThemeProvider themeProvider = ThemeProvider();
-
-  // Delete db if it exists (untuk testing)
-  //await LocalStorageService.deleteDatabase();
+  final themeProvider = ThemeProvider();
 
   // Initialize database and get user data
   Map<String, dynamic>? userData;
   try {
     userData = await LocalStorageService.getUserData();
-    print('Database is ready');
+    _logger.info('Database is ready');
 
     themeProvider.loadTheme(userData?['isDarkMode']);
-    print('Initialize ThemeProvider and load DarkTheme: ' +
-        userData!['isDarkMode'].toString());
+    _logger.info(
+        'Initialize ThemeProvider and load DarkTheme: ${userData!['isDarkMode']}');
   } catch (error) {
-    print('Error during app initialization: $error');
+    _logger.severe('Error during app initialization: $error');
   }
 
   runApp(
@@ -40,7 +40,7 @@ void main() async {
 class BafiaApp extends StatelessWidget {
   final Map<String, dynamic>? userData;
 
-  BafiaApp({this.userData});
+  const BafiaApp({super.key, this.userData});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class BafiaApp extends StatelessWidget {
       future: LocalStorageService.database,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(
+          return const MaterialApp(
             home: Scaffold(
               body: Center(
                 child: CircularProgressIndicator(),
@@ -74,13 +74,13 @@ class BafiaApp extends StatelessWidget {
             initialRoute: userData == null ? '/login' : '/dashboard',
             getPages: appRoutes(),
             theme: context.watch<ThemeProvider>().currentTheme,
-            localizationsDelegates: [
+            localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: [
-              const Locale('id', 'ID'),
+            supportedLocales: const [
+              Locale('id', 'ID'),
             ],
             locale: const Locale('id', 'ID'),
           );

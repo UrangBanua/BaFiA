@@ -1,53 +1,55 @@
 import 'package:get/get.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
+import 'package:logging/logging.dart';
 
 class DashboardController extends GetxController {
   var dashboardData = [].obs;
   var userData = {}.obs;
   var isLoading = true.obs;
   var hasError = false.obs;
+  final Logger _logger = Logger('DashboardController');
 
   @override
   void onInit() async {
     super.onInit();
     await _checkUserData();
-    print('[DashboardController] onInit');
+    _logger.fine('[DashboardController] onInit');
     await fetchDashboardData();
   }
 
   Future<void> _checkUserData() async {
-    var dataU = await LocalStorageService.getUserData();
-    if (dataU != null) {
-      userData.value = dataU;
+    try {
+      var dataU = await LocalStorageService.getUserData();
+      if (dataU != null) {
+        userData.value = dataU;
+      }
+    } catch (e) {
+      _logger.severe('Error getting user data: $e');
     }
   }
 
   Future<void> fetchDashboardData() async {
     try {
-      print('[DashboardController] fetchDashboardData');
+      _logger.fine('[DashboardController] fetchDashboardData');
       isLoading(true);
       var db = await LocalStorageService.database;
       var refreshToken = userData['refresh_token'];
-      //print('[DashboardController] Database fetched with token: $refreshToken');
+      _logger.fine(
+          '[DashboardController] Database fetched with token: $refreshToken');
       await ApiService.syncDashboardToLocalDB(db, refreshToken);
-      print('[DashboardController] Dashboard synced to local DB');
+      _logger.fine('[DashboardController] Dashboard synced to local DB');
       var data = await db.query('dashboard');
-      print('[DashboardController] Dashboard data fetched');
+      _logger.fine('[DashboardController] Dashboard data fetched');
       dashboardData.assignAll(data);
-      print('[DashboardController] Dashboard data assigned');
+      _logger.fine('[DashboardController] Dashboard data assigned');
     } catch (e) {
-      print('[DashboardController] Error: $e');
+      _logger.severe('Error fetching dashboard data: $e');
       hasError(true);
-      //var db = await LocalStorageService.database;
-      //var data = await db.query('dashboard');
-      //print('[DashboardController] Dashboard data loaded from local DB');
-      //dashboardData.assignAll(data);
-      //print('[DashboardController] Dashboard data local DB assigned');
       Get.snackbar('Error', 'Connection problem, data loaded from local DB');
     } finally {
       isLoading(false);
-      print('[DashboardController] isLoading set to false');
+      _logger.fine('[DashboardController] isLoading set to false');
     }
   }
 }

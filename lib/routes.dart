@@ -34,7 +34,7 @@ import 'views/profile_user_page.dart';
 
 List<GetPage> appRoutes() {
   return [
-    GetPage(name: '/login', page: () => LoginPage()),
+    GetPage(name: '/login', page: () => const LoginPage()),
     GetPage(name: '/dashboard', page: () => DashboardPage()),
     GetPage(
         name: '/penatausahaan/dokumen_kendali',
@@ -58,7 +58,8 @@ List<GetPage> appRoutes() {
         name: '/penatausahaan/register_belanja/pengajuan_tu',
         page: () => RBPengajuanTuPage()),
     GetPage(
-        name: '/penatausahaan/daftar_rekanan', page: () => DaftarRekananPage()),
+        name: '/penatausahaan/daftar_rekanan',
+        page: () => const DaftarRekananPage()),
     GetPage(
         name: '/penatausahaan/buku_kas_umum', page: () => BukuKasUmumPage()),
     GetPage(
@@ -75,28 +76,31 @@ List<GetPage> appRoutes() {
         page: () => LPJFungsionalPage()),
     GetPage(
         name: '/akuntansi/jurnal_approve/anggaran',
-        page: () => JAAnggaranPage()),
+        page: () => const JAAnggaranPage()),
     GetPage(
         name: '/akuntansi/jurnal_approve/pendapatan',
-        page: () => JAPendapatanPage()),
+        page: () => const JAPendapatanPage()),
     GetPage(
-        name: '/akuntansi/jurnal_approve/belanja', page: () => JABelanjaPage()),
-    GetPage(name: '/akuntansi/jurnal_umum', page: () => JurnalUmumPage()),
-    GetPage(name: '/akuntansi/buku/jurnal', page: () => BukuJurnalPage()),
-    GetPage(name: '/akuntansi/buku/besar', page: () => BukuBesarPage()),
+        name: '/akuntansi/jurnal_approve/belanja',
+        page: () => const JABelanjaPage()),
+    GetPage(name: '/akuntansi/jurnal_umum', page: () => const JurnalUmumPage()),
+    GetPage(name: '/akuntansi/buku/jurnal', page: () => const BukuJurnalPage()),
+    GetPage(name: '/akuntansi/buku/besar', page: () => const BukuBesarPage()),
     GetPage(
         name: '/akuntansi/buku/besar_pembantu',
-        page: () => BukuBesarPembantuPage()),
+        page: () => const BukuBesarPembantuPage()),
     GetPage(
-        name: '/akuntansi/mutasi_rekening', page: () => MutasiRekeningPage()),
-    GetPage(name: '/akuntansi/neraca_saldo', page: () => NeracaSaldoPage()),
+        name: '/akuntansi/mutasi_rekening',
+        page: () => const MutasiRekeningPage()),
+    GetPage(
+        name: '/akuntansi/neraca_saldo', page: () => const NeracaSaldoPage()),
     GetPage(name: '/akuntansi/laporan_keuangan/lra', page: () => LKLraPage()),
     GetPage(name: '/akuntansi/laporan_keuangan/lo', page: () => LKLoPage()),
     GetPage(name: '/akuntansi/laporan_keuangan/lpe', page: () => LKLpePage()),
     GetPage(
         name: '/akuntansi/laporan_keuangan/neraca', page: () => LKNeracaPage()),
     GetPage(name: '/profile_user', page: () => ProfileUserPage()),
-    GetPage(name: '/about', page: () => AboutPage()),
+    GetPage(name: '/about', page: () => const AboutPage()),
     // add other routes...
   ];
 }

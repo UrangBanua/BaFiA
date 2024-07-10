@@ -11,7 +11,7 @@ class DrawerMenu extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
@@ -24,33 +24,33 @@ class DrawerMenu extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.dashboard),
-            title: Text('Dashboard'),
+            leading: const Icon(Icons.dashboard),
+            title: const Text('Dashboard'),
             onTap: () {
               Get.toNamed('/dashboard');
             },
           ),
           ExpansionTile(
-            leading: Icon(Icons.folder),
-            title: Text('Penatausahaan'),
+            leading: const Icon(Icons.folder),
+            title: const Text('Penatausahaan'),
             children: <Widget>[
               ListTile(
-                title: Text('Dokumen Kendali'),
+                title: const Text('Dokumen Kendali'),
                 onTap: () {
                   Get.toNamed('/penatausahaan/dokumen_kendali');
                 },
               ),
               ExpansionTile(
-                title: Text('Register Pendapatan'),
+                title: const Text('Register Pendapatan'),
                 children: <Widget>[
                   ListTile(
-                    title: Text('STBP'),
+                    title: const Text('STBP'),
                     onTap: () {
                       Get.toNamed('/penatausahaan/register_pendapatan/stbp');
                     },
                   ),
                   ListTile(
-                    title: Text('STS'),
+                    title: const Text('STS'),
                     onTap: () {
                       Get.toNamed('/penatausahaan/register_pendapatan/sts');
                     },
@@ -58,34 +58,34 @@ class DrawerMenu extends StatelessWidget {
                 ],
               ),
               ExpansionTile(
-                title: Text('Register Belanja'),
+                title: const Text('Register Belanja'),
                 children: <Widget>[
                   ListTile(
-                    title: Text('SPP'),
+                    title: const Text('SPP'),
                     onTap: () {
                       Get.toNamed('/penatausahaan/register_belanja/spp');
                     },
                   ),
                   ListTile(
-                    title: Text('SPM'),
+                    title: const Text('SPM'),
                     onTap: () {
                       Get.toNamed('/penatausahaan/register_belanja/spm');
                     },
                   ),
                   ListTile(
-                    title: Text('SP2D'),
+                    title: const Text('SP2D'),
                     onTap: () {
                       Get.toNamed('/penatausahaan/register_belanja/sp2d');
                     },
                   ),
                   ListTile(
-                    title: Text('TBP - GU'),
+                    title: const Text('TBP - GU'),
                     onTap: () {
                       Get.toNamed('/penatausahaan/register_belanja/tbp_gu');
                     },
                   ),
                   ListTile(
-                    title: Text('Pengajuan - TU'),
+                    title: const Text('Pengajuan - TU'),
                     onTap: () {
                       Get.toNamed(
                           '/penatausahaan/register_belanja/pengajuan_tu');
@@ -94,43 +94,43 @@ class DrawerMenu extends StatelessWidget {
                 ],
               ),
               ListTile(
-                title: Text('Daftar Rekanan'),
+                title: const Text('Daftar Rekanan'),
                 onTap: () {
                   Get.toNamed('/penatausahaan/daftar_rekanan');
                 },
               ),
               ListTile(
-                title: Text('Buku Kas Umum'),
+                title: const Text('Buku Kas Umum'),
                 onTap: () {
                   Get.toNamed('/penatausahaan/buku_kas_umum');
                 },
               ),
               ExpansionTile(
-                title: Text('Laporan Pertanggungjawaban'),
+                title: const Text('Laporan Pertanggungjawaban'),
                 children: <Widget>[
                   ListTile(
-                    title: Text('LPJ UP/GU'),
+                    title: const Text('LPJ UP/GU'),
                     onTap: () {
                       Get.toNamed(
                           '/penatausahaan/laporan_pertanggungjawaban/lpj_up_gu');
                     },
                   ),
                   ListTile(
-                    title: Text('LPJ TU'),
+                    title: const Text('LPJ TU'),
                     onTap: () {
                       Get.toNamed(
                           '/penatausahaan/laporan_pertanggungjawaban/lpj_tu');
                     },
                   ),
                   ListTile(
-                    title: Text('LPJ Administratif'),
+                    title: const Text('LPJ Administratif'),
                     onTap: () {
                       Get.toNamed(
                           '/penatausahaan/laporan_pertanggungjawaban/lpj_administratif');
                     },
                   ),
                   ListTile(
-                    title: Text('LPJ Fungsional'),
+                    title: const Text('LPJ Fungsional'),
                     onTap: () {
                       Get.toNamed(
                           '/penatausahaan/laporan_pertanggungjawaban/lpj_fungsional');
@@ -141,26 +141,26 @@ class DrawerMenu extends StatelessWidget {
             ],
           ),
           ExpansionTile(
-            leading: Icon(Icons.account_balance),
-            title: Text('Akuntansi'),
+            leading: const Icon(Icons.account_balance),
+            title: const Text('Akuntansi'),
             children: <Widget>[
               ExpansionTile(
-                title: Text('Jurnal Approve'),
+                title: const Text('Jurnal Approve'),
                 children: <Widget>[
                   ListTile(
-                    title: Text('Anggaran'),
+                    title: const Text('Anggaran'),
                     onTap: () {
                       Get.toNamed('/akuntansi/jurnal_approve/anggaran');
                     },
                   ),
                   ListTile(
-                    title: Text('Pendapatan'),
+                    title: const Text('Pendapatan'),
                     onTap: () {
                       Get.toNamed('/akuntansi/jurnal_approve/pendapatan');
                     },
                   ),
                   ListTile(
-                    title: Text('Belanja'),
+                    title: const Text('Belanja'),
                     onTap: () {
                       Get.toNamed('/akuntansi/jurnal_approve/belanja');
                     },
@@ -168,28 +168,28 @@ class DrawerMenu extends StatelessWidget {
                 ],
               ),
               ListTile(
-                title: Text('Jurnal Umum'),
+                title: const Text('Jurnal Umum'),
                 onTap: () {
                   Get.toNamed('/akuntansi/jurnal_umum');
                 },
               ),
               ExpansionTile(
-                title: Text('Buku'),
+                title: const Text('Buku'),
                 children: <Widget>[
                   ListTile(
-                    title: Text('Jurnal'),
+                    title: const Text('Jurnal'),
                     onTap: () {
                       Get.toNamed('/akuntansi/buku/jurnal');
                     },
                   ),
                   ListTile(
-                    title: Text('Besar'),
+                    title: const Text('Besar'),
                     onTap: () {
                       Get.toNamed('/akuntansi/buku/besar');
                     },
                   ),
                   ListTile(
-                    title: Text('Besar Pembantu'),
+                    title: const Text('Besar Pembantu'),
                     onTap: () {
                       Get.toNamed('/akuntansi/buku/besar_pembantu');
                     },
@@ -197,40 +197,40 @@ class DrawerMenu extends StatelessWidget {
                 ],
               ),
               ListTile(
-                title: Text('Mutasi Rekening'),
+                title: const Text('Mutasi Rekening'),
                 onTap: () {
                   Get.toNamed('/akuntansi/mutasi_rekening');
                 },
               ),
               ListTile(
-                title: Text('Neraca Saldo'),
+                title: const Text('Neraca Saldo'),
                 onTap: () {
                   Get.toNamed('/akuntansi/neraca_saldo');
                 },
               ),
               ExpansionTile(
-                title: Text('Laporan Keuangan'),
+                title: const Text('Laporan Keuangan'),
                 children: <Widget>[
                   ListTile(
-                    title: Text('LRA'),
+                    title: const Text('LRA'),
                     onTap: () {
                       Get.toNamed('/akuntansi/laporan_keuangan/lra');
                     },
                   ),
                   ListTile(
-                    title: Text('LO'),
+                    title: const Text('LO'),
                     onTap: () {
                       Get.toNamed('/akuntansi/laporan_keuangan/lo');
                     },
                   ),
                   ListTile(
-                    title: Text('LPE'),
+                    title: const Text('LPE'),
                     onTap: () {
                       Get.toNamed('/akuntansi/laporan_keuangan/lpe');
                     },
                   ),
                   ListTile(
-                    title: Text('Neraca'),
+                    title: const Text('Neraca'),
                     onTap: () {
                       Get.toNamed('/akuntansi/laporan_keuangan/neraca');
                     },
@@ -240,23 +240,23 @@ class DrawerMenu extends StatelessWidget {
             ],
           ),
           ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Profile User'),
+            leading: const Icon(Icons.person),
+            title: const Text('Profile User'),
             onTap: () {
               Get.toNamed('/profile_user');
             },
           ),
           ListTile(
-            leading: Icon(Icons.info),
-            title: Text('About'),
+            leading: const Icon(Icons.info),
+            title: const Text('About'),
             onTap: () {
               Get.toNamed('/about');
             },
           ),
-          Divider(),
+          const Divider(),
           ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Logout'),
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
             onTap: () {
               authController.logout();
             },

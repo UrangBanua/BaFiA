@@ -1,17 +1,26 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logging/logging.dart';
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin as FlutterLocalNotificationsPlugin;
+  final Logger _logger = Logger('NotificationService');
+
+  NotificationService() {
+    _logger.onRecord.listen(
+      (record) =>
+          print('${record.level.name}: ${record.time}: ${record.message}'),
+    );
+  }
 
   Future<void> initialize() async {
     // Inisialisasi Local Notification
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('app_icon');
     //final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       //iOS: initializationSettingsIOS,
@@ -20,17 +29,21 @@ class NotificationService {
 
     // Menerima notifikasi ketika aplikasi berjalan di foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _logger
+          .fine('Menerima notifikasi ketika aplikasi berjalan di foreground');
       _showNotification(message);
     });
 
     // Menerima notifikasi ketika aplikasi berjalan di background dan dibuka
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _logger.fine(
+          'Menerima notifikasi ketika aplikasi berjalan di background dan dibuka');
       // Handle the notification when the app is opened
     });
 
     // Mendapatkan token FCM
     String? token = await _firebaseMessaging.getToken();
-    print("FCM Token: $token");
+    _logger.fine('FCM Token: $token');
   }
 
   Future<void> _showNotification(RemoteMessage message) async {
@@ -52,5 +65,6 @@ class NotificationService {
       platformChannelSpecifics,
       payload: 'item x',
     );
+    _logger.fine('Menampilkan notifikasi');
   }
 }

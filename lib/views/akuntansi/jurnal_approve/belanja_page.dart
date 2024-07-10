@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class JABelanjaPage extends StatelessWidget {
+  const JABelanjaPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Jurnal Aprrove Belanja Page'),
+        title: const Text('Jurnal Aprrove Belanja Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Jurnal Aprrove Belanja Page Content'),
       ),
     );
