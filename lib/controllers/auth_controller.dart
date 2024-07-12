@@ -1,12 +1,9 @@
 import 'dart:convert';
-
 import 'package:get/get.dart';
-import 'package:logging/logging.dart';
+import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
-import 'package:flutter/material.dart';
-
-final Logger _logger = Logger('ApiService');
+import '../services/logger_service.dart';
 
 class AuthController extends GetxController {
   var isLoggedIn = false.obs;
@@ -29,7 +26,7 @@ class AuthController extends GetxController {
         'token': userData['token'],
         'refresh_token': userData['refresh_token']
       }).obs;
-      //_logger.info('User token: ' + userToken['refresh_token']);
+      //LoggerService.logger.i('User token: ' + userToken['refresh_token']);
     }
   }
 
@@ -38,7 +35,7 @@ class AuthController extends GetxController {
     if (response != null && response['base64'] != null) {
       captchaData.value = response;
     } else {
-      _logger.severe('Captcha image fetch failed');
+      LoggerService.logger.e('Captcha image fetch failed');
     }
   }
 
@@ -51,11 +48,11 @@ class AuthController extends GetxController {
       var namaRole = response['nama_role'];
       var tahun = year;
 
-      _logger.info('Login successful: $username');
+      LoggerService.logger.i('Login successful: $username');
 
       // Set variable userData
       userData.value = response;
-      _logger.info('Set variable userData');
+      LoggerService.logger.i('Set variable userData');
 
       // // User data pre-login saved to db
       // await LocalStorageService.saveUserData({
@@ -64,12 +61,13 @@ class AuthController extends GetxController {
       //   'password': password,
       //   'tahun': tahun
       // });
-      //_logger.info('User data pre-login saved to db: $response');
+      //LoggerService.logger.i('User data pre-login saved to db: $response');
 
       // ambil captcha image
       await _fetchCaptchaImage();
       // ignore: prefer_interpolation_to_compose_strings
-      _logger.info('Captcha image fetched id: ' + captchaData['id'].toString());
+      LoggerService.logger
+          .i('Captcha image fetched id: ' + captchaData['id'].toString());
 
       Get.dialog(
         AlertDialog(
@@ -79,7 +77,8 @@ class AuthController extends GetxController {
               Text('Role: $namaRole\nKode SKPD: $kodeSkpd\nSKPD: $namaSkpd\n'),
               Image.memory(base64Decode(captchaData['base64'])),
               TextField(
-                decoration: const InputDecoration(labelText: 'Masukkan Captcha'),
+                decoration:
+                    const InputDecoration(labelText: 'Masukkan Captcha'),
                 onChanged: (value) => captcha = value,
               ),
             ],
@@ -88,7 +87,7 @@ class AuthController extends GetxController {
             TextButton(
               onPressed: () {
                 Get.back();
-                _logger.info('Login cancelled: $username');
+                LoggerService.logger.i('Login cancelled: $username');
               },
               child: const Text('Cancel'),
             ),
@@ -114,15 +113,15 @@ class AuthController extends GetxController {
                   response['refresh_token'] = tokenResponse['refresh_token'];
                   await LocalStorageService.saveUserData(response);
                   userData.value = response;
-                  _logger.info('userData Merger: ');
+                  LoggerService.logger.i('userData Merger: ');
                   userToken = (tokenResponse).obs;
-                  _logger.info('Simpan variable data user token');
+                  LoggerService.logger.i('Simpan variable data user token');
                   isLoggedIn.value = true;
                   Get.offAllNamed('/dashboard');
-                  _logger.info('Login completed: $username');
+                  LoggerService.logger.i('Login completed: $username');
                 } else {
                   Get.snackbar('Login Failed', 'Unable to retrieve token');
-                  _logger.severe('Token fetch failed for: $username');
+                  LoggerService.logger.e('Token fetch failed for: $username');
                 }
               },
               child: const Text('Pilih'),
@@ -131,7 +130,7 @@ class AuthController extends GetxController {
         ),
       );
     } else {
-      _logger.severe('Login failed: Invalid username or password');
+      LoggerService.logger.e('Login failed: Invalid username or password');
       Get.snackbar('Login Failed', 'Invalid username or password');
     }
   }
@@ -146,7 +145,7 @@ class AuthController extends GetxController {
       String username,
       String capcaptchaId,
       String capcaptchaSolution) async {
-    _logger.info('Fetching user token for: $username');
+    LoggerService.logger.i('Fetching user token for: $username');
     var response = await ApiService.getUserToken(
         idDaerah: idDaerah,
         idRole: idRole,
@@ -160,10 +159,10 @@ class AuthController extends GetxController {
     if (response != null &&
         response['token'] != null &&
         response['refresh_token'] != null) {
-      _logger.info('Token fetched successfully for: $username');
+      LoggerService.logger.i('Token fetched successfully for: $username');
       return response;
     } else {
-      _logger.severe('Token fetch failed for: $username');
+      LoggerService.logger.e('Token fetch failed for: $username');
       return null;
     }
   }
@@ -188,7 +187,7 @@ class AuthController extends GetxController {
               isLoggedIn = false.obs;
               userData.value = {}.obs; // Mengosongkan userData
               Get.offAllNamed('/login');
-              _logger.info('Logout completed');
+              LoggerService.logger.i('Logout completed');
             },
             child: const Text('Yakin'),
           ),

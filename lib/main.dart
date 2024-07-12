@@ -5,10 +5,8 @@ import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
 import 'routes.dart';
 import 'theme_provider.dart';
+import 'services/logger_service.dart';
 import 'services/local_storage_service.dart';
-import 'package:logging/logging.dart';
-
-final Logger _logger = Logger('Bafia');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,13 +18,13 @@ void main() async {
   Map<String, dynamic>? userData;
   try {
     userData = await LocalStorageService.getUserData();
-    _logger.info('Database is ready');
+    LoggerService.logger.i('Database is ready');
 
     themeProvider.loadTheme(userData?['isDarkMode']);
-    _logger.info(
+    LoggerService.logger.i(
         'Initialize ThemeProvider and load DarkTheme: ${userData!['isDarkMode']}');
   } catch (error) {
-    _logger.severe('Error during app initialization: $error');
+    LoggerService.logger.w('App initialization: fresh user data');
   }
 
   runApp(

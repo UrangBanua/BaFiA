@@ -3,12 +3,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../controllers/user_controller.dart';
+import '../services/logger_service.dart';
 import '../theme_provider.dart';
-import 'package:logging/logging.dart';
 
 class ProfileUserPage extends StatelessWidget {
   final UserController userController = Get.put(UserController());
-  final _logger = Logger('ProfileUserPage');
 
   ProfileUserPage({super.key});
 
@@ -85,7 +84,7 @@ class ProfileUserPage extends StatelessWidget {
                     value: themeProvider.isDarkMode,
                     onChanged: (value) {
                       themeProvider.toggleTheme(user['id_user']);
-                      _logger.info(
+                      LoggerService.logger.i(
                           'Tema: ${themeProvider.isDarkMode ? 'Gelap' : 'Terang'}');
                     },
                   ),

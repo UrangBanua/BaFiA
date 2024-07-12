@@ -1,19 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:logging/logging.dart';
+import 'logger_service.dart';
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin as FlutterLocalNotificationsPlugin;
-  final Logger _logger = Logger('NotificationService');
-
-  NotificationService() {
-    _logger.onRecord.listen(
-      (record) =>
-          _logger.fine('${record.level.name}: ${record.time}: ${record.message}'),
-    );
-  }
 
   Future<void> initialize() async {
     // Inisialisasi Local Notification
@@ -29,21 +21,21 @@ class NotificationService {
 
     // Menerima notifikasi ketika aplikasi berjalan di foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _logger
-          .fine('Menerima notifikasi ketika aplikasi berjalan di foreground');
+      LoggerService.logger
+          .i('Menerima notifikasi ketika aplikasi berjalan di foreground');
       _showNotification(message);
     });
 
     // Menerima notifikasi ketika aplikasi berjalan di background dan dibuka
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _logger.fine(
+      LoggerService.logger.i(
           'Menerima notifikasi ketika aplikasi berjalan di background dan dibuka');
       // Handle the notification when the app is opened
     });
 
     // Mendapatkan token FCM
     String? token = await _firebaseMessaging.getToken();
-    _logger.fine('FCM Token: $token');
+    LoggerService.logger.i('FCM Token: $token');
   }
 
   Future<void> _showNotification(RemoteMessage message) async {
@@ -65,6 +57,6 @@ class NotificationService {
       platformChannelSpecifics,
       payload: 'item x',
     );
-    _logger.fine('Menampilkan notifikasi');
+    LoggerService.logger.i('Menampilkan notifikasi');
   }
 }

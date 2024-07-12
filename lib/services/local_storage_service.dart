@@ -1,9 +1,13 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
+// ignore: unnecessary_import
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:path/path.dart';
+
+import 'logger_service.dart';
 
 final _logger = Logger('LocalStorageService');
 
@@ -17,30 +21,31 @@ class LocalStorageService {
   }
 
   static Future<Database> _initDB() async {
-    _logger.info('Initializing database...');
+    LoggerService.logger.i('Initializing database...');
     if (kIsWeb) {
       var factory = databaseFactoryFfiWeb;
-      _logger.info("Using web database");
+      LoggerService.logger.i("Using web database");
       return await factory.openDatabase('bafia.db',
           options: OpenDatabaseOptions(version: 1, onCreate: _onCreate));
     } else {
       if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
         sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi; // Tambahkan inisialisasi ini
         var factory = databaseFactoryFfi;
         String path = join(await getDatabasesPath(), 'bafia.db');
-        _logger.info("Using FFI database");
+        LoggerService.logger.i("Using FFI database");
         return await factory.openDatabase(path,
             options: OpenDatabaseOptions(version: 1, onCreate: _onCreate));
       } else {
         String path = join(await getDatabasesPath(), 'bafia.db');
-        _logger.info("Using mobile database");
+        LoggerService.logger.i("Using mobile database");
         return await openDatabase(path, version: 1, onCreate: _onCreate);
       }
     }
   }
 
   static Future<void> _onCreate(Database db, int version) async {
-    _logger.info('Creating tables...');
+    LoggerService.logger.i('Creating tables...');
     await db.execute('''
       CREATE TABLE user (
         id_user INTEGER PRIMARY KEY,
@@ -77,7 +82,7 @@ class LocalStorageService {
       )
     ''');
 
-    _logger.info('Tables created.');
+    LoggerService.logger.i('Tables created.');
     await _logTableStructure(db, 'user');
     await _logTableStructure(db, 'dashboard');
   }
@@ -88,32 +93,32 @@ class LocalStorageService {
     final path = await getDatabasesPath();
     final file = File('$path/bafia.db');
     await file.delete();
-    _logger.info("Database deleted.");
+    LoggerService.logger.i("Database deleted.");
   }
 
   static Future<void> _logTableStructure(Database db, String tableName) async {
     final result = await db.rawQuery('PRAGMA table_info($tableName)');
-    _logger.info('Structure of $tableName:');
+    LoggerService.logger.i('Structure of $tableName:');
     for (var row in result) {
-      _logger.info(row);
+      LoggerService.logger.i(row);
     }
   }
 
   static Future<Map<String, dynamic>?> getUserData() async {
     final db = await database;
-    _logger.info("Fetching user data...");
+    LoggerService.logger.i("Fetching user data...");
     final List<Map<String, dynamic>> maps = await db.query('user');
     if (maps.isNotEmpty) {
-      _logger.info("Get Data from DB - User");
+      LoggerService.logger.i("Get Data from DB - User");
       return maps.first;
     }
-    _logger.info("No data found in DB.");
+    LoggerService.logger.i("No data found in DB.");
     return null;
   }
 
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
     final db = await database;
-    _logger.info("Saving user data");
+    LoggerService.logger.i("Saving user data");
 
     // Periksa apakah user dengan id_user sudah ada
     List<Map<String, dynamic>> existingUser = await db.query(
@@ -130,7 +135,7 @@ class LocalStorageService {
         where: 'id_user = ?',
         whereArgs: [userData['id_user']],
       );
-      _logger.info("User data updated.");
+      LoggerService.logger.i("User data updated.");
     } else {
       // Jika user dengan id_user belum ada, lakukan insert
       await db.insert(
@@ -138,14 +143,14 @@ class LocalStorageService {
         userData,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      _logger.info("User data inserted.");
+      LoggerService.logger.i("User data inserted.");
     }
   }
 
   static Future<void> deleteUserData() async {
     final db = await database;
     await db.delete('user');
-    _logger.info("User data deleted.");
+    LoggerService.logger.i("User data deleted.");
   }
 
   static Future<void> saveDashboardData(
@@ -153,13 +158,13 @@ class LocalStorageService {
     for (var data in dashboardData) {
       await db.insert('dashboard', data,
           conflictAlgorithm: ConflictAlgorithm.replace);
-      _logger.info("Dashboard data saved: $data");
+      LoggerService.logger.i("Dashboard data saved: $data");
     }
   }
 
   static Future<void> deleteDashboardData() async {
     final db = await database;
     await db.delete('dashboard');
-    _logger.info("Dashboard data cleared.");
+    LoggerService.logger.i("Dashboard data cleared.");
   }
 }
