@@ -65,9 +65,7 @@ class AuthController extends GetxController {
 
       // ambil captcha image
       await _fetchCaptchaImage();
-      // ignore: prefer_interpolation_to_compose_strings
-      LoggerService.logger
-          .i('Captcha image fetched id: ' + captchaData['id'].toString());
+      LoggerService.logger.i('Captcha image fetched id: ${captchaData['id']}');
 
       Get.dialog(
         AlertDialog(
