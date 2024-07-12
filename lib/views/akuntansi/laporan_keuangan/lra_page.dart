@@ -5,9 +5,9 @@ class LKLraPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Laporan Realisasi Anggaran Page'),
+        title: const Text('Laporan Realisasi Anggaran Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Laporan Realisasi Anggaran Page Content'),
       ),
     );

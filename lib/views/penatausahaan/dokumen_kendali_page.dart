@@ -5,9 +5,9 @@ class DokumenKendaliPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dokumen Kendali'),
+        title: const Text('Dokumen Kendali'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Dokumen Kendali Page Content'),
       ),
     );

@@ -5,9 +5,9 @@ class LPJTUPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('LPJ TU Page'),
+        title: const Text('LPJ TU Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('LPJ TU Page Content'),
       ),
     );

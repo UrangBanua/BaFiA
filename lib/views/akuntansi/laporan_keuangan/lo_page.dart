@@ -5,9 +5,9 @@ class LKLoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Laporan Operasional Page'),
+        title: const Text('Laporan Operasional Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Laporan Operasional Page Content'),
       ),
     );

@@ -68,17 +68,18 @@ class AuthController extends GetxController {
 
       // ambil captcha image
       await _fetchCaptchaImage();
+      // ignore: prefer_interpolation_to_compose_strings
       _logger.info('Captcha image fetched id: ' + captchaData['id'].toString());
 
       Get.dialog(
         AlertDialog(
-          title: Text('Konfirmasi Login'),
+          title: const Text('Konfirmasi Login'),
           content: Column(
             children: [
               Text('Role: $namaRole\nKode SKPD: $kodeSkpd\nSKPD: $namaSkpd\n'),
               Image.memory(base64Decode(captchaData['base64'])),
               TextField(
-                decoration: InputDecoration(labelText: 'Masukkan Captcha'),
+                decoration: const InputDecoration(labelText: 'Masukkan Captcha'),
                 onChanged: (value) => captcha = value,
               ),
             ],
@@ -89,7 +90,7 @@ class AuthController extends GetxController {
                 Get.back();
                 _logger.info('Login cancelled: $username');
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
@@ -124,7 +125,7 @@ class AuthController extends GetxController {
                   _logger.severe('Token fetch failed for: $username');
                 }
               },
-              child: Text('Pilih'),
+              child: const Text('Pilih'),
             ),
           ],
         ),

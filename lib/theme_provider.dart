@@ -12,10 +12,10 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleTheme(id_user) {
+  void toggleTheme(idUser) {
     _isDarkMode = !_isDarkMode;
     UserController userController = UserController();
-    userController.saveTheme(id_user, _isDarkMode);
+    userController.saveTheme(idUser, _isDarkMode);
     notifyListeners();
   }
 

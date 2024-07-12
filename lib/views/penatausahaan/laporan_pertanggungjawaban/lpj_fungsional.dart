@@ -5,9 +5,9 @@ class LPJFungsionalPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('LPJ Fungsional Page'),
+        title: const Text('LPJ Fungsional Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('LPJ Fungsional Page Content'),
       ),
     );

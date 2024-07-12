@@ -5,9 +5,9 @@ class RBTbpGuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register Belanja - TBP GU Page'),
+        title: const Text('Register Belanja - TBP GU Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Register Belanja - TBP GU Page Content'),
       ),
     );

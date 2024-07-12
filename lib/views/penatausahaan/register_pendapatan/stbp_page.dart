@@ -5,9 +5,9 @@ class RPStbpPPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register Pendapatan - STBP'),
+        title: const Text('Register Pendapatan - STBP'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Register Pendapatan - STBP Page Content'),
       ),
     );

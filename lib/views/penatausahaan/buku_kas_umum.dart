@@ -5,9 +5,9 @@ class BukuKasUmumPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Buku Kas Umum Page'),
+        title: const Text('Buku Kas Umum Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Buku Kas Umum Page Content'),
       ),
     );

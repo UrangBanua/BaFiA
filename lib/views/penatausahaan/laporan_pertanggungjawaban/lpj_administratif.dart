@@ -5,9 +5,9 @@ class LPJAdministratifPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('LPJ Administratif Page'),
+        title: const Text('LPJ Administratif Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('LPJ Administratif Page Content'),
       ),
     );

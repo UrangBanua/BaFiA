@@ -5,9 +5,9 @@ class LKNeracaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Laporan Neraca Page'),
+        title: const Text('Laporan Neraca Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Laporan Neraca Page Content'),
       ),
     );

@@ -5,9 +5,9 @@ class RBPengajuanTuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register Belanja - Pengajuan TU Page'),
+        title: const Text('Register Belanja - Pengajuan TU Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Register Belanja - Pengajuan TU Page Content'),
       ),
     );

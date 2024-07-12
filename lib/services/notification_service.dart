@@ -11,7 +11,7 @@ class NotificationService {
   NotificationService() {
     _logger.onRecord.listen(
       (record) =>
-          print('${record.level.name}: ${record.time}: ${record.message}'),
+          _logger.fine('${record.level.name}: ${record.time}: ${record.message}'),
     );
   }
 

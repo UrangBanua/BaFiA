@@ -5,9 +5,9 @@ class RBSpmPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register Belanja - SPM Page'),
+        title: const Text('Register Belanja - SPM Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Register Belanja - SPM Page Content'),
       ),
     );
