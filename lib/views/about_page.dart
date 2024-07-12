@@ -23,7 +23,8 @@ class AboutPage extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.all(16.0),
-            child: Text('https://github.com/UrangBanua/BaFiA'),
+            child: Text(
+                'https://github.com/UrangBanua/BaFiA/releases/tag/pre-release'),
           ),
         ],
       ),
