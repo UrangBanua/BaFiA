@@ -25,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -53,12 +47,11 @@ class DefaultFirebaseOptions {
     projectId: 'bpkad-official',
     authDomain: 'bpkad-official.firebaseapp.com',
     storageBucket: 'bpkad-official.appspot.com',
-    measurementId: 'G-QR11HF4TBP',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAsVGKPuTzY_PDRipXCTb71bq8o7R-MaN8',
-    appId: '1:648049824628:android:ebba87b532504ef1109221',
+    appId: '1:648049824628:android:0a286f7aa04f759d109221',
     messagingSenderId: '648049824628',
     projectId: 'bpkad-official',
     storageBucket: 'bpkad-official.appspot.com',
@@ -66,10 +59,29 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDs9H1N6OUxXDYvnkRqCPWinluIBQyU_wQ',
-    appId: '1:648049824628:ios:cb48b1ea08159976109221',
+    appId: '1:648049824628:ios:83f322b3a86b4ce6109221',
     messagingSenderId: '648049824628',
     projectId: 'bpkad-official',
     storageBucket: 'bpkad-official.appspot.com',
-    iosBundleId: 'com.bafia-ios.app',
+    iosBundleId: 'com.urangbanua.bafia',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDs9H1N6OUxXDYvnkRqCPWinluIBQyU_wQ',
+    appId: '1:648049824628:ios:83f322b3a86b4ce6109221',
+    messagingSenderId: '648049824628',
+    projectId: 'bpkad-official',
+    storageBucket: 'bpkad-official.appspot.com',
+    iosBundleId: 'com.urangbanua.bafia',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCuDJxbX8CysqVFDAcUwxmngOhRUjgfeDI',
+    appId: '1:648049824628:web:dc27e9e7f1e1e239109221',
+    messagingSenderId: '648049824628',
+    projectId: 'bpkad-official',
+    authDomain: 'bpkad-official.firebaseapp.com',
+    storageBucket: 'bpkad-official.appspot.com',
+  );
+
 }

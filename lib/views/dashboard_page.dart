@@ -153,7 +153,7 @@ class DashboardPage extends StatelessWidget {
                                 angle: 90,
                                 positionFactor: 1.7,
                                 widget: Text(
-                                  'Total Pencairan Realisasi\n$nilaiRealisasi',
+                                  'Total Realisasi\n$nilaiRealisasi',
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,

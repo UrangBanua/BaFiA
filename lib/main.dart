@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
+import 'firebase_options.dart';
 import 'routes.dart';
 import 'theme_provider.dart';
 import 'services/logger_service.dart';
@@ -13,6 +15,9 @@ void main() async {
 
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
+
+  // Initialize Firebase App
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize database and get user data
   Map<String, dynamic>? userData;

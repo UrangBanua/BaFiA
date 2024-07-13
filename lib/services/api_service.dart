@@ -104,7 +104,7 @@ class ApiService {
         Uri.parse(
             'https://service.sipd.kemendagri.go.id/pengeluaran/strict/dashboard/statistik-belanja'),
         headers: {'Authorization': 'Bearer $token'},
-      ).timeout(const Duration(seconds: 30));
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         LoggerService.logger
