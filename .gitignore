@@ -48,5 +48,4 @@ app.*.map.json
 /web/
 
 #  firebase_option
-lib/firebase_option.dart
-firebase.json
+*.env

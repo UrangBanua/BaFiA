@@ -1,4 +1,4 @@
-import 'package:bafia/firebase_options.dart';
+import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,6 +15,9 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
+  await loadEnv();
 
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
