@@ -1,14 +1,17 @@
+import 'package:bafia/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
-import 'firebase_options.dart';
 import 'routes.dart';
+import 'services/api_firebase.dart';
 import 'theme_provider.dart';
 import 'services/logger_service.dart';
 import 'services/local_storage_service.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,8 +19,11 @@ void main() async {
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
 
-  // Initialize Firebase App
+  // Initalize Firebase App Messaging
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // final apiFirebase = ApiFirebase();
+  await ApiFirebase().initNotifications();
 
   // Initialize database and get user data
   Map<String, dynamic>? userData;
@@ -75,6 +81,7 @@ class BafiaApp extends StatelessWidget {
                   AuthController()); // Sediakan AuthController saat app diluncurkan
             }),
             initialRoute: userData == null ? '/login' : '/dashboard',
+            navigatorKey: navigatorKey,
             getPages: appRoutes(),
             theme: context.watch<ThemeProvider>().currentTheme,
             localizationsDelegates: const [

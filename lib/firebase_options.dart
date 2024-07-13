@@ -41,28 +41,28 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCuDJxbX8CysqVFDAcUwxmngOhRUjgfeDI',
-    appId: '1:648049824628:web:7cf65883273b6594109221',
-    messagingSenderId: '648049824628',
-    projectId: 'bpkad-official',
-    authDomain: 'bpkad-official.firebaseapp.com',
-    storageBucket: 'bpkad-official.appspot.com',
+    apiKey: 'AIzaSyBzALO8NlFmYQ-1eQoP8j8FbH7LpkiDMPQ',
+    appId: '1:487583025296:web:193c17e25d70948539b015',
+    messagingSenderId: '487583025296',
+    projectId: 'bafia-428505',
+    authDomain: 'bafia-428505.firebaseapp.com',
+    storageBucket: 'bafia-428505.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAsVGKPuTzY_PDRipXCTb71bq8o7R-MaN8',
-    appId: '1:648049824628:android:0a286f7aa04f759d109221',
-    messagingSenderId: '648049824628',
-    projectId: 'bpkad-official',
-    storageBucket: 'bpkad-official.appspot.com',
+    apiKey: 'AIzaSyBF780b22C2yjZdmGT-XQCXkofW8bo-tNo',
+    appId: '1:487583025296:android:dca831457fca37a739b015',
+    messagingSenderId: '487583025296',
+    projectId: 'bafia-428505',
+    storageBucket: 'bafia-428505.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDs9H1N6OUxXDYvnkRqCPWinluIBQyU_wQ',
-    appId: '1:648049824628:ios:83f322b3a86b4ce6109221',
-    messagingSenderId: '648049824628',
-    projectId: 'bpkad-official',
-    storageBucket: 'bpkad-official.appspot.com',
+    apiKey: 'AIzaSyBRkVz6T6dUTEvgW4lFnjQvAjuSuSLFzyc',
+    appId: '1:487583025296:ios:a90ea3406a46521539b015',
+    messagingSenderId: '487583025296',
+    projectId: 'bafia-428505',
+    storageBucket: 'bafia-428505.appspot.com',
     iosBundleId: 'com.urangbanua.bafia',
   );
 
@@ -76,12 +76,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCuDJxbX8CysqVFDAcUwxmngOhRUjgfeDI',
-    appId: '1:648049824628:web:dc27e9e7f1e1e239109221',
-    messagingSenderId: '648049824628',
-    projectId: 'bpkad-official',
-    authDomain: 'bpkad-official.firebaseapp.com',
-    storageBucket: 'bpkad-official.appspot.com',
+    apiKey: 'AIzaSyBzALO8NlFmYQ-1eQoP8j8FbH7LpkiDMPQ',
+    appId: '1:487583025296:web:059b43badbf5598639b015',
+    messagingSenderId: '487583025296',
+    projectId: 'bafia-428505',
+    authDomain: 'bafia-428505.firebaseapp.com',
+    storageBucket: 'bafia-428505.appspot.com',
   );
 
 }

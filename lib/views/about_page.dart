@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -22,25 +22,12 @@ class AboutPage extends StatelessWidget {
             child: Text(
                 'Aplikasi Asisten Keuangan khususnya untuk Keluarga LKPD Kabupaten Hulu Sungai Tengah'),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextButton(
-              onPressed: () async {
-                const url =
-                    'https://github.com/UrangBanua/BaFiA/releases/tag/pre-release';
-                if (await canLaunch(url)) {
-                  await launch(
-                    url,
-                    forceSafariVC: false,
-                    forceWebView: false,
-                  );
-                } else {
-                  throw 'Could not launch $url';
-                }
-              },
-              child: const Text(
-                'Cek release versi terbaru disini',
-              ),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Linkify(
+              text:
+                  'Cek release versi terbaru disini\nhttps://github.com/UrangBanua/BaFiA/releases/tag/pre-release',
+              options: LinkifyOptions(humanize: false),
             ),
           ),
         ],
