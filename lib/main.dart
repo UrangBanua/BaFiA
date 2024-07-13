@@ -16,17 +16,22 @@ final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
-  await loadEnv();
+  try {
+    // Load environment variables
+    await loadEnv();
+  } catch (error) {
+    LoggerService.logger.e(error);
+  } finally {
+    // Initalize Firebase App Messaging
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+
+    // final apiFirebase = ApiFirebase();
+    await ApiFirebase().initNotifications();
+  }
 
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
-
-  // Initalize Firebase App Messaging
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // final apiFirebase = ApiFirebase();
-  await ApiFirebase().initNotifications();
 
   // Initialize database and get user data
   Map<String, dynamic>? userData;

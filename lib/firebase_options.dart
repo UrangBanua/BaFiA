@@ -1,5 +1,5 @@
-// ignore: depend_on_referenced_packages
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'services/logger_service.dart';
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
@@ -11,29 +11,43 @@ Future<void> loadEnv() async {
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
+      LoggerService.logger
+          .d('Current platform is Web key: ${dotenv.env['API_KEY_WEB']}');
       return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
+        LoggerService.logger.d(
+            'Current platform is Android key: ${dotenv.env['API_KEY_ANDROID']}');
         return android;
       case TargetPlatform.iOS:
+        LoggerService.logger.d('Current platform is iOS');
         return ios;
       case TargetPlatform.macOS:
+        LoggerService.logger.d('Current platform is macOS');
         return macos;
       case TargetPlatform.windows:
+        LoggerService.logger.d(
+            'Current platform is Windows key: ${dotenv.env['API_KEY_WINDOWS']}');
         return windows;
       case TargetPlatform.linux:
+        LoggerService.logger.e(
+            'DefaultFirebaseOptions have not been configured for Linux - '
+            'you can reconfigure this by running the FlutterFire CLI again.');
         throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
+          'DefaultFirebaseOptions have not been configured for Linux - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
+        LoggerService.logger
+            .e('DefaultFirebaseOptions are not supported for this platform.');
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
         );
     }
   }
 
+  /// Returns the FirebaseOptions based on the current platform.
   static FirebaseOptions web = FirebaseOptions(
     apiKey: dotenv.env['API_KEY_WEB'] ?? '',
     appId: '1:487583025296:web:193c17e25d70948539b015',

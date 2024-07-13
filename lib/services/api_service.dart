@@ -36,11 +36,12 @@ class ApiService {
     } catch (e) {
       if (e is TimeoutException) {
         LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Error', 'Login request timeout');
+        Get.snackbar('Timeout', 'Login request timeout');
         // Handle the TimeoutException accordingly
       } else {
-        // Handle other exceptions
-        rethrow; // Rethrow the exception if it's not a TimeoutException
+        LoggerService.logger.e('Login request failed for from service server');
+        Get.snackbar(
+            'Failed', 'Login request failed'); // Handle other exceptions
       }
     }
     return null;
@@ -87,11 +88,12 @@ class ApiService {
     } catch (e) {
       if (e is TimeoutException) {
         LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Error', 'User token request timeout');
+        Get.snackbar('Timeout', 'User token request timeout');
         // Handle the TimeoutException accordingly
       } else {
-        // Handle other exceptions
-        rethrow; // Rethrow the exception if it's not a TimeoutException
+        LoggerService.logger.e('Login request failed for from service server');
+        Get.snackbar(
+            'Failed', 'User token request failed'); // Handle other exceptions
       }
     }
     return null;
@@ -119,11 +121,12 @@ class ApiService {
     } catch (e) {
       if (e is TimeoutException) {
         LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Error', 'Sync dashboard request timeout');
+        Get.snackbar('Timeout', 'Sync dashboard to local db');
         // Handle the TimeoutException accordingly
       } else {
-        // Handle other exceptions
-        rethrow; // Rethrow the exception if it's not a TimeoutException
+        LoggerService.logger.e('Login request failed for from service server');
+        Get.snackbar(
+            'Failed', 'Sync dashboard to local db'); // Handle other exceptions
       }
     }
   }
@@ -152,8 +155,9 @@ class ApiService {
         Get.snackbar('Error', 'Load captcha image request timeout');
         // Handle the TimeoutException accordingly
       } else {
-        // Handle other exceptions
-        rethrow; // Rethrow the exception if it's not a TimeoutException
+        LoggerService.logger.e('Login request failed for from service server');
+        Get.snackbar('Error',
+            'Load captcha image request failed'); // Handle other exceptions
       }
     }
     return null;
