@@ -5,6 +5,7 @@ import 'drawer_menu.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart'; // Import Syncfusion Flutter Gauges library
 import '../controllers/dashboard_controller.dart';
 
+// ignore: must_be_immutable
 class DashboardPage extends StatelessWidget {
   final DashboardController dashboardController =
       Get.put(DashboardController());
@@ -15,11 +16,13 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         DateTime now = DateTime.now();
         if (currentBackPressTime == null ||
-            now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
+            now.difference(currentBackPressTime!) >
+                const Duration(seconds: 2)) {
           currentBackPressTime = now;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
