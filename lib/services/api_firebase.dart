@@ -1,21 +1,37 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../main.dart';
 import 'logger_service.dart';
 
 class ApiFirebase {
-  // create an instance of FIrebase Messaaging
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  // create an instance of Firebase Messaging
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   // function to initialize notifications
   Future<void> initNotifications() async {
-    // request permission from user (will prompt user)
-    await _firebaseMessaging.requestPermission();
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
-    // fetch the FCM token for this device
-    final fCMToken = await _firebaseMessaging.getToken();
+    if (kIsWeb) {
+      // Web-specific initialization
+      await _firebaseMessaging.requestPermission();
+    } else {
+      // Mobile-specific initialization
+      await _firebaseMessaging.requestPermission();
+    }
 
-    // print the token (normally you would send this to your server)
-    LoggerService.logger.i('Token: $fCMToken');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      LoggerService.logger.i('User granted permission');
+    } else {
+      LoggerService.logger.i('User declined or has not accepted permission');
+    }
+
+    // Get the token
+    final fCMToken = kIsWeb ? 'web_token' : await _firebaseMessaging.getToken();
+    LoggerService.logger.i('FCM Token: $fCMToken');
   }
 
   // function to handle received messages
@@ -31,11 +47,10 @@ class ApiFirebase {
   }
 
   // function to initialize background settings
-  Future initPushNotifications() async {
-    // handle notification if the app was terminated and now opened
-    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
-
-    // attach event listeners for when a notification opens the app
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+  Future<void> initPushNotifications() async {
+    if (!kIsWeb) {
+      // handle notification if the app was terminated and now opened
+      FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
+    }
   }
 }
