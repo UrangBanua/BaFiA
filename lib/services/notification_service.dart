@@ -1,62 +1,36 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'logger_service.dart';
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin as FlutterLocalNotificationsPlugin;
 
-  Future<void> initialize() async {
-    // Inisialisasi Local Notification
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
-    //final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      //iOS: initializationSettingsIOS,
+  Future<void> initNotifications() async {
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
     );
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    // Menerima notifikasi ketika aplikasi berjalan di foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      LoggerService.logger
-          .i('Menerima notifikasi ketika aplikasi berjalan di foreground');
-      _showNotification(message);
-    });
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      LoggerService.logger.i('User granted permission');
+    } else {
+      LoggerService.logger.i('User declined or has not accepted permission');
+      return;
+    }
 
-    // Menerima notifikasi ketika aplikasi berjalan di background dan dibuka
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      LoggerService.logger.i(
-          'Menerima notifikasi ketika aplikasi berjalan di background dan dibuka');
-      // Handle the notification when the app is opened
-    });
-
-    // Mendapatkan token FCM
-    String? token = await _firebaseMessaging.getToken();
-    LoggerService.logger.i('FCM Token: $token');
-  }
-
-  Future<void> _showNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: false,
-    );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-    await _flutterLocalNotificationsPlugin.show(
-      0,
-      message.notification?.title,
-      message.notification?.body,
-      platformChannelSpecifics,
-      payload: 'item x',
-    );
-    LoggerService.logger.i('Menampilkan notifikasi');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('fcm_token');
+    if (token == null) {
+      token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        await prefs.setString('fcm_token', token);
+        LoggerService.logger.i('FCM Token saved: $token');
+      } else {
+        LoggerService.logger.e('Failed to get FCM Token');
+      }
+    } else {
+      LoggerService.logger.i('FCM Token: $token');
+    }
   }
 }

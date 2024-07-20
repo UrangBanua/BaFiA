@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../controllers/user_controller.dart';
 import '../services/logger_service.dart';
 import '../theme_provider.dart';
 
 class ProfileUserPage extends StatelessWidget {
-  final UserController userController = Get.put(UserController());
+  //const ProfileUserPage({super.key});
 
-  ProfileUserPage({super.key});
-
-  Future<void> _updateProfilePhotoAndReplaceDefault() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      userController.updateProfilePhotoAndReplaceDefault(pickedFile.path);
-    }
-  }
+  UserController get userController => Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +17,18 @@ class ProfileUserPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Profile User'),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                ),
+                onPressed: () {
+                  themeProvider.toggleTheme(userController.userData['id_user']);
+                  LoggerService.logger.i(
+                      'Tema: ${themeProvider.isDarkMode ? 'Gelap' : 'Terang'}');
+                },
+              ),
+            ],
           ),
           body: Obx(() {
             if (userController.userData.isEmpty) {
@@ -37,21 +39,44 @@ class ProfileUserPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 children: [
                   Center(
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image:
-                              AssetImage('assets/images/default_profile.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    child: FutureBuilder<ImageProvider>(
+                      future: userController.getProfileImage(
+                          userController.userData['profile_photo']),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError || !snapshot.hasData) {
+                          return Container(
+                            width: 100.0,
+                            height: 100.0,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/images/default_profile.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            width: 100.0,
+                            height: 100.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: snapshot.data!,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: _updateProfilePhotoAndReplaceDefault,
+                    onPressed: userController.pickProfilePhoto,
                     child: const Text('Perbarui Photo Profil'),
                   ),
                   const SizedBox(height: 16.0),
@@ -78,15 +103,6 @@ class ProfileUserPage extends StatelessWidget {
                   ListTile(
                     title: const Text('Daerah'),
                     subtitle: Text(user['nama_daerah']),
-                  ),
-                  SwitchListTile(
-                    title: const Text('Tema'),
-                    value: themeProvider.isDarkMode,
-                    onChanged: (value) {
-                      themeProvider.toggleTheme(user['id_user']);
-                      LoggerService.logger.i(
-                          'Tema: ${themeProvider.isDarkMode ? 'Gelap' : 'Terang'}');
-                    },
                   ),
                   ListTile(
                     title: const Text('Token OK - ⌛'),

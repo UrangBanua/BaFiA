@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/user_controller.dart';
 
 class DrawerMenu extends StatelessWidget {
   final AuthController authController = Get.find<AuthController>();
+
+  UserController get userController => Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +21,24 @@ class DrawerMenu extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage(
-                      'assets/images/default_profile.png'), // Ganti dengan URL foto profil
+                Text(
+                  'Menu',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
                 ),
+                /* IconButton(
+                  icon: Icon(
+                    Get.isDarkMode ? Icons.wb_sunny : Icons.nights_stay,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Get.changeTheme(
+                      Get.isDarkMode ? ThemeData.light() : ThemeData.dark(),
+                    );
+                  },
+                ), */
               ],
             ),
           ),

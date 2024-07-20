@@ -33,6 +33,9 @@ void main() async {
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
 
+  // Clear database structure untuk pembaruan atau update struktur database
+  //await LocalStorageService.deleteDatabase();
+
   // Initialize database and get user data
   Map<String, dynamic>? userData;
   try {
