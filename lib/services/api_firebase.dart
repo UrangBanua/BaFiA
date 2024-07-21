@@ -1,8 +1,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'logger_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
+import 'logger_service.dart';
 
 class ApiFirebase {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -40,21 +41,41 @@ class ApiFirebase {
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
 
+    final link = message.data['link'];
+    if (link != null) {
+      LoggerService.logger.i('OPEN_URL link is available');
+      _launchURL(link);
+    }
+
     navigatorKey.currentState?.pushNamed(
       '/notification',
       arguments: message,
     );
   }
 
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      LoggerService.logger.i('Launching link url: $url');
+      await launch(url);
+    } else {
+      LoggerService.logger.i('Could not launch link url: $url');
+      throw 'Could not launch $url';
+    }
+  }
+
   Future<void> initPushNotifications() async {
     if (!kIsWeb) {
       FirebaseMessaging.instance.getInitialMessage().then((message) {
         if (message != null) {
+          LoggerService.logger.i(
+              'getInitialMessage: ${message.toMap()}'); // Log the full message
           handleMessage(message);
         }
       });
     } else {
       FirebaseMessaging.onBackgroundMessage((message) async {
+        LoggerService.logger
+            .i('Full message: ${message.toMap()}'); // Log the full message
         handleMessage(message);
       });
     }

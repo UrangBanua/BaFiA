@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:get/get.dart';
@@ -8,19 +9,18 @@ import 'logger_service.dart';
 
 class ApiService {
   static final client = http.Client();
+  static final String apiServiceUrl = dotenv.env['API_SERVICE_URL'] ?? '';
 
   static Future<Map<String, dynamic>?> login(
       String year, String username, String password, String captcha) async {
     LoggerService.logger.i('Attempting to login with username: $username');
     try {
-      final response = await client.post(
-          Uri.parse(
-              'https://service.sipd.kemendagri.go.id/auth/auth/pre-login'),
-          body: {
-            'username': username,
-            'password': password,
-            'tahun': year
-          }).timeout(const Duration(seconds: 10));
+      final response = await client
+          .post(Uri.parse('$apiServiceUrl/auth/auth/pre-login'), body: {
+        'username': username,
+        'password': password,
+        'tahun': year
+      }).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Login successful for username: $username');
@@ -61,7 +61,7 @@ class ApiService {
     LoggerService.logger.i('Attempting to get user token');
     try {
       final response = await client.post(
-        Uri.parse('https://service.sipd.kemendagri.go.id/auth/auth/login'),
+        Uri.parse('$apiServiceUrl/auth/auth/login'),
         body: json.encode({
           'id_daerah': idDaerah,
           'id_role': idRole,
@@ -104,7 +104,7 @@ class ApiService {
     try {
       final response = await client.get(
         Uri.parse(
-            'https://service.sipd.kemendagri.go.id/pengeluaran/strict/dashboard/statistik-belanja'),
+            '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja'),
         headers: {'Authorization': 'Bearer $token'},
       ).timeout(const Duration(seconds: 10));
 
@@ -135,7 +135,7 @@ class ApiService {
     LoggerService.logger.i('Attempting to get captcha image');
     try {
       final response = await client.get(
-        Uri.parse('https://service.sipd.kemendagri.go.id/auth/captcha/new'),
+        Uri.parse('$apiServiceUrl/auth/captcha/new'),
         headers: {
           'Accept': 'application/json',
         },
