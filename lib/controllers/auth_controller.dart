@@ -15,6 +15,7 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
     _checkUserData();
+    ApiService.checkDevelopmentModeWarning();
   }
 
   Future<void> _checkUserData() async {

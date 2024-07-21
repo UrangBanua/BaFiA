@@ -9,18 +9,32 @@ import 'logger_service.dart';
 
 class ApiService {
   static final client = http.Client();
-  static final String apiServiceUrl = dotenv.env['API_SERVICE_URL'] ?? '';
+  static final bool isDevelopmentMode = dotenv.env['DEVELOPMENT_MODE'] == 'ON';
+  static final String apiServiceUrl = isDevelopmentMode
+      ? dotenv.env['API_SERVICE_FAKE'] ?? ''
+      : dotenv.env['API_SERVICE_URL'] ?? '';
+  static final String? fakeXApiKey = dotenv.env['FAKE_X_API_KEY'];
+
+  static void checkDevelopmentModeWarning() {
+    if (isDevelopmentMode) {
+      LoggerService.logger.w('DEVELOPMENT_MODE IS ON');
+    }
+  }
 
   static Future<Map<String, dynamic>?> login(
       String year, String username, String password, String captcha) async {
     LoggerService.logger.i('Attempting to login with username: $username');
     try {
-      final response = await client
-          .post(Uri.parse('$apiServiceUrl/auth/auth/pre-login'), body: {
-        'username': username,
-        'password': password,
-        'tahun': year
-      }).timeout(const Duration(seconds: 10));
+      final pHeaders =
+          isDevelopmentMode ? {'x-api-key': fakeXApiKey ?? ''} : {};
+      final response = await client.post(
+          Uri.parse('$apiServiceUrl/auth/auth/pre-login'),
+          headers: pHeaders as Map<String, String>?,
+          body: {
+            'username': username,
+            'password': password,
+            'tahun': year
+          }).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Login successful for username: $username');
@@ -60,22 +74,27 @@ class ApiService {
   }) async {
     LoggerService.logger.i('Attempting to get user token');
     try {
-      final response = await client.post(
-        Uri.parse('$apiServiceUrl/auth/auth/login'),
-        body: json.encode({
-          'id_daerah': idDaerah,
-          'id_role': idRole,
-          'id_skpd': idSkpd,
-          'id_pegawai': idPegawai,
-          'password': password,
-          'tahun': year,
-          'username': username,
-          'captcha_id': captchaId,
-          'captcha_solution': captchaSolution,
-          'remember_me': 'true'
-        }),
-        headers: {'Content-Type': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final pHeaders = isDevelopmentMode
+          ? {'x-api-key': fakeXApiKey ?? '', 'Content-Type': 'application/json'}
+          : {'Content-Type': 'application/json'};
+      final response = await client
+          .post(
+            Uri.parse('$apiServiceUrl/auth/auth/login'),
+            body: json.encode({
+              'id_daerah': idDaerah,
+              'id_role': idRole,
+              'id_skpd': idSkpd,
+              'id_pegawai': idPegawai,
+              'password': password,
+              'tahun': year,
+              'username': username,
+              'captcha_id': captchaId,
+              'captcha_solution': captchaSolution,
+              'remember_me': 'true'
+            }),
+            headers: pHeaders,
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('User token fetched successfully');
@@ -102,11 +121,16 @@ class ApiService {
   static Future<void> syncDashboardToLocalDB(Database db, String token) async {
     LoggerService.logger.i('Attempting to sync dashboard data to local db');
     try {
-      final response = await client.get(
-        Uri.parse(
-            '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja'),
-        headers: {'Authorization': 'Bearer $token'},
-      ).timeout(const Duration(seconds: 10));
+      final pHeaders = isDevelopmentMode
+          ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+          : {'Authorization': 'Bearer $token'};
+      final response = await client
+          .get(
+            Uri.parse(
+                '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja'),
+            headers: pHeaders,
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         LoggerService.logger
@@ -134,12 +158,15 @@ class ApiService {
   static Future<Map<String, dynamic>?> getCaptchaImage() async {
     LoggerService.logger.i('Attempting to get captcha image');
     try {
-      final response = await client.get(
-        Uri.parse('$apiServiceUrl/auth/captcha/new'),
-        headers: {
-          'Accept': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 10));
+      final pHeaders = isDevelopmentMode
+          ? {'x-api-key': fakeXApiKey ?? '', 'Content-Type': 'application/json'}
+          : {'Content-Type': 'application/json'};
+      final response = await client
+          .get(
+            Uri.parse('$apiServiceUrl/auth/captcha/new'),
+            headers: pHeaders,
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Captcha image fetched successfully');
