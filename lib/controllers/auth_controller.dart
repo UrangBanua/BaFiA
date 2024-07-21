@@ -48,13 +48,10 @@ class AuthController extends GetxController {
       var namaSkpd = response['nama_skpd'];
       var namaRole = response['nama_role'];
       var tahun = year;
-
       LoggerService.logger.i('Login successful: $username');
-
       // Set variable userData
       userData.value = response;
       LoggerService.logger.i('Set variable userData');
-
       // // User data pre-login saved to db
       // await LocalStorageService.saveUserData({
       //   'id_pegawai': id_pegawai,
@@ -63,11 +60,9 @@ class AuthController extends GetxController {
       //   'tahun': tahun
       // });
       //LoggerService.logger.i('User data pre-login saved to db: $response');
-
       // ambil captcha image
       await _fetchCaptchaImage();
       LoggerService.logger.i('Captcha image fetched id: ${captchaData['id']}');
-
       Get.dialog(
         AlertDialog(
           title: const Text('Konfirmasi Login'),
@@ -78,7 +73,42 @@ class AuthController extends GetxController {
               TextField(
                 decoration:
                     const InputDecoration(labelText: 'Masukkan Captcha'),
-                onChanged: (value) => captcha = value,
+                onChanged: (value) async {
+                  captcha = value;
+                  if (captcha.length >= 6) {
+                    var tokenResponse = await fetchUserToken(
+                        response['id_daerah'],
+                        response['id_role'],
+                        response['id_skpd'],
+                        response['id_pegawai'],
+                        password,
+                        int.parse(year), // Convert year to integer
+                        username,
+                        captchaData['id'],
+                        captcha);
+                    if (tokenResponse != null) {
+                      // Merge token response with user data and save to local storage
+                      response['username'] = username;
+                      response['password'] = password;
+                      response['tahun'] = int.parse(tahun);
+                      response['token'] = tokenResponse['token'];
+                      response['refresh_token'] =
+                          tokenResponse['refresh_token'];
+                      await LocalStorageService.saveUserData(response);
+                      userData.value = response;
+                      LoggerService.logger.i('userData Merger: ');
+                      userToken = (tokenResponse).obs;
+                      LoggerService.logger.i('Simpan variable data user token');
+                      isLoggedIn.value = true;
+                      Get.offAllNamed('/dashboard');
+                      LoggerService.logger.i('Login completed: $username');
+                    } else {
+                      Get.snackbar('Login Failed', 'Unable to retrieve token');
+                      LoggerService.logger
+                          .e('Token fetch failed for: $username');
+                    }
+                  }
+                },
               ),
             ],
           ),
@@ -89,41 +119,6 @@ class AuthController extends GetxController {
                 LoggerService.logger.i('Login cancelled: $username');
               },
               child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                var tokenResponse = await fetchUserToken(
-                    response['id_daerah'],
-                    response['id_role'],
-                    response['id_skpd'],
-                    response['id_pegawai'],
-                    password,
-                    int.parse(year), // Convert year to integer
-                    username,
-                    captchaData['id'],
-                    captcha);
-
-                if (tokenResponse != null) {
-                  // Merge token response with user data and save to local storage
-                  response['username'] = username;
-                  response['password'] = password;
-                  response['tahun'] = int.parse(tahun);
-                  response['token'] = tokenResponse['token'];
-                  response['refresh_token'] = tokenResponse['refresh_token'];
-                  await LocalStorageService.saveUserData(response);
-                  userData.value = response;
-                  LoggerService.logger.i('userData Merger: ');
-                  userToken = (tokenResponse).obs;
-                  LoggerService.logger.i('Simpan variable data user token');
-                  isLoggedIn.value = true;
-                  Get.offAllNamed('/dashboard');
-                  LoggerService.logger.i('Login completed: $username');
-                } else {
-                  Get.snackbar('Login Failed', 'Unable to retrieve token');
-                  LoggerService.logger.e('Token fetch failed for: $username');
-                }
-              },
-              child: const Text('Pilih'),
             ),
           ],
         ),
