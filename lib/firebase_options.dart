@@ -5,7 +5,12 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 Future<void> loadEnv() async {
-  await dotenv.load();
+  try {
+    await dotenv.load(fileName: ".env");
+    LoggerService.logger.d("Environment variables loaded successfully.");
+  } catch (e) {
+    LoggerService.logger.e("Failed to load environment variables: $e");
+  }
 }
 
 class DefaultFirebaseOptions {
@@ -47,7 +52,6 @@ class DefaultFirebaseOptions {
     }
   }
 
-  /// Returns the FirebaseOptions based on the current platform.
   static FirebaseOptions web = FirebaseOptions(
     apiKey: dotenv.env['API_KEY_WEB'] ?? '',
     appId: '1:487583025296:web:193c17e25d70948539b015',

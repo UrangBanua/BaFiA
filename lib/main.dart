@@ -24,9 +24,15 @@ void main() async {
   } catch (error) {
     LoggerService.logger.e(error);
   } finally {
-    // Initalize Firebase App Messaging
+    // Initialize Firebase App Messaging
     await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+      options: DefaultFirebaseOptions.currentPlatform,
+      name: 'BaFiA_PushNotif',
+      // Add the following line to fix the error on web
+      // This is required for Firebase Messaging on web
+      // Remove this line if you're not targeting web
+      // messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+    );
 
     // final apiFirebase = ApiFirebase();
     await ApiFirebase().initNotifications();

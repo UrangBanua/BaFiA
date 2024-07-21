@@ -9,11 +9,29 @@ class ApiFirebase {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initNotifications() async {
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    NotificationSettings settings;
+
+    if (!kIsWeb) {
+      settings = await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } else {
+      settings = const NotificationSettings(
+        authorizationStatus: AuthorizationStatus.authorized,
+        alert: AppleNotificationSetting.enabled,
+        badge: AppleNotificationSetting.enabled,
+        sound: AppleNotificationSetting.enabled,
+        lockScreen: AppleNotificationSetting.enabled,
+        carPlay: AppleNotificationSetting.enabled,
+        announcement: AppleNotificationSetting.enabled,
+        notificationCenter: AppleNotificationSetting.enabled,
+        showPreviews: AppleShowPreviewSetting.always,
+        timeSensitive: AppleNotificationSetting.enabled,
+        criticalAlert: AppleNotificationSetting.enabled,
+      );
+    }
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       LoggerService.logger.i('User granted permission');

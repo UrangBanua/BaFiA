@@ -46,6 +46,7 @@ app.*.map.json
 /linux/
 /windows/
 
-#  firebase_option
+#  firebase_option and scure environment data
 *.env
 .metadata
+web/env.js
