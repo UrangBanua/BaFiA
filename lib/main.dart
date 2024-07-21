@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ void main() async {
 
     // final apiFirebase = ApiFirebase();
     await ApiFirebase().initNotifications();
+    //NotificationService().initialize();
   }
 
   // Initialize ThemeProvider and load theme
@@ -35,6 +38,19 @@ void main() async {
 
   // Clear database structure untuk pembaruan atau update struktur database
   //await LocalStorageService.deleteDatabase();
+
+  // Handle foreground notifications
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    LoggerService.logger.i('Got a message whilst in the foreground!');
+    LoggerService.logger
+        .i('Full message: ${message.toMap()}'); // Log the full message
+    LoggerService.logger.i('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      LoggerService.logger
+          .i('Message also contained a notification: ${message.notification}');
+    }
+  });
 
   // Initialize database and get user data
   Map<String, dynamic>? userData;

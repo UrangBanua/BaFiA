@@ -1,6 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'logger_service.dart'; // Pastikan Anda mengimpor LoggerService jika belum
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'logger_service.dart';
+import '../main.dart';
 
 class ApiFirebase {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -22,10 +24,39 @@ class ApiFirebase {
     String? fCMToken = prefs.getString('fcm_token');
 
     if (fCMToken == null) {
-      fCMToken = await _firebaseMessaging.getToken();
-      await prefs.setString('fcm_token', fCMToken!);
+      fCMToken = kIsWeb ? 'web_token' : await _firebaseMessaging.getToken();
+      if (fCMToken != null) {
+        await prefs.setString('fcm_token', fCMToken);
+      }
     }
 
     LoggerService.logger.i('FCM Token: $fCMToken');
+
+    // Subscribe to the 'bafia-info' topic
+    await _firebaseMessaging.subscribeToTopic('bafia-info');
+    LoggerService.logger.i('Subscribed to topic: bafia-info');
+  }
+
+  void handleMessage(RemoteMessage? message) {
+    if (message == null) return;
+
+    navigatorKey.currentState?.pushNamed(
+      '/notification',
+      arguments: message,
+    );
+  }
+
+  Future<void> initPushNotifications() async {
+    if (!kIsWeb) {
+      FirebaseMessaging.instance.getInitialMessage().then((message) {
+        if (message != null) {
+          handleMessage(message);
+        }
+      });
+    } else {
+      FirebaseMessaging.onBackgroundMessage((message) async {
+        handleMessage(message);
+      });
+    }
   }
 }
