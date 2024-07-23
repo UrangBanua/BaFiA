@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class LKLraPage extends StatelessWidget {
+class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Laporan Realisasi Anggaran'),
+        title: const Text('Notification Page'),
       ),
       body: const Center(
-        child: Text('Laporan Realisasi Anggaran Page Content'),
+        child: Text('Notification Page Content'),
       ),
     );
   }

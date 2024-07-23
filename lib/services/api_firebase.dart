@@ -9,34 +9,23 @@ class ApiFirebase {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initNotifications() async {
-    NotificationSettings settings;
-
-    if (!kIsWeb) {
-      settings = await FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-    } else {
-      settings = const NotificationSettings(
-        authorizationStatus: AuthorizationStatus.authorized,
-        alert: AppleNotificationSetting.enabled,
-        badge: AppleNotificationSetting.enabled,
-        sound: AppleNotificationSetting.enabled,
-        lockScreen: AppleNotificationSetting.enabled,
-        carPlay: AppleNotificationSetting.enabled,
-        announcement: AppleNotificationSetting.enabled,
-        notificationCenter: AppleNotificationSetting.enabled,
-        showPreviews: AppleShowPreviewSetting.always,
-        timeSensitive: AppleNotificationSetting.enabled,
-        criticalAlert: AppleNotificationSetting.enabled,
-      );
+    if (kIsWeb) {
+      LoggerService.logger.i('FCM is disabled on web platform.');
+      return;
     }
 
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      LoggerService.logger.i('User granted permission');
+      LoggerService.logger.i('User granted permission for notifications');
     } else {
-      LoggerService.logger.i('User declined or has not accepted permission');
+      LoggerService.logger
+          .i('User declined or has not accepted permission for notifications');
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();

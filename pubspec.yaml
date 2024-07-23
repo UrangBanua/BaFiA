@@ -57,6 +57,8 @@ dependencies:
   shared_preferences: ^2.2.3
   url_launcher: ^6.0.13
   font_awesome_flutter: ^10.7.0
+  animated_text_kit: ^4.2.2
+  #marquee: ^2.2.3
 
 dev_dependencies:
   flutter_test:

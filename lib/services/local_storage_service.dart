@@ -59,7 +59,7 @@ class LocalStorageService {
         nama_daerah TEXT DEFAULT '-',
         token TEXT,
         refresh_token TEXT,
-        profile_photo TEXT DEFAULT '/assets/images/default_profile.png',
+        profile_photo TEXT DEFAULT '-',
         isDarkMode INTEGER DEFAULT 0,
         time_update datetime DEFAULT CURRENT_TIMESTAMP
       )
@@ -71,9 +71,11 @@ class LocalStorageService {
         id_skpd INTEGER,
         kode_skpd TEXT,
         nama_skpd TEXT,
-        anggaran REAL,
-        realisasi_rencana REAL,
-        realisasi_rill REAL,
+        anggaran_p REAL DEFAULT 0,
+        anggaran_b REAL DEFAULT 0,
+        realisasi_rencana_b REAL DEFAULT 0,
+        realisasi_rill_p REAL DEFAULT 0,
+        realisasi_rill_b REAL DEFAULT 0,
         time_update datetime DEFAULT CURRENT_TIMESTAMP
       )
     ''');

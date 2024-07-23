@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
@@ -10,17 +11,20 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
+    if (kIsWeb) {
+      LoggerService.logger
+          .i('Local notifications are disabled on web platform.');
+      return;
+    }
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('app_icon');
-
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
     );
-
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    // Create a notification channel for Android 8.0+
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
@@ -29,13 +33,9 @@ class NotificationService {
       importance: Importance.high,
     );
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
     final androidImplementation =
-        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+        _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
-
     if (androidImplementation != null) {
       await androidImplementation.createNotificationChannel(channel);
     } else {
@@ -43,19 +43,14 @@ class NotificationService {
           .e('Failed to resolve Android implementation for notifications');
     }
 
-    /* FirebaseMessaging.onBackgroundMessage((message) async {
-      handleMessage(message);
-    }); */
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      LoggerService.logger
-          .i('Menerima notifikasi ketika aplikasi berjalan di foreground');
+      LoggerService.logger.i('Received a message while in foreground');
       _showNotification(message);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      LoggerService.logger.i(
-          'Menerima notifikasi ketika aplikasi berjalan di background dan dibuka');
+      LoggerService.logger
+          .i('Received a message while in background and opened');
     });
 
     SharedPreferences prefs = await SharedPreferences.getInstance();

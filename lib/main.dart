@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
-import 'routes.dart';
+import 'routes/routes.dart';
 import 'services/api_firebase.dart';
 import 'theme_provider.dart';
 import 'services/logger_service.dart';
@@ -34,9 +35,10 @@ void main() async {
       // messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
     );
 
-    // final apiFirebase = ApiFirebase();
-    await ApiFirebase().initNotifications();
-    //NotificationService().initialize();
+    if (!kIsWeb) {
+      await ApiFirebase().initNotifications();
+      //NotificationService().initialize();
+    }
   }
 
   // Initialize ThemeProvider and load theme

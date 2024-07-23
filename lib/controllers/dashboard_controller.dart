@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
@@ -51,5 +53,17 @@ class DashboardController extends GetxController {
       isLoading(false);
       LoggerService.logger.i('[DashboardController] isLoading set to false');
     }
+  }
+
+  String formatCurrency(double value, BuildContext context) {
+    return NumberFormat.currency(
+      symbol: 'Rp ',
+      decimalDigits: 2,
+      locale: Localizations.localeOf(context).toString(),
+    ).format(value);
+  }
+
+  String formatDate(String date) {
+    return DateFormat('dd MMMM y', 'id').format(DateTime.parse(date));
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -8,6 +10,7 @@ import 'local_storage_service.dart';
 import 'logger_service.dart';
 
 class ApiService {
+  //var mergerData = [].obs;
   static final client = http.Client();
   static final bool isDevelopmentMode = dotenv.env['DEVELOPMENT_MODE'] == 'ON';
   static final String apiServiceUrl = isDevelopmentMode
@@ -18,6 +21,8 @@ class ApiService {
   static void checkDevelopmentModeWarning() {
     if (isDevelopmentMode) {
       LoggerService.logger.w('DEVELOPMENT_MODE IS ON');
+    } else {
+      LoggerService.logger.i('API_SERVICE_URL : $apiServiceUrl');
     }
   }
 
@@ -29,7 +34,7 @@ class ApiService {
           isDevelopmentMode ? {'x-api-key': fakeXApiKey ?? ''} : {};
       final response = await client.post(
           Uri.parse('$apiServiceUrl/auth/auth/pre-login'),
-          headers: pHeaders as Map<String, String>?,
+          headers: isDevelopmentMode ? pHeaders as Map<String, String>? : null,
           body: {
             'username': username,
             'password': password,
@@ -124,7 +129,18 @@ class ApiService {
       final pHeaders = isDevelopmentMode
           ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
           : {'Authorization': 'Bearer $token'};
-      final response = await client
+
+      // Handle the response dashboard
+      final responsePend = await client
+          .get(
+            Uri.parse(
+                '$apiServiceUrl/penerimaan/strict/dashboard/statistik-pendapatan'),
+            headers: pHeaders,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handle the response statistik-belanja
+      final responseBela = await client
           .get(
             Uri.parse(
                 '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja'),
@@ -132,15 +148,56 @@ class ApiService {
           )
           .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
+      if (responsePend.statusCode == 200 || responseBela.statusCode == 200) {
         LoggerService.logger
             .i('Dashboard data synced to local db successfully');
-        await LocalStorageService.deleteDashboardData();
-        await LocalStorageService.saveDashboardData(
-            db, json.decode(response.body));
+        // mserge data pendapatan dan belanja
+        try {
+          // Clear the existing dashboard data from the local db
+          await LocalStorageService.deleteDashboardData();
+
+          // Parse the response bodies
+          final List<dynamic> dataPend = json.decode(responsePend.body);
+          final List<dynamic> dataBela = json.decode(responseBela.body);
+
+          // Merge the data
+          final List<Map<String, dynamic>?> dashboardGab = dataPend
+              .map((pend) {
+                final bela = dataBela.firstWhere(
+                    (b) =>
+                        b['id_daerah'] == pend['id_daerah'] &&
+                        b['tahun'] == pend['tahun'] &&
+                        b['id_skpd'] == pend['id_skpd'],
+                    orElse: () => null);
+
+                if (bela != null) {
+                  return {
+                    'id_daerah': pend['id_daerah'],
+                    'tahun': pend['tahun'],
+                    'id_skpd': pend['id_skpd'],
+                    'kode_skpd': pend['kode_skpd'],
+                    'nama_skpd': pend['nama_skpd'],
+                    'anggaran_p': pend['anggaran'],
+                    'anggaran_b': bela['anggaran'],
+                    'realisasi_rencana_b': bela['realisasi_rencana'],
+                    'realisasi_rill_p': pend['realisasi_rill'],
+                    'realisasi_rill_b': bela['realisasi_rill'],
+                  };
+                } else {
+                  return null;
+                }
+              })
+              .where((item) => item != null)
+              .toList();
+
+          // Save the dashboard data to the local db
+          await LocalStorageService.saveDashboardData(db, dashboardGab);
+        } catch (e) {
+          // Handle any exceptions that occur during parsing or JSON creation
+          LoggerService.logger.e('Failed to merger pendapatan and belanja: $e');
+        }
       } else {
-        LoggerService.logger.e(
-            'Failed to sync dashboard data to local db. Status code: ${response.statusCode}');
+        LoggerService.logger.e('Failed to sync dashboard data to local db');
       }
     } catch (e) {
       if (e is TimeoutException) {
