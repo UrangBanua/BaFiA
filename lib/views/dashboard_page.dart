@@ -41,7 +41,7 @@ class DashboardPage extends StatelessWidget {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              Get.toNamed('/akuntansi/laporan_keuangan/menu');
+                              Get.toNamed('/laporan');
                             },
                             child: const Column(
                               mainAxisSize: MainAxisSize.min,
