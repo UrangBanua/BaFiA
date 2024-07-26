@@ -115,8 +115,7 @@ class LaporanPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                        'Penatausahaan - Register Pendapatan dan Belanja'),
+                    const Text('Penatausahaan - Register Pendapatan & Belanja'),
                     // tambahkan jarak antara judul dan daftar laporan
                     const SizedBox(height: 16.0),
                     ValueListenableBuilder<List<Map<String, dynamic>>>(
@@ -132,8 +131,9 @@ class LaporanPage extends StatelessWidget {
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                     ),
+                                    padding: const EdgeInsets.all(20),
                                   ),
                                   child: Icon(button['icon']),
                                 ),
@@ -147,7 +147,8 @@ class LaporanPage extends StatelessWidget {
                   ],
                 ),
               ),
-            ), // Panel Laporan Penatausahaan
+            ),
+            // Panel Laporan Penatausahaan
             SizedBox(
               width: double.infinity,
               child: Container(
@@ -176,8 +177,9 @@ class LaporanPage extends StatelessWidget {
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                     ),
+                                    padding: const EdgeInsets.all(20),
                                   ),
                                   child: Icon(button['icon']),
                                 ),
@@ -192,7 +194,7 @@ class LaporanPage extends StatelessWidget {
                 ),
               ),
             ),
-// Panel Laporan Akuntansi
+            // Panel Laporan Akuntansi
             SizedBox(
               width: double.infinity,
               child: Container(
@@ -221,8 +223,9 @@ class LaporanPage extends StatelessWidget {
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                     ),
+                                    padding: const EdgeInsets.all(20),
                                   ),
                                   child: Icon(button['icon']),
                                 ),
@@ -237,7 +240,7 @@ class LaporanPage extends StatelessWidget {
                 ),
               ),
             ),
-// Panel Laporan Akuntansi
+            // Panel Laporan Akuntansi
             SizedBox(
               width: double.infinity,
               child: Container(
@@ -267,8 +270,9 @@ class LaporanPage extends StatelessWidget {
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                     ),
+                                    padding: const EdgeInsets.all(20),
                                   ),
                                   child: Icon(button['icon']),
                                 ),

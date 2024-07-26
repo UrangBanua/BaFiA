@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import '../controllers/dashboard_controller.dart';
 
+// ignore: must_be_immutable
 class DashboardPage extends StatelessWidget {
   int notificationCount = 3;
   final DashboardController dashboardController =
@@ -72,6 +73,7 @@ class DashboardPage extends StatelessWidget {
                             child: const Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                // ignore: deprecated_member_use
                                 FaIcon(FontAwesomeIcons.cogs),
                                 SizedBox(height: 4),
                                 Text('Pengaturan'),
@@ -93,7 +95,7 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Brightness brightness = Theme.of(context).brightness;
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         DateTime now = DateTime.now();
@@ -306,6 +308,7 @@ class DashboardPage extends StatelessWidget {
                   child: const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // ignore: deprecated_member_use
                       FaIcon(FontAwesomeIcons.home),
                     ],
                   ),

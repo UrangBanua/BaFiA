@@ -1,8 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
+import 'local_storage_service.dart';
 import 'logger_service.dart';
 
 class ApiFirebase {
@@ -30,7 +33,6 @@ class ApiFirebase {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? fCMToken = prefs.getString('fcm_token');
-
     if (fCMToken == null) {
       fCMToken = kIsWeb ? 'web_token' : await _firebaseMessaging.getToken();
       if (fCMToken != null) {
@@ -45,13 +47,18 @@ class ApiFirebase {
     LoggerService.logger.i('Subscribed to topic: bafia-info');
   }
 
-  void handleMessage(RemoteMessage? message) {
+  Future<void> handleMessage(RemoteMessage? message) async {
     if (message == null) return;
 
     final link = message.data['link'];
     if (link != null) {
       LoggerService.logger.i('OPEN_URL link is available');
       _launchURL(link);
+    }
+
+    if (message.data.isNotEmpty) {
+      LoggerService.logger.i('Message also contained data: ${message.data}');
+      await LocalStorageService.saveMessageData(message.data);
     }
 
     navigatorKey.currentState?.pushNamed(
@@ -78,12 +85,6 @@ class ApiFirebase {
               'getInitialMessage: ${message.toMap()}'); // Log the full message
           handleMessage(message);
         }
-      });
-    } else {
-      FirebaseMessaging.onBackgroundMessage((message) async {
-        LoggerService.logger
-            .i('Full message: ${message.toMap()}'); // Log the full message
-        handleMessage(message);
       });
     }
   }

@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +15,21 @@ import 'services/local_storage_service.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  LoggerService.logger.i('Handling a background message: ${message.messageId}');
+  if (message.data.isNotEmpty) {
+    LoggerService.logger.i('Message also contained data: ${message.data}');
+    await LocalStorageService.saveMessageData(message.data);
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Register the background message handler
+  if (!kIsWeb) {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
 
   try {
     // Load environment variables
@@ -29,34 +41,27 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
       name: 'BaFiA_PushNotif',
-      // Add the following line to fix the error on web
-      // This is required for Firebase Messaging on web
-      // Remove this line if you're not targeting web
-      // messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
     );
-
     if (!kIsWeb) {
       await ApiFirebase().initNotifications();
-      //NotificationService().initialize();
     }
   }
 
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
 
-  // Clear database structure untuk pembaruan atau update struktur database
-  //await LocalStorageService.deleteDatabase();
-
   // Handle foreground notifications
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     LoggerService.logger.i('Got a message whilst in the foreground!');
     LoggerService.logger
         .i('Full message: ${message.toMap()}'); // Log the full message
-    LoggerService.logger.i('Message data: ${message.data}');
-
     if (message.notification != null) {
       LoggerService.logger
           .i('Message also contained a notification: ${message.notification}');
+    }
+    if (message.data.isNotEmpty) {
+      LoggerService.logger.i('Message also contained data: ${message.data}');
+      await LocalStorageService.saveMessageData(message.data);
     }
   });
 
@@ -65,7 +70,6 @@ void main() async {
   try {
     userData = await LocalStorageService.getUserData();
     LoggerService.logger.i('Database is ready');
-
     themeProvider.loadTheme(userData?['isDarkMode']);
     LoggerService.logger.i(
         'Initialize ThemeProvider and load DarkTheme: ${userData!['isDarkMode']}');
@@ -83,7 +87,6 @@ void main() async {
 
 class BafiaApp extends StatelessWidget {
   final Map<String, dynamic>? userData;
-
   const BafiaApp({super.key, this.userData});
 
   @override

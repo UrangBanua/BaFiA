@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -10,13 +8,19 @@ import 'local_storage_service.dart';
 import 'logger_service.dart';
 
 class ApiService {
-  //var mergerData = [].obs;
   static final client = http.Client();
   static final bool isDevelopmentMode = dotenv.env['DEVELOPMENT_MODE'] == 'ON';
   static final String apiServiceUrl = isDevelopmentMode
       ? dotenv.env['API_SERVICE_FAKE'] ?? ''
       : dotenv.env['API_SERVICE_URL'] ?? '';
   static final String? fakeXApiKey = dotenv.env['FAKE_X_API_KEY'];
+  static const int timeoutDuration = 10;
+
+  static get getDateNow {
+    DateTime now = DateTime.now();
+    String formattedDate = "${now.year}-${now.month}-${now.day}";
+    return formattedDate;
+  }
 
   static void checkDevelopmentModeWarning() {
     if (isDevelopmentMode) {
@@ -30,38 +34,25 @@ class ApiService {
       String year, String username, String password, String captcha) async {
     LoggerService.logger.i('Attempting to login with username: $username');
     try {
-      final pHeaders =
-          isDevelopmentMode ? {'x-api-key': fakeXApiKey ?? ''} : {};
-      final response = await client.post(
-          Uri.parse('$apiServiceUrl/auth/auth/pre-login'),
-          headers: isDevelopmentMode ? pHeaders as Map<String, String>? : null,
-          body: {
-            'username': username,
-            'password': password,
-            'tahun': year
-          }).timeout(const Duration(seconds: 10));
+      final response = await _postRequest(
+        '$apiServiceUrl/auth/auth/pre-login',
+        {
+          'username': username,
+          'password': password,
+          'tahun': year,
+        },
+        isDevelopmentMode ? {'x-api-key': fakeXApiKey ?? ''} : {},
+      );
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Login successful for username: $username');
         final data = (json.decode(response.body) as List).first;
         return data;
       } else {
-        LoggerService.logger.e(
-            'Login failed for username: $username. Status code: ${response.statusCode}');
-        Get.snackbar('Error', 'Login failed');
-        throw Exception(
-            'Login failed'); // Throw an exception instead of rethrowing
+        _handleError(response, 'Login failed for username: $username');
       }
     } catch (e) {
-      if (e is TimeoutException) {
-        LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Timeout', 'Login request timeout');
-        // Handle the TimeoutException accordingly
-      } else {
-        LoggerService.logger.e('Login request failed for from service server');
-        Get.snackbar(
-            'Failed', 'Login request failed'); // Handle other exceptions
-      }
+      _handleException(e as Exception, 'Login request failed');
     }
     return null;
   }
@@ -79,46 +70,36 @@ class ApiService {
   }) async {
     LoggerService.logger.i('Attempting to get user token');
     try {
-      final pHeaders = isDevelopmentMode
-          ? {'x-api-key': fakeXApiKey ?? '', 'Content-Type': 'application/json'}
-          : {'Content-Type': 'application/json'};
-      final response = await client
-          .post(
-            Uri.parse('$apiServiceUrl/auth/auth/login'),
-            body: json.encode({
-              'id_daerah': idDaerah,
-              'id_role': idRole,
-              'id_skpd': idSkpd,
-              'id_pegawai': idPegawai,
-              'password': password,
-              'tahun': year,
-              'username': username,
-              'captcha_id': captchaId,
-              'captcha_solution': captchaSolution,
-              'remember_me': 'true'
-            }),
-            headers: pHeaders,
-          )
-          .timeout(const Duration(seconds: 10));
+      final response = await _postRequest(
+        '$apiServiceUrl/auth/auth/login',
+        {
+          'id_daerah': idDaerah,
+          'id_role': idRole,
+          'id_skpd': idSkpd,
+          'id_pegawai': idPegawai,
+          'password': password,
+          'tahun': year,
+          'username': username,
+          'captcha_id': captchaId,
+          'captcha_solution': captchaSolution,
+          'remember_me': 'true',
+        },
+        isDevelopmentMode
+            ? {
+                'x-api-key': fakeXApiKey ?? '',
+                'Content-Type': 'application/json'
+              }
+            : {'Content-Type': 'application/json'},
+      );
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('User token fetched successfully');
         return json.decode(response.body);
       } else {
-        LoggerService.logger
-            .e('Failed to get user token. Status code: ${response.statusCode}');
-        return null;
+        _handleError(response, 'Failed to get user token');
       }
     } catch (e) {
-      if (e is TimeoutException) {
-        LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Timeout', 'User token request timeout');
-        // Handle the TimeoutException accordingly
-      } else {
-        LoggerService.logger.e('Login request failed for from service server');
-        Get.snackbar(
-            'Failed', 'User token request failed'); // Handle other exceptions
-      }
+      _handleException(e as Exception, 'User token request failed');
     }
     return null;
   }
@@ -130,120 +111,252 @@ class ApiService {
           ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
           : {'Authorization': 'Bearer $token'};
 
-      // Handle the response dashboard
-      final responsePend = await client
-          .get(
-            Uri.parse(
-                '$apiServiceUrl/penerimaan/strict/dashboard/statistik-pendapatan'),
-            headers: pHeaders,
-          )
-          .timeout(const Duration(seconds: 10));
+      final responsePend = await _getRequest(
+        '$apiServiceUrl/penerimaan/strict/dashboard/statistik-pendapatan',
+        pHeaders,
+      );
 
-      // Handle the response statistik-belanja
-      final responseBela = await client
-          .get(
-            Uri.parse(
-                '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja'),
-            headers: pHeaders,
-          )
-          .timeout(const Duration(seconds: 10));
+      final responseBela = await _getRequest(
+        '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja',
+        pHeaders,
+      );
 
-      if (responsePend.statusCode == 200 || responseBela.statusCode == 200) {
+      if (responsePend.statusCode == 200 && responseBela.statusCode == 200) {
         LoggerService.logger
             .i('Dashboard data synced to local db successfully');
-        // mserge data pendapatan dan belanja
-        try {
-          // Clear the existing dashboard data from the local db
-          await LocalStorageService.deleteDashboardData();
-
-          // Parse the response bodies
-          final List<dynamic> dataPend = json.decode(responsePend.body);
-          final List<dynamic> dataBela = json.decode(responseBela.body);
-
-          // Merge the data
-          final List<Map<String, dynamic>?> dashboardGab = dataPend
-              .map((pend) {
-                final bela = dataBela.firstWhere(
-                    (b) =>
-                        b['id_daerah'] == pend['id_daerah'] &&
-                        b['tahun'] == pend['tahun'] &&
-                        b['id_skpd'] == pend['id_skpd'],
-                    orElse: () => null);
-
-                if (bela != null) {
-                  return {
-                    'id_daerah': pend['id_daerah'],
-                    'tahun': pend['tahun'],
-                    'id_skpd': pend['id_skpd'],
-                    'kode_skpd': pend['kode_skpd'],
-                    'nama_skpd': pend['nama_skpd'],
-                    'anggaran_p': pend['anggaran'],
-                    'anggaran_b': bela['anggaran'],
-                    'realisasi_rencana_b': bela['realisasi_rencana'],
-                    'realisasi_rill_p': pend['realisasi_rill'],
-                    'realisasi_rill_b': bela['realisasi_rill'],
-                  };
-                } else {
-                  return null;
-                }
-              })
-              .where((item) => item != null)
-              .toList();
-
-          // Save the dashboard data to the local db
-          await LocalStorageService.saveDashboardData(db, dashboardGab);
-        } catch (e) {
-          // Handle any exceptions that occur during parsing or JSON creation
-          LoggerService.logger.e('Failed to merger pendapatan and belanja: $e');
-        }
+        await _mergeAndSaveDashboardData(db, responsePend, responseBela);
       } else {
         LoggerService.logger.e('Failed to sync dashboard data to local db');
       }
     } catch (e) {
-      if (e is TimeoutException) {
-        LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Timeout', 'Sync dashboard to local db');
-        // Handle the TimeoutException accordingly
-      } else {
-        LoggerService.logger.e('Login request failed for from service server');
-        Get.snackbar(
-            'Failed', 'Sync dashboard to local db'); // Handle other exceptions
-      }
+      _handleException(e as Exception, 'Sync dashboard to local db failed');
     }
   }
 
   static Future<Map<String, dynamic>?> getCaptchaImage() async {
     LoggerService.logger.i('Attempting to get captcha image');
     try {
-      final pHeaders = isDevelopmentMode
-          ? {'x-api-key': fakeXApiKey ?? '', 'Content-Type': 'application/json'}
-          : {'Content-Type': 'application/json'};
-      final response = await client
-          .get(
-            Uri.parse('$apiServiceUrl/auth/captcha/new'),
-            headers: pHeaders,
-          )
-          .timeout(const Duration(seconds: 10));
+      final response = await _getRequest(
+        '$apiServiceUrl/auth/captcha/new',
+        isDevelopmentMode
+            ? {
+                'x-api-key': fakeXApiKey ?? '',
+                'Content-Type': 'application/json'
+              }
+            : {'Content-Type': 'application/json'},
+      );
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Captcha image fetched successfully');
         return json.decode(response.body);
       } else {
-        LoggerService.logger.e(
-            'Failed to get captcha image. Status code: ${response.statusCode}');
-        throw Exception('Failed to get captcha image');
+        _handleError(response, 'Failed to get captcha image');
       }
     } catch (e) {
-      if (e is TimeoutException) {
-        LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Error', 'Load captcha image request timeout');
-        // Handle the TimeoutException accordingly
-      } else {
-        LoggerService.logger.e('Login request failed for from service server');
-        Get.snackbar('Error',
-            'Load captcha image request failed'); // Handle other exceptions
-      }
+      _handleException(e as Exception, 'Captcha image request failed');
     }
     return null;
+  }
+
+  static Future<http.Response> _postRequest(
+      String url, Map<String, dynamic> body, Map<String, String> headers) {
+    return client
+        .post(
+          Uri.parse(url),
+          headers: headers,
+          body: json.encode(body),
+        )
+        .timeout(const Duration(seconds: timeoutDuration));
+  }
+
+  static Future<http.Response> _getRequest(
+      String url, Map<String, String> headers) {
+    return client
+        .get(
+          Uri.parse(url),
+          headers: headers,
+        )
+        .timeout(const Duration(seconds: timeoutDuration));
+  }
+
+  static void _handleError(http.Response response, String message) {
+    LoggerService.logger.e('$message. Status code: ${response.statusCode}');
+    Get.snackbar('Error', message);
+  }
+
+  static void _handleException(Exception e, String message) {
+    if (e is TimeoutException) {
+      LoggerService.logger.e('$message: Request timeout');
+      Get.snackbar('Timeout', '$message: Request timeout');
+    } else {
+      LoggerService.logger.e('$message: $e');
+      Get.snackbar('Error', message);
+    }
+  }
+
+  static Future<void> _mergeAndSaveDashboardData(Database db,
+      http.Response responsePend, http.Response responseBela) async {
+    try {
+      await LocalStorageService.deleteDashboardData();
+      final List<dynamic> dataPend = json.decode(responsePend.body);
+      final List<dynamic> dataBela = json.decode(responseBela.body);
+
+      final List<Map<String, dynamic>?> dashboardGab = dataPend
+          .map((pend) {
+            final bela = dataBela.firstWhere(
+                (b) =>
+                    b['id_daerah'] == pend['id_daerah'] &&
+                    b['tahun'] == pend['tahun'] &&
+                    b['id_skpd'] == pend['id_skpd'],
+                orElse: () => null);
+            if (bela != null) {
+              return {
+                'id_daerah': pend['id_daerah'],
+                'tahun': pend['tahun'],
+                'id_skpd': pend['id_skpd'],
+                'kode_skpd': pend['kode_skpd'],
+                'nama_skpd': pend['nama_skpd'],
+                'anggaran_p': pend['anggaran'],
+                'anggaran_b': bela['anggaran'],
+                'realisasi_rencana_b': bela['realisasi_rencana'],
+                'realisasi_rill_p': pend['realisasi_rill'],
+                'realisasi_rill_b': bela['realisasi_rill'],
+              };
+            } else {
+              return null;
+            }
+          })
+          .where((item) => item != null)
+          .toList();
+
+      await LocalStorageService.saveDashboardData(db, dashboardGab);
+    } catch (e) {
+      LoggerService.logger.e('Failed to merge pendapatan and belanja: $e');
+    }
+  }
+
+  // API Service untuk Dokumen Kendali
+  static Future<List<dynamic>> getKendaliSkpd(int idSkpd, String token) async {
+    LoggerService.logger
+        .i('Attempting to get kendali skpd for idSkpd: $idSkpd');
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final response = await _getRequest(
+        '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja/$idSkpd?tanggal_akhir=$getDateNow',
+        pHeaders);
+    if (response.statusCode == 200) {
+      LoggerService.logger
+          .i('Kendali skpd fetched successfully for idSkpd: $idSkpd');
+      return json.decode(response.body);
+    } else {
+      LoggerService.logger.e('Failed to load kendali skpd for idSkpd: $idSkpd');
+      throw Exception('Failed to load kendali skpd');
+    }
+  }
+
+  static Future<List<dynamic>> getKendaliUrusan(
+      int idSkpd, int idSubSkpd, String token) async {
+    LoggerService.logger.i(
+        'Attempting to get kendali urusan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd');
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final response = await _getRequest(
+        '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja/$idSkpd/$idSubSkpd?tanggal_akhir=$getDateNow',
+        pHeaders);
+    if (response.statusCode == 200) {
+      LoggerService.logger.i(
+          'Kendali urusan fetched successfully for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd');
+      return json.decode(response.body);
+    } else {
+      LoggerService.logger.e(
+          'Failed to load kendali urusan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd');
+      throw Exception('Failed to load kendali urusan');
+    }
+  }
+
+  static Future<List<dynamic>> getKendaliProgram(
+      int idSkpd, int idSubSkpd, int idBidangUrusan, String token) async {
+    LoggerService.logger.i(
+        'Attempting to get kendali program for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan');
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final response = await _getRequest(
+        '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja/$idSkpd/$idSubSkpd/$idBidangUrusan?tanggal_akhir=$getDateNow',
+        pHeaders);
+    if (response.statusCode == 200) {
+      LoggerService.logger.i(
+          'Kendali program fetched successfully for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan');
+      return json.decode(response.body);
+    } else {
+      LoggerService.logger.e(
+          'Failed to load kendali program for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan');
+      throw Exception('Failed to load kendali program');
+    }
+  }
+
+  static Future<List<dynamic>> getKendaliKegiatan(int idSkpd, int idSubSkpd,
+      int idBidangUrusan, int idProgram, String token) async {
+    LoggerService.logger.i(
+        'Attempting to get kendali kegiatan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram');
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final response = await _getRequest(
+        '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja/$idSkpd/$idSubSkpd/$idBidangUrusan/$idProgram?tanggal_akhir=$getDateNow',
+        pHeaders);
+    if (response.statusCode == 200) {
+      LoggerService.logger.i(
+          'Kendali kegiatan fetched successfully for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram');
+      return json.decode(response.body);
+    } else {
+      LoggerService.logger.e(
+          'Failed to load kendali kegiatan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram');
+      throw Exception('Failed to load kendali kegiatan');
+    }
+  }
+
+  static Future<List<dynamic>> getKendaliSubKegiatan(int idSkpd, int idSubSkpd,
+      int idBidangUrusan, int idProgram, int idGiat, String token) async {
+    LoggerService.logger.i(
+        'Attempting to get kendali sub kegiatan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram, idGiat: $idGiat');
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final response = await _getRequest(
+        '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja/$idSkpd/$idSubSkpd/$idBidangUrusan/$idProgram/$idGiat?tanggal_akhir=$getDateNow',
+        pHeaders);
+    if (response.statusCode == 200) {
+      LoggerService.logger.i(
+          'Kendali sub kegiatan fetched successfully for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram, idGiat: $idGiat');
+      return json.decode(response.body);
+    } else {
+      LoggerService.logger.e(
+          'Failed to load kendali sub kegiatan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram, idGiat: $idGiat');
+      throw Exception('Failed to load kendali sub kegiatan');
+    }
+  }
+
+  static Future<List<dynamic>> getKendaliRekening(
+      int idSkpd,
+      int idSubSkpd,
+      int idBidangUrusan,
+      int idProgram,
+      int idGiat,
+      int idSubGiat,
+      String token) async {
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final response = await _getRequest(
+        '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja/$idSkpd/$idSubSkpd/$idBidangUrusan/$idProgram/$idGiat/$idSubGiat?tanggal_akhir=$getDateNow',
+        pHeaders);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load kendali rekening');
+    }
   }
 }

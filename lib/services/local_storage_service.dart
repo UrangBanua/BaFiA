@@ -61,7 +61,7 @@ class LocalStorageService {
         refresh_token TEXT,
         profile_photo TEXT DEFAULT '-',
         isDarkMode INTEGER DEFAULT 0,
-        time_update datetime DEFAULT CURRENT_TIMESTAMP
+        time_update DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     ''');
     await db.execute('''
@@ -76,13 +76,28 @@ class LocalStorageService {
         realisasi_rencana_b REAL DEFAULT 0,
         realisasi_rill_p REAL DEFAULT 0,
         realisasi_rill_b REAL DEFAULT 0,
-        time_update datetime DEFAULT CURRENT_TIMESTAMP
+        time_update DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    ''');
+    // buat tabel notification dan set id auto increment
+    await db.execute('''
+      CREATE TABLE notification (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        content TEXT,
+        category TEXT,
+        action TEXT,
+        link TEXT,
+        date DATETIME,
+        isRead TEXT DEFAULT 'false',
+        time_update DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     ''');
 
     LoggerService.logger.i('Tables created.');
     await _logTableStructure(db, 'user');
     await _logTableStructure(db, 'dashboard');
+    await _logTableStructure(db, 'notification');
   }
 
   static Future<void> deleteDatabase() async {
@@ -164,5 +179,66 @@ class LocalStorageService {
     final db = await database;
     await db.delete('dashboard');
     LoggerService.logger.i("Dashboard data cleared.");
+  }
+
+  // fungsi untuk menyimpan notifikasi ke database
+  static Future<void> saveMessageData(Map<String, dynamic> messageData) async {
+    final db = await database;
+    LoggerService.logger.i("Saving message data");
+
+    // Periksa apakah pesan dengan id sudah ada
+    List<Map<String, dynamic>> existingMessage = await db.query(
+      'notification',
+      where: 'id = ?',
+      whereArgs: [messageData['id']],
+    );
+
+    if (existingMessage.isNotEmpty) {
+      // Jika pesan dengan id sudah ada, lakukan update
+      await db.update(
+        'notification',
+        messageData,
+        where: 'id = ?',
+        whereArgs: [messageData['id']],
+      );
+      LoggerService.logger.i("Message data updated.");
+    } else {
+      // Jika pesan dengan id belum ada, lakukan insert
+      await db.insert(
+        'notification',
+        messageData,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      LoggerService.logger.i("Message data inserted.");
+    }
+  }
+
+  // fungsi untuk update status pesan menjadi sudah dibaca
+  static Future<void> markAsRead(int id) async {
+    final db = await database;
+    await db.update('notification', {'isRead': 'true'},
+        where: 'id = ?', whereArgs: [id]);
+    LoggerService.logger.i("Message data updated.");
+  }
+
+  // fungsi untuk mengambil semua notifikasi dari database
+  static Future<List<Map<String, dynamic>>> getMessages() async {
+    final db = await database;
+    LoggerService.logger.i("Fetching message data...");
+    final List<Map<String, dynamic>> messages = await db.query('notification');
+    if (messages.isNotEmpty) {
+      LoggerService.logger.i("Get Data from DB - Message");
+      return messages;
+    }
+    LoggerService.logger.i("No data found in DB.");
+    return [];
+  }
+
+  // fungsi untuk menghapus notifikasi dari database
+  static Future<void> deleteMessageData(int id) async {
+    final db = await database;
+    await db.delete('notification', where: 'id = ?', whereArgs: [id]);
+    LoggerService.logger.i("Message data deleted.");
   }
 }
