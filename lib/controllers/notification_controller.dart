@@ -7,13 +7,11 @@ class NotificationController extends ChangeNotifier {
   List<Map<String, dynamic>> _notifications = [];
   String _selectedCategory = 'Semua';
 
-  static var to;
-
   NotificationController() {
     _loadNotifications();
   }
 
-  get notificationCount => null;
+  get notificationCount => _notifications.length;
 
   // Load notifications from local storage
   Future<void> _loadNotifications() async {
@@ -25,31 +23,51 @@ class NotificationController extends ChangeNotifier {
 
   // Getter and Setter
   List<Map<String, dynamic>> get notifications => _notifications;
-
   set notifications(List<Map<String, dynamic>> notifications) {
     _notifications = notifications;
     notifyListeners();
   }
 
   String get selectedCategory => _selectedCategory;
-
   void setSelectedCategory(String category) {
     _selectedCategory = category;
     notifyListeners();
   }
 
-  // Mark message as read
-  Future<void> markAsRead(int idMessage) async {
+  // Add a new notification
+  Future<void> addNotification(Map<String, dynamic> notification) async {
     try {
-      // log idMessage
-      LoggerService.logger.i(idMessage.toString());
-
-      // Update message isRead to local storage
-      //await markAsRead(idMessage);
+      await LocalStorageService.saveMessageData(notification);
+      _notifications.add(notification);
+      LoggerService.logger.i('Notification added: $notification');
       notifyListeners();
     } catch (e) {
-      LoggerService.logger.e('Failed to update markAsRead message: $e');
+      LoggerService.logger.e('Failed to add notification: $e');
     }
+  }
+
+  // Update an existing notification
+  Future<void> updateNotification(
+      Map<String, dynamic> updatedNotification) async {
+    try {
+      final index = _notifications
+          .indexWhere((n) => n['id'] == updatedNotification['id']);
+      if (index != -1) {
+        _notifications[index] = updatedNotification;
+        await LocalStorageService.saveMessageData(updatedNotification);
+        LoggerService.logger.i('Notification updated: $updatedNotification');
+        notifyListeners();
+      }
+    } catch (e) {
+      LoggerService.logger.e('Failed to update notification: $e');
+    }
+  }
+
+  // Mark message as read
+  void markAsRead(int id) {
+    final notification = _notifications.firstWhere((n) => n['id'] == id);
+    //notification['isRead'] = 'true';
+    updateNotification(notification);
   }
 
   // Filter notifications by category
@@ -76,5 +94,18 @@ class NotificationController extends ChangeNotifier {
       }
     }
     return groupedNotifications;
+  }
+
+  // Delete message by id
+  Future<void> deleteMessage(int idMessage) async {
+    try {
+      await LocalStorageService.deleteMessageData(idMessage);
+      _notifications
+          .removeWhere((notification) => notification['id'] == idMessage);
+      LoggerService.logger.i('Message with id $idMessage deleted.');
+      notifyListeners();
+    } catch (e) {
+      LoggerService.logger.e('Failed to delete message: $e');
+    }
   }
 }

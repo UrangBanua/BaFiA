@@ -1,5 +1,4 @@
 // ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -77,31 +76,63 @@ class _NotificationPageState extends State<NotificationPage> {
                             final notificationIndex = entry.key;
                             final notification = entry.value;
                             final isRead = notification['isRead'] as String;
-                            return Card(
-                              color: isRead == 'false'
-                                  ? Theme.of(context).colorScheme.surface
-                                  : Theme.of(context).colorScheme.background,
-                              child: ListTile(
-                                title: Text(
-                                    '${notificationIndex + 1}. ${notification['title']}'),
-                                subtitle: Text(notification['content']),
-                                trailing: Icon(
-                                  isRead == 'false'
-                                      ? Icons.check_circle
-                                      : Icons.check_circle_outline,
-                                  color: isRead == 'false'
-                                      ? Colors.green
-                                      : Colors.grey,
+                            return Dismissible(
+                              key: Key(notification['id'].toString()),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (direction) {
+                                // Panggil fungsi deleteMessage dari controller
+                                controller.deleteMessage(notification['id']);
+                              },
+                              background: Container(
+                                color: Colors.blueGrey,
+                                alignment: Alignment.centerRight,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: const Icon(Icons.delete,
+                                    color: Colors.white),
+                              ),
+                              child: Card(
+                                color: isRead == 'false'
+                                    ? Theme.of(context).colorScheme.surface
+                                    : Theme.of(context).colorScheme.background,
+                                child: ListTile(
+                                  leading: Icon(
+                                    isRead == 'false'
+                                        ? Icons.mark_email_unread
+                                        : Icons.mark_email_read,
+                                    color: isRead == 'false'
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                  title: Text(
+                                      //'${notificationIndex + 1}. ${notification['title']}'),
+                                      '${notification['title']}'),
+                                  subtitle: Text(notification['content']),
+                                  onTap: () {
+                                    // Buka Popup untuk membaca isi pesan
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(notification['title']),
+                                          content:
+                                              Text(notification['content']),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                // Tandai pesan sebagai sudah dibaca
+                                                controller.markAsRead(
+                                                    notification['id']);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Tutup'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
                                 ),
-                                onTap: () {
-                                  if (notificationIndex != -1) {
-                                    controller.markAsRead(notification['id']);
-                                  } else {
-                                    // Handle the error case if needed
-                                    print(
-                                        'Invalid notification index: $notificationIndex');
-                                  }
-                                },
                               ),
                             );
                           }).toList(),

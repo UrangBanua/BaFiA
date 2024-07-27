@@ -61,7 +61,19 @@ void main() async {
     }
     if (message.data.isNotEmpty) {
       LoggerService.logger.i('Message also contained data: ${message.data}');
-      await LocalStorageService.saveMessageData(message.data);
+      try {
+        await LocalStorageService.saveMessageData(message.data);
+      } catch (error) {
+        LoggerService.logger.e('Error saving message data: $error');
+      } finally {
+        Get.snackbar(
+          message.notification?.title ?? 'BaFiA',
+          message.notification?.body ?? 'Ada pesan baru',
+          onTap: (_) {
+            Get.toNamed('/notification');
+          },
+        );
+      }
     }
   });
 

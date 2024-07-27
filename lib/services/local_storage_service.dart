@@ -26,7 +26,7 @@ class LocalStorageService {
     } else {
       if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
         sqfliteFfiInit();
-        databaseFactory = databaseFactoryFfi; // Tambahkan inisialisasi ini
+        databaseFactory = databaseFactoryFfi;
         var factory = databaseFactoryFfi;
         String path = join(await getDatabasesPath(), 'bafia.db');
         LoggerService.logger.i("Using FFI database");
@@ -79,7 +79,6 @@ class LocalStorageService {
         time_update DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     ''');
-    // buat tabel notification dan set id auto increment
     await db.execute('''
       CREATE TABLE notification (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,7 +92,6 @@ class LocalStorageService {
         time_update DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     ''');
-
     LoggerService.logger.i('Tables created.');
     await _logTableStructure(db, 'user');
     await _logTableStructure(db, 'dashboard');
@@ -132,16 +130,12 @@ class LocalStorageService {
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
     final db = await database;
     LoggerService.logger.i("Saving user data");
-
-    // Periksa apakah user dengan id_user sudah ada
     List<Map<String, dynamic>> existingUser = await db.query(
       'user',
       where: 'id_user = ?',
       whereArgs: [userData['id_user']],
     );
-
     if (existingUser.isNotEmpty) {
-      // Jika user dengan id_user sudah ada, lakukan update
       await db.update(
         'user',
         userData,
@@ -150,7 +144,6 @@ class LocalStorageService {
       );
       LoggerService.logger.i("User data updated.");
     } else {
-      // Jika user dengan id_user belum ada, lakukan insert
       await db.insert(
         'user',
         userData,
@@ -181,20 +174,15 @@ class LocalStorageService {
     LoggerService.logger.i("Dashboard data cleared.");
   }
 
-  // fungsi untuk menyimpan notifikasi ke database
   static Future<void> saveMessageData(Map<String, dynamic> messageData) async {
     final db = await database;
     LoggerService.logger.i("Saving message data");
-
-    // Periksa apakah pesan dengan id sudah ada
     List<Map<String, dynamic>> existingMessage = await db.query(
       'notification',
       where: 'id = ?',
       whereArgs: [messageData['id']],
     );
-
     if (existingMessage.isNotEmpty) {
-      // Jika pesan dengan id sudah ada, lakukan update
       await db.update(
         'notification',
         messageData,
@@ -203,18 +191,15 @@ class LocalStorageService {
       );
       LoggerService.logger.i("Message data updated.");
     } else {
-      // Jika pesan dengan id belum ada, lakukan insert
       await db.insert(
         'notification',
         messageData,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-
       LoggerService.logger.i("Message data inserted.");
     }
   }
 
-  // fungsi untuk update status pesan menjadi sudah dibaca
   static Future<void> markAsRead(int id) async {
     final db = await database;
     await db.update('notification', {'isRead': 'true'},
@@ -222,7 +207,6 @@ class LocalStorageService {
     LoggerService.logger.i("Message data updated.");
   }
 
-  // fungsi untuk mengambil semua notifikasi dari database
   static Future<List<Map<String, dynamic>>> getMessages() async {
     final db = await database;
     LoggerService.logger.i("Fetching message data...");
@@ -235,10 +219,13 @@ class LocalStorageService {
     return [];
   }
 
-  // fungsi untuk menghapus notifikasi dari database
   static Future<void> deleteMessageData(int id) async {
     final db = await database;
-    await db.delete('notification', where: 'id = ?', whereArgs: [id]);
-    LoggerService.logger.i("Message data deleted.");
+    try {
+      await db.delete('notification', where: 'id = ?', whereArgs: [id]);
+      LoggerService.logger.i("Message data deleted.");
+    } catch (e) {
+      LoggerService.logger.e("Failed to delete message: $e");
+    }
   }
 }
