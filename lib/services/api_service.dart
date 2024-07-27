@@ -438,7 +438,7 @@ class ApiService {
         ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
         : {'Authorization': 'Bearer $token'};
     final url =
-        '$apiServiceUrl/aklap/api/report/cetaklo?skpd:$idSkpd&tanggalFrom:$tanggalMulai&tanggalTo:$tanggalSampai&level:$klasifikasi&is_combine:$konsolidasiSKPD&filetype=pdf';
+        '$apiServiceUrl/aklap/api/report/cetaklo?id_skpd=$idSkpd&tanggalFrom=$tanggalMulai&tanggalTo=$tanggalSampai&level=$klasifikasi&is_combine=$konsolidasiSKPD&filetype=pdf';
     final response = await _getRequestReports(url, pHeaders);
     // Show the URL in the console
     LoggerService.logger.i(url);
@@ -465,7 +465,7 @@ class ApiService {
         ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
         : {'Authorization': 'Bearer $token'};
     final url =
-        '$apiServiceUrl/aklap/api/report/lpe/cetak?tanggalFrom:$tanggalMulai&tanggalTo:$tanggalSampai&format:$klasifikasi&konsolidasi_unit:$konsolidasiSKPD&filetype=pdf';
+        '$apiServiceUrl/aklap/api/report/lpe/cetak?tanggalFrom=$tanggalMulai&tanggalTo=$tanggalSampai&format=$klasifikasi&konsolidasi_unit=$konsolidasiSKPD&filetype=pdf';
     final response = await _getRequestReports(url, pHeaders);
     // Show the URL in the console
     LoggerService.logger.i(url);

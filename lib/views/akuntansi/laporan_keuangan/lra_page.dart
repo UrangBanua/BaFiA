@@ -9,7 +9,18 @@ class LKLraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Laporan Keuangan LRA')),
+      appBar: AppBar(
+        title: const Text(
+          'Laporan Realisasi Anggaran',
+          style: TextStyle(fontSize: 20),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.print, color: Colors.blue),
+            onPressed: controller.printPdf,
+          ),
+        ],
+      ),
       body: Column(
         children: [
           // Panel 1: Input Parameters
@@ -137,9 +148,13 @@ class LKLraPage extends StatelessWidget {
                     ],
                   ),
                   Center(
-                    child: ElevatedButton(
+                    child: IconButton(
                       onPressed: controller.previewReport,
-                      child: const Text('Terapkan'),
+                      icon: const Icon(
+                        Icons.pageview,
+                        color: Colors.blue,
+                        size: 35,
+                      ),
                     ),
                   ),
                 ],

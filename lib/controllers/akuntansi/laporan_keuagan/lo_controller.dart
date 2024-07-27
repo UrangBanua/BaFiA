@@ -7,7 +7,7 @@ import '../../dashboard_controller.dart';
 import '../../../services/api_service.dart';
 import '../../../services/logger_service.dart';
 
-class LKLraController extends GetxController {
+class LKLoController extends GetxController {
   final TextEditingController tanggalMulaiController = TextEditingController();
   final TextEditingController tanggalSampaiController = TextEditingController();
   final RxInt klasifikasi = RxInt(5);

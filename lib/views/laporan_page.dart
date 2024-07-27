@@ -84,9 +84,15 @@ class LaporanPage extends StatelessWidget {
     {
       'icon': Icons.assessment,
       'color': Colors.deepOrangeAccent,
-      'text': 'LPSAL'
+      'text': 'LPSAL',
+      'pageToGo': '/akuntansi/laporan_keuangan/lpsal'
     },
-    {'icon': Icons.assessment, 'color': Colors.deepOrangeAccent, 'text': 'LAK'},
+    {
+      'icon': Icons.assessment,
+      'color': Colors.deepOrangeAccent,
+      'text': 'LAK',
+      'pageToGo': '/akuntansi/laporan_keuangan/lak'
+    },
   ];
 
   final List<Map<String, dynamic>> buttonsAkuntansiPertanggungjawaban = [
