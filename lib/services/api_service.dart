@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -15,6 +17,7 @@ class ApiService {
       : dotenv.env['API_SERVICE_URL'] ?? '';
   static final String? fakeXApiKey = dotenv.env['FAKE_X_API_KEY'];
   static const int timeoutDuration = 10;
+  static const int timeoutDurationReports = 60;
 
   static get getDateNow {
     DateTime now = DateTime.now();
@@ -51,6 +54,17 @@ class ApiService {
           headers: headers,
         )
         .timeout(const Duration(seconds: timeoutDuration));
+  }
+
+  // fungsi get request reports
+  static Future<http.Response> _getRequestReports(
+      String url, Map<String, String> headers) {
+    return client
+        .get(
+          Uri.parse(url),
+          headers: headers,
+        )
+        .timeout(const Duration(seconds: timeoutDurationReports));
   }
 
   // fungsi handle error
@@ -274,6 +288,7 @@ class ApiService {
     }
   }
 
+  // API Service untuk Dokumen Kendali
   static Future<List<dynamic>> getKendaliUrusan(
       int idSkpd, int idSubSkpd, String token) async {
     LoggerService.logger.i(
@@ -295,6 +310,7 @@ class ApiService {
     }
   }
 
+  // API Service untuk Dokumen Kendali
   static Future<List<dynamic>> getKendaliProgram(
       int idSkpd, int idSubSkpd, int idBidangUrusan, String token) async {
     LoggerService.logger.i(
@@ -316,6 +332,7 @@ class ApiService {
     }
   }
 
+  // API Service untuk Dokumen Kendali
   static Future<List<dynamic>> getKendaliKegiatan(int idSkpd, int idSubSkpd,
       int idBidangUrusan, int idProgram, String token) async {
     LoggerService.logger.i(
@@ -337,6 +354,7 @@ class ApiService {
     }
   }
 
+  // API Service untuk Dokumen Kendali
   static Future<List<dynamic>> getKendaliSubKegiatan(int idSkpd, int idSubSkpd,
       int idBidangUrusan, int idProgram, int idGiat, String token) async {
     LoggerService.logger.i(
@@ -358,6 +376,7 @@ class ApiService {
     }
   }
 
+  // API Service untuk Dokumen Kendali
   static Future<List<dynamic>> getKendaliRekening(
       int idSkpd,
       int idSubSkpd,
@@ -376,6 +395,114 @@ class ApiService {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load kendali rekening');
+    }
+  }
+
+  // API Service untuk Laporan Keuagan - LRA
+  static Future<Uint8List> getLraReport(
+    String tanggalMulai,
+    String tanggalSampai,
+    int klasifikasi,
+    String konsolidasiSKPD,
+    int idSkpd,
+    String token,
+  ) async {
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final url =
+        '$apiServiceUrl/aklap/api/report/cetaklra?searchparams={"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klasifikasi,"is_combine":"$konsolidasiSKPD","skpd":$idSkpd}&formatFile=pdf';
+    final response = await _getRequestReports(url, pHeaders);
+    // Show the URL in the console
+    LoggerService.logger.i(url);
+    //final response = await client.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      // return data as Uint8List
+      return Uint8List.fromList(response.body.codeUnits);
+      //return response.body; // Assuming the API returns the URL of the PDF
+    } else {
+      throw Exception('Failed to load report');
+    }
+  }
+
+  // API Service untuk Laporan Keuagan - LO
+  static Future<Uint8List> getLoReport(
+    String tanggalMulai,
+    String tanggalSampai,
+    int klasifikasi,
+    String konsolidasiSKPD,
+    int idSkpd,
+    String token,
+  ) async {
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final url =
+        '$apiServiceUrl/aklap/api/report/cetaklo?skpd:$idSkpd&tanggalFrom:$tanggalMulai&tanggalTo:$tanggalSampai&level:$klasifikasi&is_combine:$konsolidasiSKPD&filetype=pdf';
+    final response = await _getRequestReports(url, pHeaders);
+    // Show the URL in the console
+    LoggerService.logger.i(url);
+    //final response = await client.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      // return data as Uint8List
+      return Uint8List.fromList(response.body.codeUnits);
+      //return response.body; // Assuming the API returns the URL of the PDF
+    } else {
+      throw Exception('Failed to load report');
+    }
+  }
+
+  // API Service untuk Laporan Keuagan - LPE
+  static Future<Uint8List> getLpeReport(
+    String tanggalMulai,
+    String tanggalSampai,
+    int klasifikasi,
+    String konsolidasiSKPD,
+    int idSkpd,
+    String token,
+  ) async {
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final url =
+        '$apiServiceUrl/aklap/api/report/lpe/cetak?tanggalFrom:$tanggalMulai&tanggalTo:$tanggalSampai&format:$klasifikasi&konsolidasi_unit:$konsolidasiSKPD&filetype=pdf';
+    final response = await _getRequestReports(url, pHeaders);
+    // Show the URL in the console
+    LoggerService.logger.i(url);
+    //final response = await client.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      // return data as Uint8List
+      return Uint8List.fromList(response.body.codeUnits);
+      //return response.body; // Assuming the API returns the URL of the PDF
+    } else {
+      throw Exception('Failed to load report');
+    }
+  }
+
+  // API Service untuk Laporan Keuagan - Neraca
+  static Future<Uint8List> getNeracaReport(
+    String tanggalMulai,
+    String tanggalSampai,
+    int klasifikasi,
+    String konsolidasiSKPD,
+    int idSkpd,
+    String token,
+  ) async {
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final url =
+        '$apiServiceUrl/aklap/api/report/load-report-konsolidasi-neraca??searchparams={"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klasifikasi,"is_combine":"$konsolidasiSKPD","skpd":$idSkpd}&formatFile=pdf';
+    final response = await _getRequestReports(url, pHeaders);
+    // Show the URL in the console
+    LoggerService.logger.i(url);
+    //final response = await client.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      // return data as Uint8List
+      return Uint8List.fromList(response.body.codeUnits);
+      //return response.body; // Assuming the API returns the URL of the PDF
+    } else {
+      throw Exception('Failed to load report');
     }
   }
 }

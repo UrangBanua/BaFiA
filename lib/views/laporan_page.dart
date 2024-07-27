@@ -1,3 +1,4 @@
+import 'package:bafia/services/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/laporan_controller.dart';
@@ -33,17 +34,53 @@ class LaporanPage extends StatelessWidget {
   ];
 
   final List<Map<String, dynamic>> buttonsPenatausahaanLaporan = [
-    {'icon': Icons.receipt, 'text': 'LPJ UP/GU'},
-    {'icon': Icons.receipt, 'text': 'LPJ TU'},
-    {'icon': Icons.receipt, 'color': Colors.green, 'text': 'LPJ Admi'},
-    {'icon': Icons.receipt, 'color': Colors.green, 'text': 'LPJ Fung'},
+    {
+      'icon': Icons.receipt,
+      'text': 'LPJ UP/GU',
+      'pageToGo': '/penatausahaan/laporan_pertanggungjawaban/lpj_up_gu'
+    },
+    {
+      'icon': Icons.receipt,
+      'text': 'LPJ TU',
+      'pageToGo': '/penatausahaan/laporan_pertanggungjawaban/lpj_tu'
+    },
+    {
+      'icon': Icons.receipt,
+      'color': Colors.green,
+      'text': 'LPJ Admi',
+      'pageToGo': '/penatausahaan/laporan_pertanggungjawaban/lpj_administratif'
+    },
+    {
+      'icon': Icons.receipt,
+      'color': Colors.green,
+      'text': 'LPJ Fung',
+      'pageToGo': '/penatausahaan/laporan_pertanggungjawaban/lpj_fungsional'
+    },
   ];
 
   final List<Map<String, dynamic>> buttonsAkuntansiLaporan = [
-    {'icon': Icons.analytics, 'text': 'LRA'},
-    {'icon': Icons.analytics, 'text': 'LO'},
-    {'icon': Icons.analytics, 'color': Colors.orange, 'text': 'LPE'},
-    {'icon': Icons.analytics, 'color': Colors.orange, 'text': 'Neraca'},
+    {
+      'icon': Icons.analytics,
+      'text': 'LRA',
+      'pageToGo': '/akuntansi/laporan_keuangan/lra'
+    },
+    {
+      'icon': Icons.analytics,
+      'text': 'LO',
+      'pageToGo': '/akuntansi/laporan_keuangan/lo'
+    },
+    {
+      'icon': Icons.analytics,
+      'color': Colors.orange,
+      'text': 'LPE',
+      'pageToGo': '/akuntansi/laporan_keuangan/lpe'
+    },
+    {
+      'icon': Icons.analytics,
+      'color': Colors.orange,
+      'text': 'Neraca',
+      'pageToGo': '/akuntansi/laporan_keuangan/neraca'
+    },
     {
       'icon': Icons.assessment,
       'color': Colors.deepOrangeAccent,
@@ -200,7 +237,11 @@ class LaporanPage extends StatelessWidget {
                             return Column(
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.toNamed(button['pageToGo']);
+                                    LoggerService.logger
+                                        .i('Navigasi ke ${button['pageToGo']}');
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),
                                     backgroundColor: Colors
@@ -255,7 +296,11 @@ class LaporanPage extends StatelessWidget {
                             return Column(
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.toNamed(button['pageToGo']);
+                                    LoggerService.logger
+                                        .i('Navigasi ke ${button['pageToGo']}');
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),
                                     backgroundColor: Colors
