@@ -45,6 +45,7 @@ class LKLoPage extends StatelessWidget {
                               initialDate: DateTime.now(),
                               firstDate: DateTime(2000),
                               lastDate: DateTime(2101),
+                              initialEntryMode: DatePickerEntryMode.calendar,
                             );
                             if (pickedDate != null) {
                               controller.tanggalMulaiController.text =
@@ -66,6 +67,7 @@ class LKLoPage extends StatelessWidget {
                               initialDate: DateTime.now(),
                               firstDate: DateTime(2000),
                               lastDate: DateTime(2101),
+                              initialEntryMode: DatePickerEntryMode.calendar,
                             );
                             if (pickedDate != null) {
                               controller.tanggalSampaiController.text =
