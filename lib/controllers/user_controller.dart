@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
@@ -74,11 +75,19 @@ class UserController extends GetxController {
     if (pickedFile != null) {
       try {
         final bytes = await File(pickedFile.path).readAsBytes();
-        final base64String = base64Encode(bytes);
-        await updateProfilePhoto(base64String);
-        getProfileImage(userData['profile_photo']);
+        // Resize and compress image
+        final img.Image? image = img.decodeImage(bytes);
+        if (image != null) {
+          final resizedImage =
+              img.copyResize(image, width: 300); // Resize to 300px width
+          final compressedBytes = img.encodeJpg(resizedImage,
+              quality: 85); // Compress with 85% quality
+          final base64String = base64Encode(compressedBytes);
+          await updateProfilePhoto(base64String);
+          getProfileImage(userData['profile_photo']);
+        }
       } catch (e) {
-        LoggerService.logger.i('Error reading file: $e');
+        LoggerService.logger.i('Error processing image: $e');
       }
     } else {
       LoggerService.logger.i('No image selected.');

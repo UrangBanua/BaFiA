@@ -84,7 +84,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                 controller.deleteMessage(notification['id']);
                               },
                               background: Container(
-                                color: Colors.blueGrey,
+                                color: Colors.blue[300],
                                 alignment: Alignment.centerRight,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),

@@ -102,7 +102,11 @@ class ProfileUserPage extends StatelessWidget {
                   ),
                   ListTile(
                     title: const Text('Daerah'),
-                    subtitle: Text(user['nama_daerah']),
+                    subtitle: Text(
+                      user['nama_daerah'] != '-'
+                          ? user['nama_daerah']
+                          : 'Kabupaten Hulu Sungai Tengah',
+                    ),
                   ),
                   ListTile(
                     title: const Text('Token OK - ⌛'),

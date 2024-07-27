@@ -4,7 +4,8 @@ import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
 
 class NotificationController extends ChangeNotifier {
-  List<Map<String, dynamic>> _notifications = [];
+  List<Map<String, dynamic>> _notifications =
+      []; // Inisialisasi sebagai daftar kosong yang dapat diubah
   String _selectedCategory = 'Semua';
 
   NotificationController() {
@@ -53,8 +54,12 @@ class NotificationController extends ChangeNotifier {
       final index = _notifications
           .indexWhere((n) => n['id'] == updatedNotification['id']);
       if (index != -1) {
-        _notifications[index] = updatedNotification;
-        await LocalStorageService.saveMessageData(updatedNotification);
+        // Buat salinan dari objek sebelum memodifikasinya
+        final notificationCopy =
+            Map<String, dynamic>.from(_notifications[index]);
+        notificationCopy.addAll(updatedNotification);
+        _notifications[index] = notificationCopy;
+        await LocalStorageService.saveMessageData(notificationCopy);
         LoggerService.logger.i('Notification updated: $updatedNotification');
         notifyListeners();
       }
@@ -65,9 +70,9 @@ class NotificationController extends ChangeNotifier {
 
   // Mark message as read
   void markAsRead(int id) {
-    final notification = _notifications.firstWhere((n) => n['id'] == id);
+    //final notification = _notifications.firstWhere((n) => n['id'] == id);
     //notification['isRead'] = 'true';
-    updateNotification(notification);
+    //updateNotification(notification);
   }
 
   // Filter notifications by category
@@ -102,7 +107,6 @@ class NotificationController extends ChangeNotifier {
       await LocalStorageService.deleteMessageData(idMessage);
       _notifications
           .removeWhere((notification) => notification['id'] == idMessage);
-      LoggerService.logger.i('Message with id $idMessage deleted.');
       notifyListeners();
     } catch (e) {
       LoggerService.logger.e('Failed to delete message: $e');
