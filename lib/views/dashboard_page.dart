@@ -9,6 +9,7 @@ import '../controllers/dashboard_controller.dart';
 // ignore: must_be_immutable
 class DashboardPage extends StatelessWidget {
   int notificationCount = 3;
+//  var catatanPengajuan = '';
   final DashboardController dashboardController =
       Get.put(DashboardController());
   DateTime? currentBackPressTime;
@@ -93,6 +94,21 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
+/*   void updateCatatanPengajuan() {
+    if (dashboardController.dashboardData.isNotEmpty) {
+      var realisasiRencanaB =
+          dashboardController.dashboardData[0]['realisasi_rencana_b'] ?? 0;
+      var realisasiRillB =
+          dashboardController.dashboardData[0]['realisasi_rill_b'] ?? 0;
+      if ((realisasiRencanaB - realisasiRillB) > 0) {
+        catatanPengajuan =
+            'Cek Kendali untuk memastikan pengajuan realisasi tidak terkendala dalam proses dan \npastikan kembali pengajuan benar-benar sesuai dengan yg diinginkan.';
+      } else {
+        catatanPengajuan = 'Rencana anda sama dengan Realisai';
+      }
+    }
+  } */
+
   @override
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
@@ -123,6 +139,7 @@ class DashboardPage extends StatelessWidget {
               } else if (dashboardController.hasError.value) {
                 return const Center(child: Text('Failed to load data'));
               } else {
+                //updateCatatanPengajuan();
                 return Stack(
                   children: [
                     RefreshIndicator(
@@ -133,12 +150,14 @@ class DashboardPage extends StatelessWidget {
                           var data = dashboardController.dashboardData[index];
                           var nilaiAnggaran = dashboardController
                               .formatCurrency(data['anggaran_b'], context);
-                          var nilaiPengajuan =
-                              dashboardController.formatCurrency(
-                                  data['realisasi_rencana_b'], context);
                           var nilaiRealisasi =
                               dashboardController.formatCurrency(
                                   data['realisasi_rill_b'], context);
+                          var nilaiPengajuan =
+                              dashboardController.formatCurrency(
+                                  data['realisasi_rencana_b'] -
+                                      data['realisasi_rill_b'],
+                                  context);
                           return Column(
                             children: [
                               Text(
@@ -175,6 +194,7 @@ class DashboardPage extends StatelessWidget {
                                     labelOffset: 30,
                                     radiusFactor: 0.95,
                                     ranges: <GaugeRange>[
+                                      // GaugeRange Anggaran
                                       GaugeRange(
                                         startValue: 0,
                                         endValue: 100,
@@ -182,13 +202,28 @@ class DashboardPage extends StatelessWidget {
                                         startWidth: 10,
                                         endWidth: 30,
                                       ),
+                                      // GaugeRange Rencana
+                                      GaugeRange(
+                                        label: ((data['realisasi_rencana_b'] /
+                                                    data['anggaran_b']) *
+                                                100)
+                                            .toStringAsFixed(2),
+                                        startValue: 0,
+                                        endValue: (data['realisasi_rencana_b'] /
+                                                data['anggaran_b']) *
+                                            100,
+                                        color: Colors.orange,
+                                        startWidth: 10,
+                                        endWidth: 30,
+                                      ),
+                                      // GaugeRange Realisasi
                                       GaugeRange(
                                         label: ((data['realisasi_rill_b'] /
                                                     data['anggaran_b']) *
                                                 100)
                                             .toStringAsFixed(2),
                                         startValue: 0,
-                                        endValue: (data['realisasi_rencana_b'] /
+                                        endValue: (data['realisasi_rill_b'] /
                                                 data['anggaran_b']) *
                                             100,
                                         color: Colors.lightGreen,
@@ -199,7 +234,7 @@ class DashboardPage extends StatelessWidget {
                                     pointers: <GaugePointer>[
                                       NeedlePointer(
                                         enableAnimation: true,
-                                        needleColor: Colors.deepPurpleAccent,
+                                        needleColor: Colors.orange,
                                         animationType:
                                             AnimationType.easeOutBack,
                                         animationDuration: 3000,
@@ -254,12 +289,12 @@ class DashboardPage extends StatelessWidget {
                                             TypewriterAnimatedText(
                                               speed: const Duration(
                                                   milliseconds: 150),
-                                              'Total Pengajuan\n$nilaiPengajuan',
+                                              'Total Realisasi\n$nilaiRealisasi',
                                               textAlign: TextAlign.center,
                                               textStyle: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14,
-                                                color: Colors.deepPurpleAccent,
+                                                color: Colors.green,
                                               ),
                                             ),
                                           ],
@@ -273,17 +308,39 @@ class DashboardPage extends StatelessWidget {
                                           animatedTexts: [
                                             TypewriterAnimatedText(
                                               speed: const Duration(
-                                                  milliseconds: 200),
-                                              'Total Realisasi\n$nilaiRealisasi',
+                                                  milliseconds: 150),
+                                              'Total Selisih Pengajuan vs Realisasi\n$nilaiPengajuan',
                                               textAlign: TextAlign.center,
                                               textStyle: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14,
-                                                color: Colors.green,
+                                                color: Colors.orange,
                                               ),
                                             ),
                                           ],
                                           isRepeatingAnimation: false,
+                                        ),
+                                      ),
+                                      GaugeAnnotation(
+                                        angle: 90,
+                                        positionFactor: 1.95,
+                                        widget: AnimatedTextKit(
+                                          animatedTexts: [
+                                            TypewriterAnimatedText(
+                                              speed: const Duration(
+                                                  milliseconds: 150),
+                                              // set text catatanPengajuan
+                                              'Catatan: ${dashboardController.catatanPengajuan}',
+                                              textAlign: TextAlign.center,
+                                              textStyle: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10,
+                                                color: Color.fromARGB(
+                                                    255, 182, 54, 54),
+                                              ),
+                                            ),
+                                          ],
+                                          isRepeatingAnimation: true,
                                         ),
                                       ),
                                     ],

@@ -38,8 +38,8 @@ class NotificationController extends ChangeNotifier {
       LoggerService.logger.i(idMessage.toString());
 
       // Update message isRead to local storage
-      await markAsRead(idMessage);
-      //notifyListeners();
+      //await markAsRead(idMessage);
+      notifyListeners();
     } catch (e) {
       LoggerService.logger.e('Failed to update markAsRead message: $e');
     }

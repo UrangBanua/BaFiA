@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../controllers/penatausahaan/dokumen_kendali_controller.dart';
 import '../../services/logger_service.dart'; // Impor LoggerService
 
@@ -11,6 +12,8 @@ class DokumenKendaliPage extends StatefulWidget {
 class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
   final DokumenKendaliController controller =
       Get.put(DokumenKendaliController());
+  final NumberFormat currencyFormat = NumberFormat.currency(
+      locale: 'id_ID', symbol: 'Rp'); // Define currency format
 
   @override
   void initState() {
@@ -43,8 +46,11 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
               double persentase =
                   calculatePercentage(skpd['realisasi_rill'], skpd['anggaran']);
               return ExpansionTile(
+                backgroundColor: const Color.fromARGB(255, 74, 212, 230),
+                collapsedBackgroundColor: Colors.grey[200],
                 title: Text(
-                    '${skpd['nama_sub_skpd']} \nAnggaran    : ${skpd['anggaran']} \nRealisasi     : ${skpd['realisasi_rill']} \nPersentase : ${persentase.toStringAsFixed(2)}%'),
+                    '${skpd['kode_sub_skpd']} - ${skpd['nama_sub_skpd']} \nAnggaran    : ${currencyFormat.format(skpd['anggaran'])} \nRealisasi     : ${currencyFormat.format(skpd['realisasi_rill'])} \nPersentase : ${persentase.toStringAsFixed(2)}% \nPengajuan  : ${currencyFormat.format(skpd['realisasi_rencana'] - skpd['realisasi_rill'])}',
+                    style: const TextStyle(fontSize: 12, color: Colors.black)),
                 onExpansionChanged: (expanded) {
                   if (expanded) {
                     LoggerService.logger.i(
@@ -71,11 +77,13 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                         itemBuilder: (context, index) {
                           var urusan = controller.kendaliUrusan[index];
                           double persentase = calculatePercentage(
-                              urusan['anggaran'], urusan['realisasi_rill']);
+                              urusan['realisasi_rill'], urusan['anggaran']);
                           return ExpansionTile(
                             collapsedBackgroundColor: Colors.grey[200],
                             title: Text(
-                                '   [ URUSAN ]\n   ${urusan['kode_bidang_urusan']}-${urusan['nama_bidang_urusan']} \n   Anggaran    : ${urusan['anggaran']} \n   Realisasi     : ${urusan['realisasi_rill']} \n   Persentase : ${persentase.toStringAsFixed(2)}%'),
+                                '   [ URUSAN ]\n   ${urusan['kode_bidang_urusan']} - ${urusan['nama_bidang_urusan']} \n   Anggaran    : ${currencyFormat.format(urusan['anggaran'])} \n   Realisasi     : ${currencyFormat.format(urusan['realisasi_rill'])} \n   Persentase : ${persentase.toStringAsFixed(2)}% \n   Pengajuan  : ${currencyFormat.format(urusan['realisasi_rencana'] - urusan['realisasi_rill'])}',
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.black)),
                             onExpansionChanged: (expanded) {
                               if (expanded) {
                                 LoggerService.logger.i(
@@ -113,7 +121,10 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                         collapsedBackgroundColor:
                                             Colors.grey[300],
                                         title: Text(
-                                            '      [ PROGRAM ]\n      ${program['kode_program']}-${program['nama_program']} \n      Anggaran    : ${program['anggaran']} \n      Realisasi     : ${program['realisasi_rill']} \n      Persentase : ${persentase.toStringAsFixed(2)}%'),
+                                            '      [ PROGRAM ]\n${program['kode_program']} - ${program['nama_program']} \n      Anggaran    : ${currencyFormat.format(program['anggaran'])} \n      Realisasi     : ${currencyFormat.format(program['realisasi_rill'])} \n      Persentase : ${persentase.toStringAsFixed(2)}% \n      Pengajuan  : ${currencyFormat.format(program['realisasi_rencana'] - program['realisasi_rill'])}',
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black)),
                                         onExpansionChanged: (expanded) {
                                           if (expanded) {
                                             LoggerService.logger.i(
@@ -155,9 +166,13 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                           kegiatan['anggaran']);
                                                   return ExpansionTile(
                                                     collapsedBackgroundColor:
-                                                        Colors.grey[400],
+                                                        Colors.grey[300],
                                                     title: Text(
-                                                        '         [ KEGIATAN ]\n         ${kegiatan['kode_giat']}-${kegiatan['nama_giat']} \n         Anggaran    : ${kegiatan['anggaran']} \n         Realisasi     : ${kegiatan['realisasi_rill']} \n         Persentase : ${persentase.toStringAsFixed(2)}%'),
+                                                        '         [ KEGIATAN ]\n${kegiatan['kode_giat']} - ${kegiatan['nama_giat']} \n         Anggaran    : ${currencyFormat.format(kegiatan['anggaran'])} \n         Realisasi     : ${currencyFormat.format(kegiatan['realisasi_rill'])} \n         Persentase : ${persentase.toStringAsFixed(2)}% \n         Pengajuan  : ${currencyFormat.format(kegiatan['realisasi_rencana'] - kegiatan['realisasi_rill'])}',
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black)),
                                                     onExpansionChanged:
                                                         (expanded) {
                                                       if (expanded) {
@@ -214,9 +229,14 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                               return ExpansionTile(
                                                                 collapsedBackgroundColor:
                                                                     Colors.grey[
-                                                                        500],
+                                                                        300],
                                                                 title: Text(
-                                                                    '            [ SUBKEGIATAN ]\n            ${subKegiatan['kode_sub_giat']}-${subKegiatan['nama_sub_giat']} \n            Anggaran    : ${subKegiatan['anggaran']} \n            Realisasi     : ${subKegiatan['realisasi_rill']} \n            Persentase : ${persentase.toStringAsFixed(2)}%'),
+                                                                    '            [ SUBKEGIATAN ]\n${subKegiatan['kode_sub_giat']} - ${subKegiatan['nama_sub_giat']} \n            Anggaran    : ${currencyFormat.format(subKegiatan['anggaran'])} \n            Realisasi     : ${currencyFormat.format(subKegiatan['realisasi_rill'])} \n            Persentase : ${persentase.toStringAsFixed(2)}% \n            Pengajuan  : ${currencyFormat.format(subKegiatan['realisasi_rencana'] - subKegiatan['realisasi_rill'])}',
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        color: Colors
+                                                                            .black)),
                                                                 onExpansionChanged:
                                                                     (expanded) {
                                                                   if (expanded) {
@@ -274,10 +294,16 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                               persentase =
                                                                               calculatePercentage(rekening['realisasi_rill'], rekening['anggaran']);
                                                                           return ListTile(
-                                                                            collapsedBackgroundColor:
-                                                                                Colors.grey[600],
+                                                                            tileColor:
+                                                                                Colors.grey[300],
+                                                                            titleTextStyle:
+                                                                                const TextStyle(fontSize: 12),
+                                                                            textColor:
+                                                                                Colors.black,
                                                                             title:
-                                                                                Text('               [ REKENING ]\n               ${rekening['kode_akun']}-${rekening['nama_akun']} \n               Anggaran    : ${rekening['anggaran']} \n               Realisasi     : ${rekening['realisasi_rill']} \n               Persentase : ${persentase.toStringAsFixed(2)}%'),
+                                                                                Text(
+                                                                              '               [ REKENING ]\n${rekening['kode_akun']} - ${rekening['nama_akun']} \n               Anggaran    : ${currencyFormat.format(rekening['anggaran'])} \n               Realisasi     : ${currencyFormat.format(rekening['realisasi_rill'])} \n               Persentase : ${persentase.toStringAsFixed(2)}% \n               Pengajuan  : ${currencyFormat.format(rekening['realisasi_rencana'] - rekening['realisasi_rill'])}',
+                                                                            ),
                                                                           );
                                                                         },
                                                                       );

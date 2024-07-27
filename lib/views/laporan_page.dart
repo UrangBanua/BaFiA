@@ -15,34 +15,46 @@ class LaporanPage extends StatelessWidget {
       filteredButtonsAkuntansiPertanggungjawaban = ValueNotifier([]);
 
   final List<Map<String, dynamic>> buttonsPenatausahaanRegister = [
-    {'icon': Icons.attach_money, 'text': 'STBP'},
+    {'icon': Icons.request_page, 'text': 'STBP'},
     {'icon': Icons.receipt, 'text': 'STS'},
-    {'icon': Icons.attach_money, 'text': 'SPP'},
-    {'icon': Icons.payment, 'text': 'SPM'},
-    {'icon': Icons.receipt, 'text': 'SP2D'},
-    {'icon': Icons.account_balance_wallet, 'text': 'TBP GU'},
-    {'icon': Icons.request_page, 'text': 'Pengajuan TU'},
+    {
+      'icon': Icons.assignment_add,
+      'color': const Color.fromARGB(255, 42, 104, 211),
+      'text': 'TBP GU'
+    },
+    {
+      'icon': Icons.request_page,
+      'color': const Color.fromARGB(255, 42, 104, 211),
+      'text': 'Ajuan TU'
+    },
+    {'icon': Icons.request_page, 'color': Colors.blue, 'text': 'SPP'},
+    {'icon': Icons.payment, 'color': Colors.blue, 'text': 'SPM'},
+    {'icon': Icons.receipt, 'color': Colors.blue, 'text': 'SP2D'},
   ];
 
   final List<Map<String, dynamic>> buttonsPenatausahaanLaporan = [
-    {'icon': Icons.report, 'text': 'LPJ UP/GU'},
-    {'icon': Icons.report, 'text': 'LPJ TU'},
-    {'icon': Icons.report, 'text': 'LPJ Administratif'},
-    {'icon': Icons.report, 'text': 'LPJ Fungsional'},
+    {'icon': Icons.receipt, 'text': 'LPJ UP/GU'},
+    {'icon': Icons.receipt, 'text': 'LPJ TU'},
+    {'icon': Icons.receipt, 'color': Colors.green, 'text': 'LPJ Admi'},
+    {'icon': Icons.receipt, 'color': Colors.green, 'text': 'LPJ Fung'},
   ];
 
   final List<Map<String, dynamic>> buttonsAkuntansiLaporan = [
-    {'icon': Icons.account_balance, 'text': 'LRA'},
-    {'icon': Icons.account_balance, 'text': 'LO'},
-    {'icon': Icons.account_balance, 'text': 'LPE'},
-    {'icon': Icons.account_balance, 'text': 'Neraca'},
-    {'icon': Icons.account_balance, 'text': 'LPSAL'},
-    {'icon': Icons.account_balance, 'text': 'LAK'},
+    {'icon': Icons.analytics, 'text': 'LRA'},
+    {'icon': Icons.analytics, 'text': 'LO'},
+    {'icon': Icons.analytics, 'color': Colors.orange, 'text': 'LPE'},
+    {'icon': Icons.analytics, 'color': Colors.orange, 'text': 'Neraca'},
+    {
+      'icon': Icons.assessment,
+      'color': Colors.deepOrangeAccent,
+      'text': 'LPSAL'
+    },
+    {'icon': Icons.assessment, 'color': Colors.deepOrangeAccent, 'text': 'LAK'},
   ];
 
   final List<Map<String, dynamic>> buttonsAkuntansiPertanggungjawaban = [
-    {'icon': Icons.gavel, 'text': 'PERDA'},
-    {'icon': Icons.gavel, 'text': 'PERBUP'},
+    {'icon': Icons.gavel, 'color': Colors.cyan, 'text': 'PERDA'},
+    {'icon': Icons.gavel, 'color': Colors.cyan, 'text': 'PERBUP'},
   ];
 
   LaporanPage() {
@@ -109,13 +121,18 @@ class LaporanPage extends StatelessWidget {
                 margin: const EdgeInsets.all(8.0),
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: Colors.lightBlueAccent),
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Penatausahaan - Register Pendapatan & Belanja'),
+                    const Text(
+                      'Penatausahaan - Register Pendapatan & Belanja',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                     // tambahkan jarak antara judul dan daftar laporan
                     const SizedBox(height: 16.0),
                     ValueListenableBuilder<List<Map<String, dynamic>>>(
@@ -130,12 +147,16 @@ class LaporanPage extends StatelessWidget {
                                 ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
                                     padding: const EdgeInsets.all(20),
+                                    backgroundColor: Colors
+                                        .transparent, // Set background color to transparent
+                                    elevation: 0, // Remove elevation
                                   ),
-                                  child: Icon(button['icon']),
+                                  child: Icon(
+                                    button['icon'],
+                                    color: button['color'],
+                                    size: 36.0,
+                                  ),
                                 ),
                                 Text(button['text']),
                               ],
@@ -155,13 +176,18 @@ class LaporanPage extends StatelessWidget {
                 margin: const EdgeInsets.all(8.0),
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: Colors.lightBlueAccent),
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Penatausahaan - Laporan Pertanggungjawaban'),
+                    const Text(
+                      'Penatausahaan - Laporan Pertanggungjawaban',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                     // tambahkan jarak antara judul dan daftar laporan
                     const SizedBox(height: 16.0),
                     ValueListenableBuilder<List<Map<String, dynamic>>>(
@@ -176,12 +202,16 @@ class LaporanPage extends StatelessWidget {
                                 ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
                                     padding: const EdgeInsets.all(20),
+                                    backgroundColor: Colors
+                                        .transparent, // Set background color to transparent
+                                    elevation: 0, // Remove elevation
                                   ),
-                                  child: Icon(button['icon']),
+                                  child: Icon(
+                                    button['icon'],
+                                    color: button['color'],
+                                    size: 36.0,
+                                  ),
                                 ),
                                 Text(button['text']),
                               ],
@@ -201,13 +231,18 @@ class LaporanPage extends StatelessWidget {
                 margin: const EdgeInsets.all(8.0),
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: Colors.lightBlueAccent),
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Akuntansi - Laporan Keuangan'),
+                    const Text(
+                      'Akuntansi - Laporan Keuangan',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                     // tambahkan jarak antara judul dan daftar laporan
                     const SizedBox(height: 16.0),
                     ValueListenableBuilder<List<Map<String, dynamic>>>(
@@ -222,12 +257,16 @@ class LaporanPage extends StatelessWidget {
                                 ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
                                     padding: const EdgeInsets.all(20),
+                                    backgroundColor: Colors
+                                        .transparent, // Set background color to transparent
+                                    elevation: 0, // Remove elevation
                                   ),
-                                  child: Icon(button['icon']),
+                                  child: Icon(
+                                    button['icon'],
+                                    color: button['color'],
+                                    size: 36.0,
+                                  ),
                                 ),
                                 Text(button['text']),
                               ],
@@ -247,13 +286,18 @@ class LaporanPage extends StatelessWidget {
                 margin: const EdgeInsets.all(8.0),
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: Colors.lightBlueAccent),
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Akuntansi - Laporan Pertanggungjawaban'),
+                    const Text(
+                      'Akuntansi - Laporan Pertanggungjawaban',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                     // tambahkan jarak antara judul dan daftar laporan
                     const SizedBox(height: 16.0),
                     ValueListenableBuilder<List<Map<String, dynamic>>>(
@@ -269,12 +313,23 @@ class LaporanPage extends StatelessWidget {
                                 ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
+                                    /* foregroundColor: Colors.white,
+                                    backgroundColor:
+                                        Colors.orangeAccent, // Text color
+                                    shadowColor: Colors.black,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
+                                      borderRadius: BorderRadius.circular(15.0), 
+                                    ),*/
                                     padding: const EdgeInsets.all(20),
+                                    backgroundColor: Colors
+                                        .transparent, // Set background color to transparent
+                                    elevation: 0,
                                   ),
-                                  child: Icon(button['icon']),
+                                  child: Icon(
+                                    button['icon'],
+                                    color: button['color'],
+                                    size: 36.0,
+                                  ),
                                 ),
                                 Text(button['text']),
                               ],

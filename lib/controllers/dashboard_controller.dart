@@ -10,6 +10,7 @@ class DashboardController extends GetxController {
   var userData = {}.obs;
   var isLoading = true.obs;
   var hasError = false.obs;
+  var catatanPengajuan = '';
 
   @override
   void onInit() async {
@@ -45,6 +46,7 @@ class DashboardController extends GetxController {
       LoggerService.logger.i('[DashboardController] Dashboard data fetched');
       dashboardData.assignAll(data);
       LoggerService.logger.i('[DashboardController] Dashboard data assigned');
+      updateCatatanPengajuan();
     } catch (e) {
       LoggerService.logger.e('Error fetching dashboard data: $e');
       hasError(true);
@@ -52,6 +54,19 @@ class DashboardController extends GetxController {
     } finally {
       isLoading(false);
       LoggerService.logger.i('[DashboardController] isLoading set to false');
+    }
+  }
+
+  void updateCatatanPengajuan() {
+    if (dashboardData.isNotEmpty) {
+      var realisasiRencanaB = dashboardData[0]['realisasi_rencana_b'] ?? 0;
+      var realisasiRillB = dashboardData[0]['realisasi_rill_b'] ?? 0;
+      if ((realisasiRencanaB - realisasiRillB) > 0) {
+        catatanPengajuan =
+            'Cek Kendali untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan,\n nilai ini juga termasuk dari jumlah pengembalian belanja';
+      } else {
+        catatanPengajuan = 'Rencana anda sama dengan Realisai';
+      }
     }
   }
 

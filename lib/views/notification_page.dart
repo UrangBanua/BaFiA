@@ -93,7 +93,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                 ),
                                 onTap: () {
                                   if (notificationIndex != -1) {
-                                    controller.markAsRead(notificationIndex);
+                                    controller.markAsRead(notification['id']);
                                   } else {
                                     // Handle the error case if needed
                                     print(

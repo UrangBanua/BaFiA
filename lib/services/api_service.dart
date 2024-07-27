@@ -30,29 +30,109 @@ class ApiService {
     }
   }
 
+  // fungsi post request with header
+  static Future<http.Response> _postRequest(
+      String url, Map<String, dynamic> body, Map<String, String> headers) {
+    return client
+        .post(
+          Uri.parse(url),
+          headers: headers,
+          body: json.encode(body),
+        )
+        .timeout(const Duration(seconds: timeoutDuration));
+  }
+
+  // fungsi get request
+  static Future<http.Response> _getRequest(
+      String url, Map<String, String> headers) {
+    return client
+        .get(
+          Uri.parse(url),
+          headers: headers,
+        )
+        .timeout(const Duration(seconds: timeoutDuration));
+  }
+
+  // fungsi handle error
+  static void _handleError(http.Response response, String message) {
+    LoggerService.logger.e('$message. Status code: ${response.statusCode}');
+    Get.snackbar('Error', message);
+  }
+
+  // fungsi handle exception
+  static void _handleException(Exception e, String message) {
+    if (e is TimeoutException) {
+      LoggerService.logger.e('$message: Request timeout');
+      Get.snackbar('Timeout', '$message: Request timeout');
+    } else {
+      LoggerService.logger.e('$message: $e');
+      Get.snackbar('Error', message);
+    }
+  }
+
+  // rest api get captcha image
+  static Future<Map<String, dynamic>?> getCaptchaImage() async {
+    LoggerService.logger.i('Attempting to get captcha image');
+    try {
+      final response = await _getRequest(
+        '$apiServiceUrl/auth/captcha/new',
+        isDevelopmentMode
+            ? {
+                'x-api-key': fakeXApiKey ?? '',
+                'Content-Type': 'application/json'
+              }
+            : {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i('Captcha image fetched successfully');
+        return json.decode(response.body);
+      } else {
+        _handleError(response, 'Failed to get captcha image');
+      }
+    } catch (e) {
+      _handleException(e as Exception, 'Captcha image request failed');
+    }
+    return null;
+  }
+
+  // rest api login
   static Future<Map<String, dynamic>?> login(
       String year, String username, String password, String captcha) async {
     LoggerService.logger.i('Attempting to login with username: $username');
     try {
-      final response = await _postRequest(
-        '$apiServiceUrl/auth/auth/pre-login',
-        {
-          'username': username,
-          'password': password,
-          'tahun': year,
-        },
-        isDevelopmentMode ? {'x-api-key': fakeXApiKey ?? ''} : {},
-      );
+      final pHeaders =
+          isDevelopmentMode ? {'x-api-key': fakeXApiKey ?? ''} : {};
+      final response = await client.post(
+          Uri.parse('$apiServiceUrl/auth/auth/pre-login'),
+          headers: isDevelopmentMode ? pHeaders as Map<String, String>? : null,
+          body: {
+            'username': username,
+            'password': password,
+            'tahun': year
+          }).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Login successful for username: $username');
         final data = (json.decode(response.body) as List).first;
         return data;
       } else {
-        _handleError(response, 'Login failed for username: $username');
+        LoggerService.logger.e(
+            'Login failed for username: $username. Status code: ${response.statusCode}');
+        Get.snackbar('Error', 'Login failed');
+        throw Exception(
+            'Login failed'); // Throw an exception instead of rethrowing
       }
     } catch (e) {
-      _handleException(e as Exception, 'Login request failed');
+      if (e is TimeoutException) {
+        LoggerService.logger.e('Login request timeout for from service server');
+        Get.snackbar('Timeout', 'Login request timeout');
+        // Handle the TimeoutException accordingly
+      } else {
+        LoggerService.logger.e('Login request failed for from service server');
+        Get.snackbar(
+            'Failed', 'Login request failed'); // Handle other exceptions
+      }
     }
     return null;
   }
@@ -130,67 +210,6 @@ class ApiService {
       }
     } catch (e) {
       _handleException(e as Exception, 'Sync dashboard to local db failed');
-    }
-  }
-
-  static Future<Map<String, dynamic>?> getCaptchaImage() async {
-    LoggerService.logger.i('Attempting to get captcha image');
-    try {
-      final response = await _getRequest(
-        '$apiServiceUrl/auth/captcha/new',
-        isDevelopmentMode
-            ? {
-                'x-api-key': fakeXApiKey ?? '',
-                'Content-Type': 'application/json'
-              }
-            : {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        LoggerService.logger.i('Captcha image fetched successfully');
-        return json.decode(response.body);
-      } else {
-        _handleError(response, 'Failed to get captcha image');
-      }
-    } catch (e) {
-      _handleException(e as Exception, 'Captcha image request failed');
-    }
-    return null;
-  }
-
-  static Future<http.Response> _postRequest(
-      String url, Map<String, dynamic> body, Map<String, String> headers) {
-    return client
-        .post(
-          Uri.parse(url),
-          headers: headers,
-          body: json.encode(body),
-        )
-        .timeout(const Duration(seconds: timeoutDuration));
-  }
-
-  static Future<http.Response> _getRequest(
-      String url, Map<String, String> headers) {
-    return client
-        .get(
-          Uri.parse(url),
-          headers: headers,
-        )
-        .timeout(const Duration(seconds: timeoutDuration));
-  }
-
-  static void _handleError(http.Response response, String message) {
-    LoggerService.logger.e('$message. Status code: ${response.statusCode}');
-    Get.snackbar('Error', message);
-  }
-
-  static void _handleException(Exception e, String message) {
-    if (e is TimeoutException) {
-      LoggerService.logger.e('$message: Request timeout');
-      Get.snackbar('Timeout', '$message: Request timeout');
-    } else {
-      LoggerService.logger.e('$message: $e');
-      Get.snackbar('Error', message);
     }
   }
 
