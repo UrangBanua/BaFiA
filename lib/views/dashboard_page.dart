@@ -5,13 +5,16 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import '../controllers/dashboard_controller.dart';
+import '../controllers/notification_controller.dart';
+import '/services/logger_service.dart';
 
 // ignore: must_be_immutable
 class DashboardPage extends StatelessWidget {
-  int notificationCount = 3;
-//  var catatanPengajuan = '';
+  int notificationCount = 0;
   final DashboardController dashboardController =
       Get.put(DashboardController());
+  final NotificationController notificationController =
+      Get.put(NotificationController()); // Initialize NotificationController
   DateTime? currentBackPressTime;
 
   DashboardPage({super.key});
@@ -94,23 +97,9 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-/*   void updateCatatanPengajuan() {
-    if (dashboardController.dashboardData.isNotEmpty) {
-      var realisasiRencanaB =
-          dashboardController.dashboardData[0]['realisasi_rencana_b'] ?? 0;
-      var realisasiRillB =
-          dashboardController.dashboardData[0]['realisasi_rill_b'] ?? 0;
-      if ((realisasiRencanaB - realisasiRillB) > 0) {
-        catatanPengajuan =
-            'Cek Kendali untuk memastikan pengajuan realisasi tidak terkendala dalam proses dan \npastikan kembali pengajuan benar-benar sesuai dengan yg diinginkan.';
-      } else {
-        catatanPengajuan = 'Rencana anda sama dengan Realisai';
-      }
-    }
-  } */
-
   @override
   Widget build(BuildContext context) {
+    notificationCount = notificationController.notifications.length;
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
@@ -128,8 +117,48 @@ class DashboardPage extends StatelessWidget {
         return true;
       },
       child: Scaffold(
-        appBar:
-            AppBar(title: const Text('Serapan Realisasi'), centerTitle: true),
+        appBar: AppBar(
+          title: const Text('Serapan Realisasi'),
+          centerTitle: true,
+          actions: [
+            Stack(
+              children: [
+                IconButton(
+                  icon:
+                      const Icon(Icons.notifications, color: Colors.blueAccent),
+                  onPressed: () {
+                    // Handle notification icon press
+                    Get.toNamed('/notification');
+                  },
+                ),
+                if (notificationCount > 0)
+                  Positioned(
+                    right: 11,
+                    top: 11,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 14,
+                        minHeight: 14,
+                      ),
+                      child: Text(
+                        '$notificationCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
         drawer: DrawerMenu(),
         body: Stack(
           children: [
@@ -139,7 +168,9 @@ class DashboardPage extends StatelessWidget {
               } else if (dashboardController.hasError.value) {
                 return const Center(child: Text('Failed to load data'));
               } else {
-                //updateCatatanPengajuan();
+                notificationCount = notificationController.notifications.length;
+                LoggerService.logger
+                    .i('Notification Count: $notificationCount');
                 return Stack(
                   children: [
                     RefreshIndicator(
@@ -194,7 +225,6 @@ class DashboardPage extends StatelessWidget {
                                     labelOffset: 30,
                                     radiusFactor: 0.95,
                                     ranges: <GaugeRange>[
-                                      // GaugeRange Anggaran
                                       GaugeRange(
                                         startValue: 0,
                                         endValue: 100,
@@ -202,7 +232,6 @@ class DashboardPage extends StatelessWidget {
                                         startWidth: 10,
                                         endWidth: 30,
                                       ),
-                                      // GaugeRange Rencana
                                       GaugeRange(
                                         label: ((data['realisasi_rencana_b'] /
                                                     data['anggaran_b']) *
@@ -216,7 +245,6 @@ class DashboardPage extends StatelessWidget {
                                         startWidth: 10,
                                         endWidth: 30,
                                       ),
-                                      // GaugeRange Realisasi
                                       GaugeRange(
                                         label: ((data['realisasi_rill_b'] /
                                                     data['anggaran_b']) *
@@ -329,7 +357,6 @@ class DashboardPage extends StatelessWidget {
                                             TypewriterAnimatedText(
                                               speed: const Duration(
                                                   milliseconds: 150),
-                                              // set text catatanPengajuan
                                               'Catatan: ${dashboardController.catatanPengajuan}',
                                               textAlign: TextAlign.center,
                                               textStyle: const TextStyle(
@@ -367,42 +394,6 @@ class DashboardPage extends StatelessWidget {
                     children: [
                       // ignore: deprecated_member_use
                       FaIcon(FontAwesomeIcons.home),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 60.0, right: 16.0),
-                child: FloatingActionButton(
-                  mini: true,
-                  onPressed: () {
-                    Get.toNamed('/notification');
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const Icon(Icons.notifications),
-                      if (notificationCount > 0)
-                        Positioned(
-                          top: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            child: Text(
-                              '$notificationCount',
-                              style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.black
-                                    : Colors.white,
-                                fontSize: 10,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),

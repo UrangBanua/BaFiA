@@ -10,12 +10,14 @@ class NotificationPage extends StatefulWidget {
   _NotificationPageState createState() => _NotificationPageState();
 }
 
+// notification page state
 class _NotificationPageState extends State<NotificationPage> {
   late NotificationController _controller;
 
   @override
   void initState() {
     super.initState();
+    // initialize notification controller
     _controller = NotificationController();
   }
 

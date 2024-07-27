@@ -7,10 +7,15 @@ class NotificationController extends ChangeNotifier {
   List<Map<String, dynamic>> _notifications = [];
   String _selectedCategory = 'Semua';
 
+  static var to;
+
   NotificationController() {
     _loadNotifications();
   }
 
+  get notificationCount => null;
+
+  // Load notifications from local storage
   Future<void> _loadNotifications() async {
     _notifications = await LocalStorageService.getMessages();
     // show log data message
@@ -18,6 +23,7 @@ class NotificationController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Getter and Setter
   List<Map<String, dynamic>> get notifications => _notifications;
 
   set notifications(List<Map<String, dynamic>> notifications) {
@@ -32,6 +38,7 @@ class NotificationController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Mark message as read
   Future<void> markAsRead(int idMessage) async {
     try {
       // log idMessage
@@ -45,6 +52,7 @@ class NotificationController extends ChangeNotifier {
     }
   }
 
+  // Filter notifications by category
   List<Map<String, dynamic>> filterNotificationsByCategory(String category) {
     if (category == 'Semua') {
       return _notifications;
@@ -54,6 +62,7 @@ class NotificationController extends ChangeNotifier {
         .toList();
   }
 
+  // Group notifications by date
   Map<String, List<Map<String, dynamic>>> groupNotificationsByDate(
       List<Map<String, dynamic>> notifications) {
     final Map<String, List<Map<String, dynamic>>> groupedNotifications = {};
