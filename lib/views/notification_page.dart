@@ -26,7 +26,7 @@ class _NotificationPageState extends State<NotificationPage> {
       create: (_) => _controller,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Notifications'),
+          title: const Text('Kotak Pesan'),
         ),
         body: Column(
           children: [
@@ -73,7 +73,7 @@ class _NotificationPageState extends State<NotificationPage> {
                             ),
                           ),
                           ...notificationsForDate.asMap().entries.map((entry) {
-                            final notificationIndex = entry.key;
+                            //final notificationIndex = entry.key;
                             final notification = entry.value;
                             final isRead = notification['isRead'] as String;
                             return Dismissible(
@@ -113,10 +113,27 @@ class _NotificationPageState extends State<NotificationPage> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
+                                        final link = notification['link'];
+                                        final isImage = link.endsWith('.gif') ||
+                                            link.endsWith('.jpg') ||
+                                            link.endsWith('.png');
                                         return AlertDialog(
                                           title: Text(notification['title']),
-                                          content:
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
                                               Text(notification['content']),
+                                              if (isImage) ...[
+                                                const SizedBox(height: 10),
+                                                Image.network(link),
+                                              ] else ...[
+                                                const SizedBox(height: 10),
+                                                Text(link,
+                                                    style: const TextStyle(
+                                                        color: Colors.blue)),
+                                              ],
+                                            ],
+                                          ),
                                           actions: [
                                             TextButton(
                                               onPressed: () {

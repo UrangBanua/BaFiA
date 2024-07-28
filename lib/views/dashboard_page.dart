@@ -124,8 +124,8 @@ class DashboardPage extends StatelessWidget {
             Stack(
               children: [
                 IconButton(
-                  icon:
-                      const Icon(Icons.notifications, color: Colors.blueAccent),
+                  icon: const Icon(Icons.notifications_active,
+                      color: Colors.blueAccent),
                   onPressed: () {
                     // Handle notification icon press
                     Get.toNamed('/notification');

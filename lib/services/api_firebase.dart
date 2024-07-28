@@ -42,6 +42,16 @@ class ApiFirebase {
 
     LoggerService.logger.i('FCM Token: $fCMToken');
 
+    // Set Channel ID for Android
+    if (!kIsWeb) {
+      await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      await _firebaseMessaging.setAutoInitEnabled(true);
+    }
+
     // Subscribe to the 'bafia-info' topic
     await _firebaseMessaging.subscribeToTopic('bafia-info');
     LoggerService.logger.i('Subscribed to topic: bafia-info');

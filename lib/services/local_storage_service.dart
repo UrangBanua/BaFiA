@@ -85,9 +85,9 @@ class LocalStorageService {
         title TEXT,
         content TEXT,
         category TEXT,
-        action TEXT,
-        link TEXT,
-        date DATETIME,
+        action TEXT DEFAULT 'n/a',
+        link TEXT DEFAULT '#',
+        date DATETIME DEFAULT CURRENT_TIMESTAMP,
         isRead TEXT DEFAULT 'false',
         time_update DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -177,20 +177,37 @@ class LocalStorageService {
   static Future<void> saveMessageData(Map<String, dynamic> messageData) async {
     final db = await database;
     LoggerService.logger.i("Saving message data");
-    List<Map<String, dynamic>> existingMessage = await db.query(
-      'notification',
-      where: 'id = ?',
-      whereArgs: [messageData['id']],
-    );
-    if (existingMessage.isNotEmpty) {
-      await db.update(
+
+    // Periksa apakah `messageData` memiliki `id`
+    if (messageData.containsKey('id') && messageData['id'] != null) {
+      List<Map<String, dynamic>> existingMessage = await db.query(
         'notification',
-        messageData,
         where: 'id = ?',
         whereArgs: [messageData['id']],
       );
-      LoggerService.logger.i("Message data updated.");
+
+      if (existingMessage.isNotEmpty) {
+        // Update data jika `id` sudah ada di database
+        await db.update(
+          'notification',
+          messageData,
+          where: 'id = ?',
+          whereArgs: [messageData['id']],
+        );
+        LoggerService.logger.i("Message data updated.");
+      } else {
+        // Hapus `id` dari `messageData` sebelum insert
+        messageData.remove('id');
+        await db.insert(
+          'notification',
+          messageData,
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        LoggerService.logger.i("Message data inserted.");
+      }
     } else {
+      // Hapus `id` dari `messageData` sebelum insert
+      messageData.remove('id');
       await db.insert(
         'notification',
         messageData,

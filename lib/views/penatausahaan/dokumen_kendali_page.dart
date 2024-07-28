@@ -26,11 +26,39 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
     return (anggaran / realisasiRill) * 100;
   }
 
+  void _showExplanationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Penjelasan'),
+          content: const Text(
+              'Cek Kendali ini befungsi untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan,\n nilai ini juga termasuk dari jumlah pengembalian belanja'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dokumen Kendali'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.contact_support, color: Colors.blueAccent),
+            //onPressed: showDialog
+            onPressed: _showExplanationDialog,
+          ),
+        ],
       ),
       body: Obx(() {
         LoggerService.logger.i('Fetching kendaliSkpd data'); // Logging

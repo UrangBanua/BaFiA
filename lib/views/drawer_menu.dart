@@ -14,20 +14,96 @@ class DrawerMenu extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
+          DrawerHeader(
+            decoration: const BoxDecoration(
               color: Colors.blue,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Menu',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                   ),
                 ),
+                Obx(() {
+                  return FutureBuilder<ImageProvider<Object>>(
+                    future: userController.getProfileImage(
+                        userController.userData['profile_photo']),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          padding:
+                              const EdgeInsets.all(2), // Padding untuk border
+                          decoration: const BoxDecoration(
+                            color: Colors.blue, // Warna border
+                            shape: BoxShape.circle,
+                          ),
+                          child: const CircleAvatar(
+                            radius:
+                                38, // Kurangi radius untuk memberi ruang pada border
+                            backgroundColor: Colors.grey,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Container(
+                          padding:
+                              const EdgeInsets.all(2), // Padding untuk border
+                          decoration: const BoxDecoration(
+                            color: Colors.blue, // Warna border
+                            shape: BoxShape.circle,
+                          ),
+                          child: const CircleAvatar(
+                            radius:
+                                38, // Kurangi radius untuk memberi ruang pada border
+                            backgroundColor: Colors.red,
+                            child: Icon(
+                              Icons.error,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      } else if (snapshot.hasData) {
+                        return Container(
+                          padding:
+                              const EdgeInsets.all(2), // Padding untuk border
+                          decoration: const BoxDecoration(
+                            color: Colors.blue, // Warna border
+                            shape: BoxShape.circle,
+                          ),
+                          child: CircleAvatar(
+                            radius:
+                                38, // Kurangi radius untuk memberi ruang pada border
+                            backgroundImage: snapshot.data!,
+                          ),
+                        );
+                      } else {
+                        return Container(
+                          padding:
+                              const EdgeInsets.all(2), // Padding untuk border
+                          decoration: const BoxDecoration(
+                            color: Colors.blue, // Warna border
+                            shape: BoxShape.circle,
+                          ),
+                          child: const CircleAvatar(
+                            radius:
+                                38, // Kurangi radius untuk memberi ruang pada border
+                            backgroundColor: Colors.grey,
+                            child: Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                }),
                 /* IconButton(
                   icon: Icon(
                     Get.isDarkMode ? Icons.wb_sunny : Icons.nights_stay,
