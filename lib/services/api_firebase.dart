@@ -3,9 +3,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:url_launcher/url_launcher.dart';
-import '../main.dart';
-import 'local_storage_service.dart';
+//import 'package:url_launcher/url_launcher.dart';
+//import '../main.dart';
+//import 'local_storage_service.dart';
 import 'logger_service.dart';
 
 class ApiFirebase {
@@ -57,7 +57,7 @@ class ApiFirebase {
     LoggerService.logger.i('Subscribed to topic: bafia-info');
   }
 
-  Future<void> handleMessage(RemoteMessage? message) async {
+  /* Future<void> handleMessage(RemoteMessage? message) async {
     if (message == null) return;
 
     final link = message.data['link'];
@@ -97,5 +97,5 @@ class ApiFirebase {
         }
       });
     }
-  }
+  } */
 }

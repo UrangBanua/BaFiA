@@ -15,6 +15,7 @@ import 'services/local_storage_service.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   LoggerService.logger.i('Handling a background message: ${message.messageId}');
   if (message.data.isNotEmpty) {
@@ -37,12 +38,12 @@ void main() async {
   } catch (error) {
     LoggerService.logger.e(error);
   } finally {
+    if (!kIsWeb) {
     // Initialize Firebase App Messaging
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
       name: 'BaFiA_PushNotif',
     );
-    if (!kIsWeb) {
       await ApiFirebase().initNotifications();
     }
   }
