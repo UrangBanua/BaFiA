@@ -1,4 +1,4 @@
-import 'package:workmanager/workmanager.dart';
+/* import 'package:workmanager/workmanager.dart';
 import 'logger_service.dart';
 import 'local_storage_service.dart';
 
@@ -11,4 +11,4 @@ void callbackDispatcher() {
     }
     return Future.value(true);
   });
-}
+} */

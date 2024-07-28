@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
