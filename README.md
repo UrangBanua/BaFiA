@@ -15,7 +15,6 @@
 <li>[✅] Modul Akuntansi - Laporan LRA &amp; LO.</li>
 <li>[⛔] Masih versi awal, menu pada Penatausahaan &amp; Akuntansi beberapa masih dalam tahap pengembangan.</li>
 </ul>
-<p>&nbsp;</p>
 <table style="width: 100%; border-collapse: collapse; border-style: hidden; margin-left: auto; margin-right: auto;" border="0">
 <tbody>
 <tr>
