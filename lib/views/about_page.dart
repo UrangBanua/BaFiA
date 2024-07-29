@@ -26,7 +26,7 @@ class AboutPage extends StatelessWidget {
             padding: EdgeInsets.all(16.0),
             child: Linkify(
               text:
-                  'Cek release versi terbaru disini\nhttps://github.com/UrangBanua/BaFiA/releases/tag/pre-release',
+                  'Cek release versi terbaru disini\nhttps://github.com/UrangBanua/BaFiA/releases',
               options: LinkifyOptions(humanize: false),
             ),
           ),
