@@ -1,6 +1,28 @@
-<img align="left" width="150" height="150" src="https://github.com/user-attachments/assets/ecb0faba-bdcf-4ce0-abe1-3a178897d054">
-<p align="center">
-  Barabai Financial Assistant (BaFiA)
-</p>
-<p align="center">
-  Aplikasi Asisten Keuangan khususnya untuk Keluarga LKPD Kabupaten Hulu Sungai Tengah
+<p><img src="https://github.com/user-attachments/assets/ecb0faba-bdcf-4ce0-abe1-3a178897d054" width="150" height="150" align="left" /></p>
+<h1 align="center">Barabai Financial Assistant (BaFiA)</h1>
+<p align="center"><strong>Aplikasi Asisten Keuangan khususnya untuk Keluarga LKPD Kabupaten Hulu Sungai Tengah</strong></p>
+<p align="center">&nbsp;</p>
+<p align="center">&nbsp;</p>
+<ul style="list-style-type: circle;">
+<li>[✅] Fitur sudah menggunakan data penyimpanan lokal (sqlite), jika servcie server gagal dimuat maka data lokal yg akan di baca.</li>
+<li>[✅] Fitur login menggunakan captcha meyesuaikan dengan security service server.</li>
+<li>[✅] Fitur penggantian tema, Light &amp; Dark mode.</li>
+<li>[✅] Penambahan Serapan Realisasi per SKPD pada menu Dashboard.</li>
+<li>[✅] Fitur pull sysc server - lokal data pada halaman dashboard, dengan performa yg lebih efektif dan cepat.</li>
+<li>[✅] Fitur Push Notifikasi realtime untuk pengguna yg sudah registrasi/login menggunakan Firebase Messaging.</li>
+<li>[✅] Fitur Push Notifikasi realtime background, tanpa membuka aplikasi.</li>
+<li>[✅] Modul Penatausahaan - Dokumen Kendali.</li>
+<li>[✅] Modul Akuntansi - Laporan LRA &amp; LO.</li>
+<li>[⛔] Masih versi awal, menu pada Penatausahaan &amp; Akuntansi beberapa masih dalam tahap pengembangan.</li>
+</ul>
+<p>&nbsp;</p>
+<table style="width: 100%; border-collapse: collapse; border-style: hidden; margin-left: auto; margin-right: auto;" border="0">
+<tbody>
+<tr>
+<td style="width: 25%;"><img style="float: right;" src="https://github.com/user-attachments/assets/5ff480b0-cd7a-4b44-996b-a379437d63af" width="250" height="450" align="left" /></td>
+<td style="width: 25%;"><img style="float: left;" src="https://github.com/user-attachments/assets/86a3a7aa-d5c4-4a52-90bc-61a52d5f529a" width="250" height="450" align="left" /></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
