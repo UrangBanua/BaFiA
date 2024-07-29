@@ -33,7 +33,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
         return AlertDialog(
           title: const Text('Penjelasan'),
           content: const Text(
-              'Cek Kendali ini befungsi untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan,\n nilai ini juga termasuk dari jumlah pengembalian belanja'),
+              'Dokumen Kendali ini befungsi untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan.\nNilai ini juga termasuk dari jumlah pengembalian belanja'),
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
@@ -74,8 +74,8 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
               double persentase =
                   calculatePercentage(skpd['realisasi_rill'], skpd['anggaran']);
               return ExpansionTile(
-                backgroundColor: const Color.fromARGB(255, 74, 212, 230),
-                collapsedBackgroundColor: Colors.grey[200],
+                backgroundColor: Colors.blueGrey[100],
+                collapsedBackgroundColor: Colors.grey[100],
                 title: Text(
                     '${skpd['kode_sub_skpd']} - ${skpd['nama_sub_skpd']} \nAnggaran    : ${currencyFormat.format(skpd['anggaran'])} \nRealisasi     : ${currencyFormat.format(skpd['realisasi_rill'])} \nPersentase : ${persentase.toStringAsFixed(2)}% \nPengajuan  : ${currencyFormat.format(skpd['realisasi_rencana'] - skpd['realisasi_rill'])}',
                     style: const TextStyle(fontSize: 12, color: Colors.black)),
@@ -107,7 +107,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                           double persentase = calculatePercentage(
                               urusan['realisasi_rill'], urusan['anggaran']);
                           return ExpansionTile(
-                            collapsedBackgroundColor: Colors.grey[200],
+                            collapsedBackgroundColor: Colors.grey[100],
                             title: Text(
                                 '   [ URUSAN ]\n   ${urusan['kode_bidang_urusan']} - ${urusan['nama_bidang_urusan']} \n   Anggaran    : ${currencyFormat.format(urusan['anggaran'])} \n   Realisasi     : ${currencyFormat.format(urusan['realisasi_rill'])} \n   Persentase : ${persentase.toStringAsFixed(2)}% \n   Pengajuan  : ${currencyFormat.format(urusan['realisasi_rencana'] - urusan['realisasi_rill'])}',
                                 style: const TextStyle(
@@ -147,7 +147,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                           program['anggaran']);
                                       return ExpansionTile(
                                         collapsedBackgroundColor:
-                                            Colors.grey[300],
+                                            Colors.grey[100],
                                         title: Text(
                                             '      [ PROGRAM ]\n${program['kode_program']} - ${program['nama_program']} \n      Anggaran    : ${currencyFormat.format(program['anggaran'])} \n      Realisasi     : ${currencyFormat.format(program['realisasi_rill'])} \n      Persentase : ${persentase.toStringAsFixed(2)}% \n      Pengajuan  : ${currencyFormat.format(program['realisasi_rencana'] - program['realisasi_rill'])}',
                                             style: const TextStyle(
@@ -194,7 +194,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                           kegiatan['anggaran']);
                                                   return ExpansionTile(
                                                     collapsedBackgroundColor:
-                                                        Colors.grey[300],
+                                                        Colors.grey[100],
                                                     title: Text(
                                                         '         [ KEGIATAN ]\n${kegiatan['kode_giat']} - ${kegiatan['nama_giat']} \n         Anggaran    : ${currencyFormat.format(kegiatan['anggaran'])} \n         Realisasi     : ${currencyFormat.format(kegiatan['realisasi_rill'])} \n         Persentase : ${persentase.toStringAsFixed(2)}% \n         Pengajuan  : ${currencyFormat.format(kegiatan['realisasi_rencana'] - kegiatan['realisasi_rill'])}',
                                                         style: const TextStyle(
@@ -257,7 +257,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                               return ExpansionTile(
                                                                 collapsedBackgroundColor:
                                                                     Colors.grey[
-                                                                        300],
+                                                                        100],
                                                                 title: Text(
                                                                     '            [ SUBKEGIATAN ]\n${subKegiatan['kode_sub_giat']} - ${subKegiatan['nama_sub_giat']} \n            Anggaran    : ${currencyFormat.format(subKegiatan['anggaran'])} \n            Realisasi     : ${currencyFormat.format(subKegiatan['realisasi_rill'])} \n            Persentase : ${persentase.toStringAsFixed(2)}% \n            Pengajuan  : ${currencyFormat.format(subKegiatan['realisasi_rencana'] - subKegiatan['realisasi_rill'])}',
                                                                     style: const TextStyle(
@@ -323,7 +323,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                               calculatePercentage(rekening['realisasi_rill'], rekening['anggaran']);
                                                                           return ListTile(
                                                                             tileColor:
-                                                                                Colors.grey[300],
+                                                                                Colors.grey[100],
                                                                             titleTextStyle:
                                                                                 const TextStyle(fontSize: 12),
                                                                             textColor:

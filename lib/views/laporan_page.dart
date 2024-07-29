@@ -14,33 +14,35 @@ class LaporanPage extends StatelessWidget {
       filteredButtonsAkuntansiLaporan = ValueNotifier([]);
   final ValueNotifier<List<Map<String, dynamic>>>
       filteredButtonsAkuntansiPertanggungjawaban = ValueNotifier([]);
+  final ValueNotifier<List<Map<String, dynamic>>> filteredButtonsAsetLaporan =
+      ValueNotifier([]);
 
   final List<Map<String, dynamic>> buttonsPenatausahaanRegister = [
-    {'icon': Icons.request_page, 'text': 'STBP'},
-    {'icon': Icons.receipt, 'text': 'STS'},
+    {'icon': Icons.paid, 'text': 'STBP'},
+    {'icon': Icons.price_check, 'text': 'STS'},
     {
       'icon': Icons.assignment_add,
       'color': const Color.fromARGB(255, 42, 104, 211),
       'text': 'TBP GU'
     },
     {
-      'icon': Icons.request_page,
+      'icon': Icons.note_add,
       'color': const Color.fromARGB(255, 42, 104, 211),
       'text': 'Ajuan TU'
     },
-    {'icon': Icons.request_page, 'color': Colors.blue, 'text': 'SPP'},
+    {'icon': Icons.price_change, 'color': Colors.blue, 'text': 'SPP'},
     {'icon': Icons.payment, 'color': Colors.blue, 'text': 'SPM'},
-    {'icon': Icons.receipt, 'color': Colors.blue, 'text': 'SP2D'},
+    {'icon': Icons.credit_score, 'color': Colors.blue, 'text': 'SP2D'},
   ];
 
   final List<Map<String, dynamic>> buttonsPenatausahaanLaporan = [
     {
-      'icon': Icons.receipt,
+      'icon': Icons.receipt_long,
       'text': 'LPJ UP/GU',
       'pageToGo': '/penatausahaan/laporan_pertanggungjawaban/lpj_up_gu'
     },
     {
-      'icon': Icons.receipt,
+      'icon': Icons.receipt_long,
       'text': 'LPJ TU',
       'pageToGo': '/penatausahaan/laporan_pertanggungjawaban/lpj_tu'
     },
@@ -60,12 +62,12 @@ class LaporanPage extends StatelessWidget {
 
   final List<Map<String, dynamic>> buttonsAkuntansiLaporan = [
     {
-      'icon': Icons.analytics,
+      'icon': Icons.table_chart,
       'text': 'LRA',
       'pageToGo': '/akuntansi/laporan_keuangan/lra'
     },
     {
-      'icon': Icons.analytics,
+      'icon': Icons.table_chart,
       'text': 'LO',
       'pageToGo': '/akuntansi/laporan_keuangan/lo'
     },
@@ -76,19 +78,19 @@ class LaporanPage extends StatelessWidget {
       'pageToGo': '/akuntansi/laporan_keuangan/lpe'
     },
     {
-      'icon': Icons.analytics,
+      'icon': Icons.balance,
       'color': Colors.orange,
       'text': 'Neraca',
       'pageToGo': '/akuntansi/laporan_keuangan/neraca'
     },
     {
-      'icon': Icons.assessment,
+      'icon': Icons.bar_chart,
       'color': Colors.deepOrangeAccent,
       'text': 'LPSAL',
       'pageToGo': '/akuntansi/laporan_keuangan/lpsal'
     },
     {
-      'icon': Icons.assessment,
+      'icon': Icons.leaderboard,
       'color': Colors.deepOrangeAccent,
       'text': 'LAK',
       'pageToGo': '/akuntansi/laporan_keuangan/lak'
@@ -100,12 +102,28 @@ class LaporanPage extends StatelessWidget {
     {'icon': Icons.gavel, 'color': Colors.cyan, 'text': 'PERBUP'},
   ];
 
+  final List<Map<String, dynamic>> buttonsAsetLaporan = [
+    {
+      'icon': Icons.emoji_transportation,
+      'color': Colors.red,
+      'text': 'Modal',
+      'pageToGo': '/aset/laporan/modal'
+    },
+    {
+      'icon': Icons.repartition,
+      'color': Colors.brown,
+      'text': 'Persediaan',
+      'pageToGo': '/aset/laporan/persediaan'
+    },
+  ];
+
   LaporanPage() {
     filteredButtonsPenatausahaanRegister.value = buttonsPenatausahaanRegister;
     filteredButtonsPenatausahaanLaporan.value = buttonsPenatausahaanLaporan;
     filteredButtonsAkuntansiLaporan.value = buttonsAkuntansiLaporan;
     filteredButtonsAkuntansiPertanggungjawaban.value =
         buttonsAkuntansiPertanggungjawaban;
+    filteredButtonsAsetLaporan.value = buttonsAsetLaporan;
     searchController.addListener(_filterButtons);
   }
 
@@ -125,6 +143,9 @@ class LaporanPage extends StatelessWidget {
     }).toList();
     filteredButtonsAkuntansiPertanggungjawaban.value =
         buttonsAkuntansiPertanggungjawaban.where((button) {
+      return button['text'].toLowerCase().contains(query);
+    }).toList();
+    filteredButtonsAsetLaporan.value = buttonsAsetLaporan.where((button) {
       return button['text'].toLowerCase().contains(query);
     }).toList();
   }
@@ -330,7 +351,7 @@ class LaporanPage extends StatelessWidget {
                 ),
               ),
             ),
-            // Panel Laporan Akuntansi
+            // Panel Laporan Pertanggungjawaban
             SizedBox(
               width: double.infinity,
               child: Container(
@@ -371,6 +392,65 @@ class LaporanPage extends StatelessWidget {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15.0), 
                                     ),*/
+                                    padding: const EdgeInsets.all(20),
+                                    backgroundColor: Colors
+                                        .transparent, // Set background color to transparent
+                                    elevation: 0,
+                                  ),
+                                  child: Icon(
+                                    button['icon'],
+                                    color: button['color'],
+                                    size: 36.0,
+                                  ),
+                                ),
+                                Text(button['text']),
+                              ],
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Panel Laporan Aset
+            SizedBox(
+              width: double.infinity,
+              child: Container(
+                margin: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.lightBlueAccent),
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Aset - Laporan Belanja',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    // tambahkan jarak antara judul dan daftar laporan
+                    const SizedBox(height: 16.0),
+                    ValueListenableBuilder<List<Map<String, dynamic>>>(
+                      valueListenable: filteredButtonsAsetLaporan,
+                      builder: (context, filteredButtons, child) {
+                        return Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: filteredButtons.map((button) {
+                            return Column(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Get.toNamed(button['pageToGo']);
+                                    LoggerService.logger
+                                        .i('Navigasi ke ${button['pageToGo']}');
+                                  },
+                                  style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),
                                     backgroundColor: Colors
                                         .transparent, // Set background color to transparent

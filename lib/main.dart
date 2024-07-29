@@ -39,11 +39,11 @@ void main() async {
     LoggerService.logger.e(error);
   } finally {
     if (!kIsWeb) {
-    // Initialize Firebase App Messaging
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-      name: 'BaFiA_PushNotif',
-    );
+      // Initialize Firebase App Messaging
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+        name: 'BaFiA_PushNotif',
+      );
       await ApiFirebase().initNotifications();
     }
   }
@@ -85,7 +85,7 @@ void main() async {
     LoggerService.logger.i('Database is ready');
     themeProvider.loadTheme(userData?['isDarkMode']);
     LoggerService.logger.i(
-        'Initialize ThemeProvider and load DarkTheme: ${userData!['isDarkMode']}');
+        'Initialize ThemeProvider and load DarkTheme: ${userData?['isDarkMode']}');
   } catch (error) {
     LoggerService.logger.w('App initialization: fresh user data');
   }
