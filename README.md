@@ -11,9 +11,11 @@
 <li>[✅] Fitur pull sysc server - lokal data pada halaman dashboard, dengan performa yg lebih efektif dan cepat.</li>
 <li>[✅] Fitur Push Notifikasi realtime untuk pengguna yg sudah registrasi/login menggunakan Firebase Messaging.</li>
 <li>[✅] Fitur Push Notifikasi realtime background, tanpa membuka aplikasi.</li>
-<li>[✅] Modul Penatausahaan - Dokumen Kendali.</li>
-<li>[✅] Modul Akuntansi - Laporan LRA &amp; LO.</li>
-<li>[⛔] Masih versi awal, menu pada Penatausahaan &amp; Akuntansi beberapa masih dalam tahap pengembangan.</li>
+<li>[✅] Modul Akuntansi - Laporan LRA Periode, LRA Prognosis & LRA Per Program.</li>
+<li>[✅] Modul Akuntansi - Laporan LO.</li>
+<li>[⌛] Modul Aset - Laporan Belanja Modal & Persediaan.</li>
+<li>[⌛] Fitur Autentikasi Biometric/PIN.</li>
+<li>[⛔] Masih versi awal, menu pada Penatausahaan & Akuntansi beberapa masih dalam tahap pengembangan.</li>
 </ul>
 <table style="width: 100%; border-collapse: collapse; border-style: hidden; margin-left: auto; margin-right: auto;" border="0">
 <tbody>
