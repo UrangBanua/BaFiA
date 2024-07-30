@@ -414,7 +414,7 @@ class ApiService {
     }
   }
 
-  // API Service untuk Laporan Keuagan - LRA
+  // API Service untuk Laporan Keuagan - LRA Periode
   static Future<Uint8List> getLraReport(
     String tanggalMulai,
     String tanggalSampai,
@@ -428,6 +428,72 @@ class ApiService {
         : {'Authorization': 'Bearer $token'};
     final url =
         '$apiServiceUrl/aklap/api/report/cetaklra?searchparams={"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klasifikasi,"is_combine":"$konsolidasiSKPD","skpd":$idSkpd}&formatFile=pdf';
+    final response = await _getRequestReports(url, pHeaders);
+    // Show the URL in the console
+    LoggerService.logger.i(url);
+    //final response = await client.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      // return data as Uint8List
+      return Uint8List.fromList(response.body.codeUnits);
+      //return response.body; // Assuming the API returns the URL of the PDF
+    } else {
+      throw Exception('Failed to load report');
+    }
+  }
+
+  // API Service untuk Laporan Keuagan - LRA Prognosis
+  static Future<Uint8List> getLraPrognosisReport(
+    String tanggalMulai,
+    String tanggalSampai,
+    int klasifikasi,
+    String konsolidasiSKPD,
+    int idSkpd,
+    String token,
+  ) async {
+    int? klevel;
+    if (klasifikasi == 0) {
+      klevel = null;
+    } else {
+      klevel = klasifikasi;
+    }
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final url =
+        '$apiServiceUrl/aklap/api/report/cetak-prognosis?searchparams={"idSkpd":$idSkpd,"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klevel,"is_anggaran":"false","tahapan":{"id_jadwal":null,"id_jadwal_sipd":null,"id_tahap":null},"is_combine":"$konsolidasiSKPD"}&formatFile=pdf';
+    final response = await _getRequestReports(url, pHeaders);
+    // Show the URL in the console
+    LoggerService.logger.i(url);
+    //final response = await client.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      // return data as Uint8List
+      return Uint8List.fromList(response.body.codeUnits);
+      //return response.body; // Assuming the API returns the URL of the PDF
+    } else {
+      throw Exception('Failed to load report');
+    }
+  }
+
+  // API Service untuk Laporan Keuagan - LRA Program
+  static Future<Uint8List> getLraProgramReport(
+    String tanggalMulai,
+    String tanggalSampai,
+    int klasifikasi,
+    String konsolidasiSKPD,
+    int idSkpd,
+    String token,
+  ) async {
+    int? klevel;
+    if (klasifikasi == 0) {
+      klevel = null;
+    } else {
+      klevel = klasifikasi;
+    }
+    final pHeaders = isDevelopmentMode
+        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
+        : {'Authorization': 'Bearer $token'};
+    final url =
+        '$apiServiceUrl/aklap/api/report/cetak-lra-per-program?searchparams={"id_skpd":$idSkpd,"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","uraian":$klevel,"klasifikasi":null,"filter":0,"is_combine":"$konsolidasiSKPD","formatFile":"pdf"}';
     final response = await _getRequestReports(url, pHeaders);
     // Show the URL in the console
     LoggerService.logger.i(url);

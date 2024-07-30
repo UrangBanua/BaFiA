@@ -63,11 +63,22 @@ class LaporanPage extends StatelessWidget {
   final List<Map<String, dynamic>> buttonsAkuntansiLaporan = [
     {
       'icon': Icons.table_chart,
-      'text': 'LRA',
+      'text': 'LRA - Periode',
       'pageToGo': '/akuntansi/laporan_keuangan/lra'
     },
     {
       'icon': Icons.table_chart,
+      'text': 'LRA - Prognosis',
+      'pageToGo': '/akuntansi/laporan_keuangan/lra_prognosis'
+    },
+    {
+      'icon': Icons.table_chart,
+      'text': 'LRA - Program',
+      'pageToGo': '/akuntansi/laporan_keuangan/lra_program'
+    },
+    {
+      'icon': Icons.table_chart,
+      'color': Colors.orange,
       'text': 'LO',
       'pageToGo': '/akuntansi/laporan_keuangan/lo'
     },
@@ -209,7 +220,11 @@ class LaporanPage extends StatelessWidget {
                             return Column(
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    LoggerService.logger
+                                        .i('Navigasi ke ${button['pageToGo']}');
+                                    Get.toNamed(button['pageToGo']);
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),
                                     backgroundColor: Colors
@@ -265,9 +280,9 @@ class LaporanPage extends StatelessWidget {
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
-                                    Get.toNamed(button['pageToGo']);
                                     LoggerService.logger
                                         .i('Navigasi ke ${button['pageToGo']}');
+                                    Get.toNamed(button['pageToGo']);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),
@@ -324,9 +339,9 @@ class LaporanPage extends StatelessWidget {
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
-                                    Get.toNamed(button['pageToGo']);
                                     LoggerService.logger
                                         .i('Navigasi ke ${button['pageToGo']}');
+                                    Get.toNamed(button['pageToGo']);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),
@@ -383,15 +398,12 @@ class LaporanPage extends StatelessWidget {
                             return Column(
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    LoggerService.logger
+                                        .i('Navigasi ke ${button['pageToGo']}');
+                                    Get.toNamed(button['pageToGo']);
+                                  },
                                   style: ElevatedButton.styleFrom(
-                                    /* foregroundColor: Colors.white,
-                                    backgroundColor:
-                                        Colors.orangeAccent, // Text color
-                                    shadowColor: Colors.black,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0), 
-                                    ),*/
                                     padding: const EdgeInsets.all(20),
                                     backgroundColor: Colors
                                         .transparent, // Set background color to transparent
@@ -446,9 +458,9 @@ class LaporanPage extends StatelessWidget {
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
-                                    Get.toNamed(button['pageToGo']);
                                     LoggerService.logger
                                         .i('Navigasi ke ${button['pageToGo']}');
+                                    Get.toNamed(button['pageToGo']);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),

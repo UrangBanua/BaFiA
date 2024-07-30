@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
 
 class AuthController extends GetxController {
+  final LocalAuthentication auth = LocalAuthentication();
   var isLoggedIn = false.obs;
   var userData = {}.obs;
   var userToken = {}.obs;
@@ -18,6 +20,7 @@ class AuthController extends GetxController {
     ApiService.checkDevelopmentModeWarning();
   }
 
+  // fungsi check user data
   Future<void> _checkUserData() async {
     var data = await LocalStorageService.getUserData();
     if (data != null) {
@@ -31,12 +34,29 @@ class AuthController extends GetxController {
     }
   }
 
+  // fungsi Captcha Image
   Future<void> _fetchCaptchaImage() async {
     var response = await ApiService.getCaptchaImage();
     if (response != null && response['base64'] != null) {
       captchaData.value = response;
     } else {
       LoggerService.logger.e('Captcha image fetch failed');
+    }
+  }
+
+  // fungsi autentikasi biometrik
+  Future<bool> authenticate() async {
+    try {
+      return await auth.authenticate(
+        localizedReason: 'Please authenticate to access the app',
+        options: const AuthenticationOptions(
+          useErrorDialogs: true,
+          stickyAuth: true,
+        ),
+      );
+    } catch (e) {
+      LoggerService.logger.e('Authentication error: $e');
+      return false;
     }
   }
 

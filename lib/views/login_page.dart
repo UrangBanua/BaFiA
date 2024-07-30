@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage>
   late AnimationController _controller;
   late Animation<Offset> _positionAnimation;
   late Animation<double> _rotationAnimation;
+  bool _obscureText = true;
 
   @override
   void initState() {
@@ -148,8 +149,20 @@ class _LoginPageState extends State<LoginPage>
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 20),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                        ),
                       ),
-                      obscureText: true,
+                      obscureText: _obscureText,
                       style: const TextStyle(fontSize: 14),
                     ),
                     const SizedBox(height: 20),

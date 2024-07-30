@@ -22,9 +22,11 @@ import '../views/akuntansi/jurnal_approve/anggaran_page.dart';
 import '../views/akuntansi/jurnal_approve/belanja_page.dart';
 import '../views/akuntansi/jurnal_approve/pendapatan_page.dart';
 import '../views/laporan_page.dart';
+import '../views/akuntansi/laporan_keuangan/lra_page.dart';
+import '../views/akuntansi/laporan_keuangan/lra_program_page.dart';
+import '../views/akuntansi/laporan_keuangan/lra_prognosis_page.dart';
 import '../views/akuntansi/laporan_keuangan/lo_page.dart';
 import '../views/akuntansi/laporan_keuangan/lpe_page.dart';
-import '../views/akuntansi/laporan_keuangan/lra_page.dart';
 import '../views/akuntansi/laporan_keuangan/neraca_page.dart';
 import '../views/akuntansi/buku/besar_page.dart';
 import '../views/akuntansi/buku/besar_pembantu_page.dart';
@@ -101,6 +103,12 @@ List<GetPage> appRoutes() {
     GetPage(
         name: '/akuntansi/neraca_saldo', page: () => const NeracaSaldoPage()),
     GetPage(name: '/akuntansi/laporan_keuangan/lra', page: () => LKLraPage()),
+    GetPage(
+        name: '/akuntansi/laporan_keuangan/lra_prognosis',
+        page: () => LKLraPrognosisPage()),
+    GetPage(
+        name: '/akuntansi/laporan_keuangan/lra_program',
+        page: () => LKLraProgramPage()),
     GetPage(name: '/akuntansi/laporan_keuangan/lo', page: () => LKLoPage()),
     GetPage(name: '/akuntansi/laporan_keuangan/lpe', page: () => LKLpePage()),
     GetPage(
