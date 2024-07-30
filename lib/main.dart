@@ -35,6 +35,8 @@ void main() async {
   try {
     // Load environment variables
     await loadEnv();
+    // hapus database
+    //await LocalStorageService.deleteDatabase();
   } catch (error) {
     LoggerService.logger.e(error);
   } finally {
@@ -47,6 +49,12 @@ void main() async {
       await ApiFirebase().initNotifications();
     }
   }
+
+  // Get put AuthController
+  final AuthController authController = Get.put(AuthController());
+  // cek user autentikasi
+  bool isAuthenticated = await authController.authenticate();
+  runApp(BafiaApp(isAuthenticated: isAuthenticated));
 
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
@@ -93,14 +101,16 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => themeProvider,
-      child: BafiaApp(userData: userData),
+      child: BafiaApp(userData: userData, isAuthenticated: isAuthenticated),
     ),
   );
 }
 
 class BafiaApp extends StatelessWidget {
   final Map<String, dynamic>? userData;
-  const BafiaApp({super.key, this.userData});
+  const BafiaApp({super.key, this.userData, required this.isAuthenticated});
+  final bool isAuthenticated;
+  //BafiaApp({required this.isAuthenticated});
 
   @override
   Widget build(BuildContext context) {

@@ -8,6 +8,7 @@ import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
 
 class UserController extends GetxController {
+  var isBiometricEnabled = false.obs;
   var userData = {}.obs;
 
   @override
@@ -102,5 +103,11 @@ class UserController extends GetxController {
       LoggerService.logger.i('Error decoding image: $e');
       return const AssetImage('assets/images/default_profile.png');
     }
+  }
+
+  void setBiometricEnabled(bool value) {
+    isBiometricEnabled.value = value;
+    // Save to local storage or database
+    LocalStorageService.saveUserData({'isBiometricEnabled': value});
   }
 }

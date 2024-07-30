@@ -108,6 +108,13 @@ class ProfileUserPage extends StatelessWidget {
                           : 'Kabupaten Hulu Sungai Tengah',
                     ),
                   ),
+                  SwitchListTile(
+                    title: const Text('Enable Biometric Authentication'),
+                    value: userController.isBiometricEnabled.value,
+                    onChanged: (bool value) {
+                      userController.setBiometricEnabled(value);
+                    },
+                  ),
                   ListTile(
                     title: const Text('Token OK - ⌛'),
                     subtitle:

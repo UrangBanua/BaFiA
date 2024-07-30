@@ -16,6 +16,7 @@ class LocalStorageService {
     return _database!;
   }
 
+  // fungsi inisialisasi database
   static Future<Database> _initDB() async {
     LoggerService.logger.i('Initializing database...');
     if (kIsWeb) {
@@ -40,6 +41,7 @@ class LocalStorageService {
     }
   }
 
+  // fungsi pembuatan tabel
   static Future<void> _onCreate(Database db, int version) async {
     LoggerService.logger.i('Creating tables...');
     await db.execute('''
@@ -61,6 +63,7 @@ class LocalStorageService {
         refresh_token TEXT,
         profile_photo TEXT DEFAULT '-',
         isDarkMode INTEGER DEFAULT 0,
+        isBiometricEnabled INTEGER DEFAULT 0,
         time_update DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     ''');
@@ -98,6 +101,7 @@ class LocalStorageService {
     await _logTableStructure(db, 'notification');
   }
 
+  // fungsi penghapusan database
   static Future<void> deleteDatabase() async {
     final db = await database;
     await db.close();
@@ -107,14 +111,16 @@ class LocalStorageService {
     LoggerService.logger.i("Database deleted.");
   }
 
+  // fungsi logging struktur tabel
   static Future<void> _logTableStructure(Database db, String tableName) async {
     final result = await db.rawQuery('PRAGMA table_info($tableName)');
     LoggerService.logger.i('Structure of $tableName:');
     for (var row in result) {
-      LoggerService.logger.i(row);
+      print(row);
     }
   }
 
+  // fungsi pengambilan data user
   static Future<Map<String, dynamic>?> getUserData() async {
     final db = await database;
     LoggerService.logger.i("Fetching user data...");
@@ -127,6 +133,7 @@ class LocalStorageService {
     return null;
   }
 
+  // fungsi penyimpanan data user
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
     final db = await database;
     LoggerService.logger.i("Saving user data");
@@ -153,12 +160,14 @@ class LocalStorageService {
     }
   }
 
+  // fungsi penghapusan data user
   static Future<void> deleteUserData() async {
     final db = await database;
     await db.delete('user');
     LoggerService.logger.i("User data deleted.");
   }
 
+  // fungsi penyimpanan data dashboard
   static Future<void> saveDashboardData(
       Database db, List<dynamic> dashboardData) async {
     for (var data in dashboardData) {
@@ -168,12 +177,14 @@ class LocalStorageService {
     }
   }
 
+  // fungsi pengambilan data dashboard
   static Future<void> deleteDashboardData() async {
     final db = await database;
     await db.delete('dashboard');
     LoggerService.logger.i("Dashboard data cleared.");
   }
 
+  // fungsi penyimpanan data notifikasi
   static Future<void> saveMessageData(Map<String, dynamic> messageData) async {
     final db = await database;
     LoggerService.logger.i("Saving message data");
@@ -217,6 +228,7 @@ class LocalStorageService {
     }
   }
 
+  // fungsi penandaan notifikasi sebagai sudah dibaca
   static Future<void> markAsRead(int id) async {
     final db = await database;
     await db.update('notification', {'isRead': 'true'},
@@ -224,6 +236,7 @@ class LocalStorageService {
     LoggerService.logger.i("Message data updated.");
   }
 
+  // fungsi pengambilan data notifikasi
   static Future<List<Map<String, dynamic>>> getMessages() async {
     final db = await database;
     LoggerService.logger.i("Fetching message data...");
@@ -236,6 +249,7 @@ class LocalStorageService {
     return [];
   }
 
+  // fungsi penghapusan data notifikasi
   static Future<void> deleteMessageData(int id) async {
     final db = await database;
     try {
