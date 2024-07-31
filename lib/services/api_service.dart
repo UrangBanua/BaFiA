@@ -211,14 +211,17 @@ class ApiService {
       ); */
 
       // set dummy data responsePend
-      final responsePend = http.Response(
+      /* final responsePend = http.Response(
           '[{"id_daerah":295,"tahun":2024,"id_skpd":65,"kode_skpd":"5.02.0.00.0.00.01.0000","nama_skpd":"Badan Pengelola Keuangan dan Aset Daerah","anggaran":1504449542000,"realisasi_rill":687174554632.7098}]',
-          200);
+          200); */
 
       final responseBela = await _getRequest(
         '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja',
         pHeaders,
       );
+
+      // set dummy data responsePend = responseBela
+      final responsePend = responseBela;
 
       if (responsePend.statusCode == 200 && responseBela.statusCode == 200) {
         LoggerService.logger

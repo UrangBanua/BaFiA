@@ -26,12 +26,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Register the background message handler
   if (!kIsWeb) {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
-
   try {
     // Load environment variables
     await loadEnv();
@@ -49,42 +47,13 @@ void main() async {
       await ApiFirebase().initNotifications();
     }
   }
-
   // Get put AuthController
-  final AuthController authController = Get.put(AuthController());
+  //final AuthController authController = Get.put(AuthController());
   // cek user autentikasi
-  bool isAuthenticated = await authController.authenticate();
-  runApp(BafiaApp(isAuthenticated: isAuthenticated));
+  //bool isAuthenticated = await authController.authenticate();
 
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
-
-  // Handle foreground notifications
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-    LoggerService.logger.i('Got a message whilst in the foreground!');
-    LoggerService.logger
-        .i('Full message: ${message.toMap()}'); // Log the full message
-    if (message.notification != null) {
-      LoggerService.logger
-          .i('Message also contained a notification: ${message.notification}');
-    }
-    if (message.data.isNotEmpty) {
-      LoggerService.logger.i('Message also contained data: ${message.data}');
-      try {
-        await LocalStorageService.saveMessageData(message.data);
-      } catch (error) {
-        LoggerService.logger.e('Error saving message data: $error');
-      } finally {
-        Get.snackbar(
-          message.notification?.title ?? 'BaFiA',
-          message.notification?.body ?? 'Ada pesan baru',
-          onTap: (_) {
-            Get.toNamed('/notification');
-          },
-        );
-      }
-    }
-  });
 
   // Initialize database and get user data
   Map<String, dynamic>? userData;
@@ -101,16 +70,16 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => themeProvider,
-      child: BafiaApp(userData: userData, isAuthenticated: isAuthenticated),
+      child: BafiaApp(userData: userData),
     ),
   );
 }
 
 class BafiaApp extends StatelessWidget {
   final Map<String, dynamic>? userData;
-  const BafiaApp({super.key, this.userData, required this.isAuthenticated});
-  final bool isAuthenticated;
-  //BafiaApp({required this.isAuthenticated});
+  //final bool isAuthenticated;
+
+  const BafiaApp({super.key, this.userData});
 
   @override
   Widget build(BuildContext context) {
@@ -150,10 +119,6 @@ class BafiaApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: const [
-              Locale('id', 'ID'),
-            ],
-            locale: const Locale('id', 'ID'),
           );
         }
       },

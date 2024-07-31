@@ -130,7 +130,7 @@ class DrawerMenu extends StatelessWidget {
             title: const Text('Penatausahaan'),
             children: <Widget>[
               ListTile(
-                title: const Text('Dokumen Kendali'),
+                title: const Text('Pohon Kendali'),
                 onTap: () {
                   Get.toNamed('/penatausahaan/dokumen_kendali');
                 },

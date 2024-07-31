@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
@@ -47,6 +48,12 @@ class AuthController extends GetxController {
   // fungsi autentikasi biometrik
   Future<bool> authenticate() async {
     try {
+      bool canCheckBiometrics = await auth.canCheckBiometrics;
+      bool isBiometricSupported = await auth.isDeviceSupported();
+      if (!canCheckBiometrics || !isBiometricSupported) {
+        LoggerService.logger.e('Biometric authentication is not available.');
+        return false;
+      }
       return await auth.authenticate(
         localizedReason: 'Please authenticate to access the app',
         options: const AuthenticationOptions(
@@ -54,7 +61,7 @@ class AuthController extends GetxController {
           stickyAuth: true,
         ),
       );
-    } catch (e) {
+    } on PlatformException catch (e) {
       LoggerService.logger.e('Authentication error: $e');
       return false;
     }

@@ -33,7 +33,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
         return AlertDialog(
           title: const Text('Penjelasan'),
           content: const Text(
-              'Dokumen Kendali ini befungsi untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan.\nNilai ini juga termasuk dari jumlah pengembalian belanja'),
+              'Pohon Kendali ini befungsi untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan.\nNilai ini juga termasuk dari jumlah pengembalian belanja'),
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
@@ -51,7 +51,7 @@ class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dokumen Kendali'),
+        title: const Text('Pohon Kendali'),
         actions: [
           IconButton(
             icon: const Icon(Icons.contact_support, color: Colors.blueAccent),

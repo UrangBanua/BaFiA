@@ -179,6 +179,27 @@ class _LoginPageState extends State<LoginPage>
                             )
                           : const Text('Login'),
                     ),
+                    // buat gab atau pemisah
+                    const SizedBox(height: 20),
+                    Obx(() {
+                      if (authController.userData.isNotEmpty) {
+                        return IconButton(
+                          icon: const Icon(Icons.fingerprint),
+                          onPressed: () async {
+                            bool authenticated =
+                                await authController.authenticate();
+                            if (authenticated) {
+                              Get.offAllNamed('/dashboard');
+                            } else {
+                              Get.snackbar('Authentication Failed',
+                                  'Unable to authenticate');
+                            }
+                          },
+                        );
+                      } else {
+                        return Container();
+                      }
+                    }),
                   ],
                 ),
               ),

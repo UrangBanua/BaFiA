@@ -63,6 +63,8 @@ dependencies:
   printing: ^5.13.1
   pdf: ^3.11.0
   local_auth: ^2.2.0
+  flutter_web_browser: ^0.17.1
+  package_info_plus: ^8.0.1
   #workmanager: ^0.5.2
 
 dev_dependencies:

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import '../controllers/notification_controller.dart';
 
 class NotificationPage extends StatefulWidget {
@@ -126,11 +128,20 @@ class _NotificationPageState extends State<NotificationPage> {
                                               if (isImage) ...[
                                                 const SizedBox(height: 10),
                                                 Image.network(link),
-                                              ] else ...[
+                                              ] else if (link.isNotEmpty) ...[
                                                 const SizedBox(height: 10),
-                                                Text(link,
-                                                    style: const TextStyle(
-                                                        color: Colors.blue)),
+                                                Linkify(
+                                                  text: link,
+                                                  options: const LinkifyOptions(
+                                                      humanize: false),
+                                                  onOpen: (link) async {
+                                                    FlutterWebBrowser
+                                                        .openWebPage(
+                                                            url: link.url);
+                                                  },
+                                                  style: const TextStyle(
+                                                      color: Colors.blue),
+                                                ),
                                               ],
                                             ],
                                           ),
