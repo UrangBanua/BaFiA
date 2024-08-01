@@ -99,7 +99,6 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    notificationCount = notificationController.notifications.length;
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
@@ -131,30 +130,43 @@ class DashboardPage extends StatelessWidget {
                     Get.toNamed('/notification');
                   },
                 ),
-                if (notificationCount > 0)
-                  Positioned(
-                    right: 11,
-                    top: 11,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 14,
-                        minHeight: 14,
-                      ),
-                      child: Text(
-                        '$notificationCount',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
+                Obx(() {
+                  if (dashboardController.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (dashboardController.hasError.value) {
+                    return const Center(child: Text('Failed to load data'));
+                  } else {
+                    notificationCount =
+                        notificationController.notifications.length;
+                    LoggerService.logger
+                        .i('Notification Count: $notificationCount');
+                    return notificationCount > 0
+                        ? Positioned(
+                            right: 11,
+                            top: 11,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 14,
+                                minHeight: 14,
+                              ),
+                              child: Text(
+                                '$notificationCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                        : Container();
+                  }
+                }),
               ],
             ),
           ],
@@ -168,9 +180,6 @@ class DashboardPage extends StatelessWidget {
               } else if (dashboardController.hasError.value) {
                 return const Center(child: Text('Failed to load data'));
               } else {
-                notificationCount = notificationController.notifications.length;
-                LoggerService.logger
-                    .i('Notification Count: $notificationCount');
                 return Stack(
                   children: [
                     RefreshIndicator(

@@ -55,6 +55,33 @@ void main() async {
   // Initialize ThemeProvider and load theme
   final themeProvider = ThemeProvider();
 
+  // Handle foreground notifications
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    LoggerService.logger.i('Got a message whilst in the foreground!');
+    LoggerService.logger
+        .i('Full message: ${message.toMap()}'); // Log the full message
+    if (message.notification != null) {
+      LoggerService.logger
+          .i('Message also contained a notification: ${message.notification}');
+    }
+    if (message.data.isNotEmpty) {
+      LoggerService.logger.i('Message also contained data: ${message.data}');
+      try {
+        await LocalStorageService.saveMessageData(message.data);
+      } catch (error) {
+        LoggerService.logger.e('Error saving message data: $error');
+      } finally {
+        Get.snackbar(
+          message.notification?.title ?? 'BaFiA',
+          message.notification?.body ?? 'Ada pesan baru',
+          onTap: (_) {
+            Get.toNamed('/notification');
+          },
+        );
+      }
+    }
+  });
+
   // Initialize database and get user data
   Map<String, dynamic>? userData;
   try {

@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:url_launcher/url_launcher.dart';
 //import '../main.dart';
 //import 'local_storage_service.dart';
@@ -8,6 +9,8 @@ import 'logger_service.dart';
 
 class ApiFirebase {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  static final bool isDevelopmentMode = dotenv.env['DEVELOPMENT_MODE'] == 'ON';
 
   Future<void> initNotifications() async {
     if (kIsWeb) {
@@ -51,7 +54,10 @@ class ApiFirebase {
     }
 
     // Subscribe to the 'bafia-info' topic
-    await _firebaseMessaging.subscribeToTopic('bafia-info');
+    isDevelopmentMode
+        ? {await _firebaseMessaging.subscribeToTopic('bafia-info')}
+        : {await _firebaseMessaging.subscribeToTopic('bafia-info-dev')};
+
     LoggerService.logger.i('Subscribed to topic: bafia-info');
   }
 
