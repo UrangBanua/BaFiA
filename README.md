@@ -13,6 +13,7 @@
 <li>[✅] Fitur Push Notifikasi realtime background, tanpa membuka aplikasi.</li>
 <li>[✅] Modul Akuntansi - Laporan LRA Periode, LRA Prognosis & LRA Per Program.</li>
 <li>[✅] Modul Akuntansi - Laporan LO.</li>
+<li>[⚡] HotFix Dashboard - Serapan Realisasi pada menu utama.</li>
 <li>[⌛] Modul Aset - Laporan Belanja Modal & Persediaan.</li>
 <li> [⌛] Modul Penatausahaan - Tracking Dokumen.</li>
 <li>[⌛] Fitur Autentikasi Biometric/PIN.</li>
