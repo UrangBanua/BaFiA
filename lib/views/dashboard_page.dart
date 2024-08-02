@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+//import '../controllers/notification_controller.dart';
 import 'drawer_menu.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import '../controllers/dashboard_controller.dart';
-import '../controllers/notification_controller.dart';
 import '/services/logger_service.dart';
+import '../controllers/dashboard_controller.dart';
 
 // ignore: must_be_immutable
 class DashboardPage extends StatelessWidget {
-  //int notificationCount = 0;
+  int notificationCount = 0;
+  //int unreadCount = 1;
   final DashboardController dashboardController =
       Get.put(DashboardController());
-  //final NotificationController notificationController = Get.put(NotificationController()); // Initialize NotificationController
+  //final NotificationController notificationController =
+  //    Get.put(NotificationController()); // Initialize NotificationController
+
   DateTime? currentBackPressTime;
 
   DashboardPage({super.key});
@@ -130,40 +133,36 @@ class DashboardPage extends StatelessWidget {
                   },
                 ),
                 Obx(() {
-                  if (dashboardController.isLoading.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (dashboardController.hasError.value) {
-                    return const Center(child: Text('Failed to load data'));
-                  } else {
-                    int unreadCount = 1;
-                    //notificationController.notificationCount;
-                    LoggerService.logger.i('Notification Count: $unreadCount');
-                    return unreadCount > 0
-                        ? Positioned(
-                            right: 11,
-                            top: 11,
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 14,
-                                minHeight: 14,
-                              ),
-                              child: Text(
-                                '$unreadCount',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                  //dashboardController.loadReadNotifications();
+                  notificationCount = dashboardController.dnotifications.length;
+                  //notificationController.notifications.length;
+                  LoggerService.logger
+                      .i('Notification Count: $notificationCount');
+                  return notificationCount > 0
+                      ? Positioned(
+                          right: 11,
+                          top: 11,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
                             ),
-                          )
-                        : Container();
-                  }
+                            constraints: const BoxConstraints(
+                              minWidth: 14,
+                              minHeight: 14,
+                            ),
+                            child: Text(
+                              '$notificationCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      : Container();
                 }),
               ],
             ),
@@ -178,6 +177,7 @@ class DashboardPage extends StatelessWidget {
               } else if (dashboardController.hasError.value) {
                 return const Center(child: Text('Failed to load data'));
               } else {
+                //LoggerService.logger.i('Notification Count: $unreadCount');
                 return Stack(
                   children: [
                     RefreshIndicator(

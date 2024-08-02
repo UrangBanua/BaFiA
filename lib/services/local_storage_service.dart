@@ -249,6 +249,20 @@ class LocalStorageService {
     return [];
   }
 
+  // fungsi pengambilan data notifikasi yg belum dibaca
+  static Future<List<Map<String, dynamic>>> getUnreadMessages() async {
+    final db = await database;
+    LoggerService.logger.i("Fetching unread message data...");
+    final List<Map<String, dynamic>> messages = await db
+        .query('notification', where: 'isRead = ?', whereArgs: ['false']);
+    if (messages.isNotEmpty) {
+      LoggerService.logger.i("Get Data from DB - Unread Message");
+      return messages;
+    }
+    LoggerService.logger.i("No data found in DB.");
+    return [];
+  }
+
   // fungsi penghapusan data notifikasi
   static Future<void> deleteMessageData(int id) async {
     final db = await database;

@@ -11,11 +11,13 @@ class DashboardController extends GetxController {
   var isLoading = true.obs;
   var hasError = false.obs;
   var catatanPengajuan = '';
+  var dnotifications = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() async {
     super.onInit();
     await _checkUserData();
+    await _loadReadNotifications();
     LoggerService.logger.i('[DashboardController] onInit');
     await fetchDashboardData();
   }
@@ -80,5 +82,13 @@ class DashboardController extends GetxController {
 
   String formatDate(String date) {
     return DateFormat('dd MMMM y', 'id').format(DateTime.parse(date));
+  }
+
+  // Load notifications unread from local storage
+  Future<void> _loadReadNotifications() async {
+    var loadedNotifications = List<Map<String, dynamic>>.from(
+        await LocalStorageService.getUnreadMessages());
+    dnotifications.assignAll(loadedNotifications);
+    LoggerService.logger.i(dnotifications);
   }
 }

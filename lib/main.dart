@@ -1,6 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'controllers/notification_controller.dart';
+//import 'controllers/notification_controller.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +15,8 @@ import 'services/logger_service.dart';
 import 'services/local_storage_service.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-final NotificationController notificationController =
-    Get.put(NotificationController());
+//final NotificationController notificationController =
+//    Get.put(NotificationController());
 
 // Register the background message handler
 @pragma('vm:entry-point')
@@ -24,8 +24,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   LoggerService.logger.i('Handling a background message: ${message.messageId}');
   if (message.data.isNotEmpty) {
     LoggerService.logger.i('Message also contained data: ${message.data}');
-    //await LocalStorageService.saveMessageData(message.data);
-    await notificationController.addNotification(message.data);
+    await LocalStorageService.saveMessageData(message.data);
+    //await notificationController.addNotification(message.data);
   }
 }
 
@@ -71,8 +71,8 @@ void main() async {
     if (message.data.isNotEmpty) {
       LoggerService.logger.i('Message also contained data: ${message.data}');
       try {
-        //await LocalStorageService.saveMessageData(message.data);
-        await notificationController.addNotification(message.data);
+        await LocalStorageService.saveMessageData(message.data);
+        //await notificationController.addNotification(message.data);
       } catch (error) {
         LoggerService.logger.e('Error saving message data: $error');
       } finally {

@@ -1,55 +1,55 @@
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
 
-class NotificationController extends ChangeNotifier {
-  List<Map<String, dynamic>> _notifications =
-      []; // Inisialisasi sebagai daftar kosong yang dapat diubah
-  String _selectedCategory = 'Semua';
+class NotificationController extends GetxController {
+  var notifications = <Map<String, dynamic>>[].obs;
+  var selectedCategory = 'Semua'.obs;
 
-  NotificationController() {
+  @override
+  void onInit() {
+    super.onInit();
     _loadNotifications();
+    //loadReadNotifications();
+    //getUnreadNotificationCount();
+    //logNotificationCount();
   }
 
-  // Getter untuk menghitung jumlah notifikasi yang belum dibaca
+  // Getter for unread notification count
   int get notificationCount =>
-      _notifications.where((n) => n['isRead'] == 'false').length;
+      notifications.where((n) => n['isRead'] == 'false').length;
+
+  // Logger info notificationCount
+  void logNotificationCount() {
+    LoggerService.logger.i('Notification count: $notificationCount');
+  }
 
   // Load notifications from local storage
   Future<void> _loadNotifications() async {
-    _notifications = List<Map<String, dynamic>>.from(
+    var loadedNotifications = List<Map<String, dynamic>>.from(
         await LocalStorageService.getMessages());
-    // show log data message
-    LoggerService.logger.i(_notifications);
-    notifyListeners();
+    notifications.assignAll(loadedNotifications);
+    LoggerService.logger.i(notifications);
+    update();
   }
 
-  // Getter and Setter
-  List<Map<String, dynamic>> get notifications => _notifications;
-  set notifications(List<Map<String, dynamic>> notifications) {
-    _notifications = notifications;
-    notifyListeners();
-  }
-
-  String get selectedCategory => _selectedCategory;
+  // Set selected category
   void setSelectedCategory(String category) {
-    _selectedCategory = category;
-    notifyListeners();
+    selectedCategory.value = category;
   }
 
-  // Fungsi untuk mendapatkan jumlah notifikasi yang belum dibaca
+  // Get unread notification count
   int getUnreadNotificationCount() {
-    return _notifications.where((n) => n['isRead'] == 'false').length;
+    return notifications.where((n) => n['isRead'] == 'false').length;
   }
 
   // Add a new notification
   Future<void> addNotification(Map<String, dynamic> notification) async {
     try {
       await LocalStorageService.saveMessageData(notification);
-      _notifications.add(notification);
+      notifications.add(notification);
       LoggerService.logger.i('Notification added: $notification');
-      notifyListeners();
     } catch (e) {
       LoggerService.logger.e('Failed to add notification: $e');
     }
@@ -59,17 +59,15 @@ class NotificationController extends ChangeNotifier {
   Future<void> updateNotification(
       Map<String, dynamic> updatedNotification) async {
     try {
-      final index = _notifications
-          .indexWhere((n) => n['id'] == updatedNotification['id']);
+      final index =
+          notifications.indexWhere((n) => n['id'] == updatedNotification['id']);
       if (index != -1) {
-        // Buat salinan dari objek sebelum memodifikasinya
         final notificationCopy =
-            Map<String, dynamic>.from(_notifications[index]);
+            Map<String, dynamic>.from(notifications[index]);
         notificationCopy.addAll(updatedNotification);
-        _notifications[index] = notificationCopy;
+        notifications[index] = notificationCopy;
         await LocalStorageService.saveMessageData(notificationCopy);
         LoggerService.logger.i('Notification updated: $updatedNotification');
-        notifyListeners();
       }
     } catch (e) {
       LoggerService.logger.e('Failed to update notification: $e');
@@ -78,18 +76,19 @@ class NotificationController extends ChangeNotifier {
 
   // Mark message as read
   void markAsRead(int id) {
-    /* 
-    final notification = _notifications.firstWhere((n) => n['id'] == id);
-    notification['isRead'] = 'true';
-    updateNotification(notification); */
+    final readNotification = notifications.firstWhere((n) => n['id'] == id);
+    //loggeer info readNotification
+    LoggerService.logger.i('Read notification: $readNotification');
+    LocalStorageService.markAsRead(id);
+    // Implement mark as read functionality
   }
 
   // Filter notifications by category
   List<Map<String, dynamic>> filterNotificationsByCategory(String category) {
     if (category == 'Semua') {
-      return _notifications;
+      return notifications;
     }
-    return _notifications
+    return notifications
         .where((notification) => notification['category'] == category)
         .toList();
   }
@@ -114,9 +113,8 @@ class NotificationController extends ChangeNotifier {
   Future<void> deleteMessage(int idMessage) async {
     try {
       await LocalStorageService.deleteMessageData(idMessage);
-      _notifications
+      notifications
           .removeWhere((notification) => notification['id'] == idMessage);
-      notifyListeners();
     } catch (e) {
       LoggerService.logger.e('Failed to delete message: $e');
     }
