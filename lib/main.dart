@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-//import 'controllers/notification_controller.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,40 +9,33 @@ import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
 import 'routes/routes.dart';
 import 'services/api_firebase.dart';
-import 'theme_provider.dart';
 import 'services/logger_service.dart';
 import 'services/local_storage_service.dart';
+import 'services/theme_provider.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-//final NotificationController notificationController =
-//    Get.put(NotificationController());
 
-// Register the background message handler
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   LoggerService.logger.i('Handling a background message: ${message.messageId}');
   if (message.data.isNotEmpty) {
     LoggerService.logger.i('Message also contained data: ${message.data}');
     await LocalStorageService.saveMessageData(message.data);
-    //await notificationController.addNotification(message.data);
   }
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final themeProvider = ThemeProvider();
   if (!kIsWeb) {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
   try {
-    // Load environment variables
     await loadEnv();
-    // hapus database
-    //await LocalStorageService.deleteDatabase();
   } catch (error) {
     LoggerService.logger.e(error);
   } finally {
     if (!kIsWeb) {
-      // Initialize Firebase App Messaging
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
         name: 'BaFiA_PushNotif',
@@ -51,19 +43,10 @@ void main() async {
       await ApiFirebase().initNotifications();
     }
   }
-  // Get put AuthController
-  //final AuthController authController = Get.put(AuthController());
-  // cek user autentikasi
-  //bool isAuthenticated = await authController.authenticate();
 
-  // Initialize ThemeProvider and load theme
-  final themeProvider = ThemeProvider();
-
-  // Handle foreground notifications
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     LoggerService.logger.i('Got a message whilst in the foreground!');
-    LoggerService.logger
-        .i('Full message: ${message.toMap()}'); // Log the full message
+    LoggerService.logger.i('Full message: ${message.toMap()}');
     if (message.notification != null) {
       LoggerService.logger
           .i('Message also contained a notification: ${message.notification}');
@@ -72,7 +55,6 @@ void main() async {
       LoggerService.logger.i('Message also contained data: ${message.data}');
       try {
         await LocalStorageService.saveMessageData(message.data);
-        //await notificationController.addNotification(message.data);
       } catch (error) {
         LoggerService.logger.e('Error saving message data: $error');
       } finally {
@@ -87,7 +69,6 @@ void main() async {
     }
   });
 
-  // Initialize database and get user data
   Map<String, dynamic>? userData;
   try {
     userData = await LocalStorageService.getUserData();
@@ -109,7 +90,6 @@ void main() async {
 
 class BafiaApp extends StatelessWidget {
   final Map<String, dynamic>? userData;
-  //final bool isAuthenticated;
 
   const BafiaApp({super.key, this.userData});
 
@@ -139,8 +119,7 @@ class BafiaApp extends StatelessWidget {
           return GetMaterialApp(
             title: 'Bafia',
             initialBinding: BindingsBuilder(() {
-              Get.put(
-                  AuthController()); // Sediakan AuthController saat app diluncurkan
+              Get.put(AuthController());
             }),
             initialRoute: userData == null ? '/login' : '/dashboard',
             navigatorKey: navigatorKey,

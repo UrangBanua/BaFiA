@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../controllers/user_controller.dart';
 import '../services/logger_service.dart';
-import '../theme_provider.dart';
+import '../services/theme_provider.dart';
 
 class ProfileUserPage extends StatelessWidget {
   //const ProfileUserPage({super.key});
