@@ -12,11 +12,14 @@ class NotificationController extends ChangeNotifier {
     _loadNotifications();
   }
 
-  get notificationCount => _notifications.length;
+  // Getter untuk menghitung jumlah notifikasi yang belum dibaca
+  int get notificationCount =>
+      _notifications.where((n) => n['isRead'] == 'false').length;
 
   // Load notifications from local storage
   Future<void> _loadNotifications() async {
-    _notifications = await LocalStorageService.getMessages();
+    _notifications = List<Map<String, dynamic>>.from(
+        await LocalStorageService.getMessages());
     // show log data message
     LoggerService.logger.i(_notifications);
     notifyListeners();
@@ -33,6 +36,11 @@ class NotificationController extends ChangeNotifier {
   void setSelectedCategory(String category) {
     _selectedCategory = category;
     notifyListeners();
+  }
+
+  // Fungsi untuk mendapatkan jumlah notifikasi yang belum dibaca
+  int getUnreadNotificationCount() {
+    return _notifications.where((n) => n['isRead'] == 'false').length;
   }
 
   // Add a new notification
@@ -70,9 +78,10 @@ class NotificationController extends ChangeNotifier {
 
   // Mark message as read
   void markAsRead(int id) {
-    //final notification = _notifications.firstWhere((n) => n['id'] == id);
-    //notification['isRead'] = 'true';
-    //updateNotification(notification);
+    /* 
+    final notification = _notifications.firstWhere((n) => n['id'] == id);
+    notification['isRead'] = 'true';
+    updateNotification(notification); */
   }
 
   // Filter notifications by category

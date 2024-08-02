@@ -55,8 +55,8 @@ class ApiFirebase {
 
     // Subscribe to the 'bafia-info' topic
     isDevelopmentMode
-        ? {await _firebaseMessaging.subscribeToTopic('bafia-info')}
-        : {await _firebaseMessaging.subscribeToTopic('bafia-info-dev')};
+        ? {await _firebaseMessaging.subscribeToTopic('bafia-info-dev')}
+        : {await _firebaseMessaging.subscribeToTopic('bafia-info')};
 
     LoggerService.logger.i('Subscribed to topic: bafia-info');
   }

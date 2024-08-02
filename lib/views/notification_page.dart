@@ -77,7 +77,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           ...notificationsForDate.asMap().entries.map((entry) {
                             //final notificationIndex = entry.key;
                             final notification = entry.value;
-                            final isRead = notification['isRead'] as String;
+                            //final isRead = notification['isRead'] as String;
                             return Dismissible(
                               key: Key(notification['id'].toString()),
                               direction: DismissDirection.endToStart,
@@ -94,15 +94,15 @@ class _NotificationPageState extends State<NotificationPage> {
                                     color: Colors.white),
                               ),
                               child: Card(
-                                color: isRead == 'false'
+                                color: notification['isRead'] == 'false'
                                     ? Theme.of(context).colorScheme.surface
                                     : Theme.of(context).colorScheme.background,
                                 child: ListTile(
                                   leading: Icon(
-                                    isRead == 'false'
+                                    notification['isRead'] == 'false'
                                         ? Icons.mark_email_unread
                                         : Icons.mark_email_read,
-                                    color: isRead == 'false'
+                                    color: notification['isRead'] == 'false'
                                         ? Colors.blue
                                         : Colors.grey,
                                   ),

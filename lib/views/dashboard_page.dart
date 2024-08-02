@@ -10,11 +10,10 @@ import '/services/logger_service.dart';
 
 // ignore: must_be_immutable
 class DashboardPage extends StatelessWidget {
-  int notificationCount = 0;
+  //int notificationCount = 0;
   final DashboardController dashboardController =
       Get.put(DashboardController());
-  final NotificationController notificationController =
-      Get.put(NotificationController()); // Initialize NotificationController
+  //final NotificationController notificationController = Get.put(NotificationController()); // Initialize NotificationController
   DateTime? currentBackPressTime;
 
   DashboardPage({super.key});
@@ -136,11 +135,10 @@ class DashboardPage extends StatelessWidget {
                   } else if (dashboardController.hasError.value) {
                     return const Center(child: Text('Failed to load data'));
                   } else {
-                    notificationCount =
-                        notificationController.notifications.length;
-                    LoggerService.logger
-                        .i('Notification Count: $notificationCount');
-                    return notificationCount > 0
+                    int unreadCount = 1;
+                    //notificationController.notificationCount;
+                    LoggerService.logger.i('Notification Count: $unreadCount');
+                    return unreadCount > 0
                         ? Positioned(
                             right: 11,
                             top: 11,
@@ -155,7 +153,7 @@ class DashboardPage extends StatelessWidget {
                                 minHeight: 14,
                               ),
                               child: Text(
-                                '$notificationCount',
+                                '$unreadCount',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 8,
