@@ -10,13 +10,23 @@ class AboutPage extends StatefulWidget {
   _AboutPageState createState() => _AboutPageState();
 }
 
-class _AboutPageState extends State<AboutPage> {
+class _AboutPageState extends State<AboutPage>
+    with SingleTickerProviderStateMixin {
   String _version = '';
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _loadVersion();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0, end: 4 * 3.14159).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
+    );
   }
 
   Future<void> _loadVersion() async {
@@ -24,6 +34,12 @@ class _AboutPageState extends State<AboutPage> {
     setState(() {
       _version = 'Version: ${packageInfo.version}';
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -35,15 +51,29 @@ class _AboutPageState extends State<AboutPage> {
       body: ListView(
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset('assets/icons/logo.ico'),
+            child: GestureDetector(
+              onTap: () {
+                _controller.forward(from: 0);
+              },
+              child: AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return Transform(
+                    transform: Matrix4.rotationY(_animation.value),
+                    alignment: Alignment.center,
+                    child: ClipOval(
+                      child: Image.asset('assets/icons/logo.ico'),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
-                'Aplikasi Asisten Keuangan khususnya untuk keluarga LKPD - Kabupaten Hulu Sungai Tengah',
-                style: TextStyle(fontSize: 20.0),
+                'Aplikasi Asisten Keuangan\nUntuk keluarga LKPD\nKabupaten Hulu Sungai Tengah',
+                style: TextStyle(fontSize: 18.0),
                 textAlign: TextAlign.center),
           ),
           Padding(

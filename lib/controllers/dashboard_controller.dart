@@ -17,7 +17,6 @@ class DashboardController extends GetxController {
   void onInit() async {
     super.onInit();
     await _checkUserData();
-    await _loadReadNotifications();
     LoggerService.logger.i('[DashboardController] onInit');
     await fetchDashboardData();
   }
@@ -49,6 +48,8 @@ class DashboardController extends GetxController {
       dashboardData.assignAll(data);
       LoggerService.logger.i('[DashboardController] Dashboard data assigned');
       updateCatatanPengajuan();
+      // Load notifications unread from local storage
+      await _loadReadNotifications();
     } catch (e) {
       LoggerService.logger.e('Error fetching dashboard data: $e');
       hasError(true);

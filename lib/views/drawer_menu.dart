@@ -5,8 +5,7 @@ import '../controllers/user_controller.dart';
 
 class DrawerMenu extends StatelessWidget {
   final AuthController authController = Get.find<AuthController>();
-
-  UserController get userController => Get.put(UserController());
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +34,13 @@ class DrawerMenu extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Container(
-                          padding:
-                              const EdgeInsets.all(2), // Padding untuk border
+                          padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
-                            color: Colors.blue, // Warna border
+                            color: Colors.blue,
                             shape: BoxShape.circle,
                           ),
                           child: const CircleAvatar(
-                            radius:
-                                38, // Kurangi radius untuk memberi ruang pada border
+                            radius: 38,
                             backgroundColor: Colors.grey,
                             child: CircularProgressIndicator(
                               color: Colors.white,
@@ -52,15 +49,13 @@ class DrawerMenu extends StatelessWidget {
                         );
                       } else if (snapshot.hasError) {
                         return Container(
-                          padding:
-                              const EdgeInsets.all(2), // Padding untuk border
+                          padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
-                            color: Colors.blue, // Warna border
+                            color: Colors.blue,
                             shape: BoxShape.circle,
                           ),
                           child: const CircleAvatar(
-                            radius:
-                                38, // Kurangi radius untuk memberi ruang pada border
+                            radius: 38,
                             backgroundColor: Colors.red,
                             child: Icon(
                               Icons.error,
@@ -70,29 +65,25 @@ class DrawerMenu extends StatelessWidget {
                         );
                       } else if (snapshot.hasData) {
                         return Container(
-                          padding:
-                              const EdgeInsets.all(2), // Padding untuk border
+                          padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
-                            color: Colors.blue, // Warna border
+                            color: Colors.blue,
                             shape: BoxShape.circle,
                           ),
                           child: CircleAvatar(
-                            radius:
-                                38, // Kurangi radius untuk memberi ruang pada border
+                            radius: 38,
                             backgroundImage: snapshot.data!,
                           ),
                         );
                       } else {
                         return Container(
-                          padding:
-                              const EdgeInsets.all(2), // Padding untuk border
+                          padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
-                            color: Colors.blue, // Warna border
+                            color: Colors.blue,
                             shape: BoxShape.circle,
                           ),
                           child: const CircleAvatar(
-                            radius:
-                                38, // Kurangi radius untuk memberi ruang pada border
+                            radius: 38,
                             backgroundColor: Colors.grey,
                             child: Icon(
                               Icons.person,

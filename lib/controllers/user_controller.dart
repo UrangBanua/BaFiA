@@ -9,7 +9,8 @@ import '../services/logger_service.dart';
 
 class UserController extends GetxController {
   var isBiometricEnabled = false.obs;
-  var userData = {}.obs;
+  var userData =
+      RxMap<String, dynamic>(); // Ensure userData is a mutable observable map
 
   @override
   void onInit() {
@@ -34,15 +35,15 @@ class UserController extends GetxController {
   }
 
   Future<void> updateProfilePhoto(String imageHash) async {
-    //LoggerService.logger.i('Image hash: $imageHash');
     try {
       // Save the updated user data to local storage
       await LocalStorageService.saveUserData({
         'profile_photo': imageHash,
         'id_user': userData['id_user'],
       });
-      // Update userData dengan imageHash baru
-      userData['profile_photo'] = imageHash;
+      // Update userData with the new imageHash
+      userData.update('profile_photo', (value) => imageHash,
+          ifAbsent: () => imageHash);
     } catch (e) {
       LoggerService.logger.i('Error updating profile photo: $e');
     }
@@ -85,7 +86,6 @@ class UserController extends GetxController {
               quality: 85); // Compress with 85% quality
           final base64String = base64Encode(compressedBytes);
           await updateProfilePhoto(base64String);
-          getProfileImage(userData['profile_photo']);
         }
       } catch (e) {
         LoggerService.logger.i('Error processing image: $e');

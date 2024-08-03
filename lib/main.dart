@@ -5,13 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
 import 'routes/routes.dart';
 import 'services/api_firebase.dart';
 import 'services/logger_service.dart';
 import 'services/local_storage_service.dart';
-import 'services/theme_provider.dart';
+import 'controllers/theme_controller.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -21,12 +20,19 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (message.data.isNotEmpty) {
     LoggerService.logger.i('Message also contained data: ${message.data}');
     await LocalStorageService.saveMessageData(message.data);
+    // pengarahan ke halaman notifikasi
+    navigatorKey.currentState?.pushNamed(
+      '/notification',
+      arguments: message,
+    );
   }
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final themeProvider = ThemeProvider();
+  // panggil theme controller
+  final themeController = Get.put(ThemeController());
+
   if (!kIsWeb) {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
@@ -69,30 +75,20 @@ void main() async {
     }
   });
 
-  Map<String, dynamic>? userData;
   try {
-    userData = await LocalStorageService.getUserData();
+    var userData = await LocalStorageService.getUserData();
     LoggerService.logger.i('Database is ready');
-    themeProvider.loadTheme(userData?['isDarkMode']);
+    themeController.loadTheme(userData?['isDarkMode']);
     LoggerService.logger.i(
         'Initialize ThemeProvider and load DarkTheme: ${userData?['isDarkMode']}');
   } catch (error) {
     LoggerService.logger.w('App initialization: fresh user data');
   }
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => themeProvider,
-      child: BafiaApp(userData: userData),
-    ),
-  );
+  runApp(BafiaApp());
 }
 
 class BafiaApp extends StatelessWidget {
-  final Map<String, dynamic>? userData;
-
-  const BafiaApp({super.key, this.userData});
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -116,21 +112,28 @@ class BafiaApp extends StatelessWidget {
             ),
           );
         } else {
-          return GetMaterialApp(
-            title: 'Bafia',
-            initialBinding: BindingsBuilder(() {
-              Get.put(AuthController());
-            }),
-            initialRoute: userData == null ? '/login' : '/dashboard',
-            navigatorKey: navigatorKey,
-            getPages: appRoutes(),
-            theme: context.watch<ThemeProvider>().currentTheme,
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-          );
+          return Obx(() {
+            Get.put(ThemeController());
+            final themeController = Get.find<ThemeController>();
+            return GetMaterialApp(
+              title: 'Bafia',
+              initialBinding: BindingsBuilder(() {
+                Get.put(AuthController());
+              }),
+              initialRoute:
+                  themeController.isUserData.value ? '/dashboard' : '/login',
+              navigatorKey: navigatorKey,
+              getPages: appRoutes(),
+              theme: themeController.isDarkMode.value
+                  ? ThemeData.dark()
+                  : ThemeData.light(),
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+            );
+          });
         }
       },
     );
