@@ -231,13 +231,14 @@ class ApiService {
           responseBela.statusCode == 503) {
         LoggerService.logger.e(
             'Failed to sync dashboard data [Service Temporarily Unavailable]');
-        Get.snackbar('Error', 'Service Temporarily Unavailable');
+        Get.snackbar('Info',
+            'singkron data service tidak tersedia saat ini - gunakan data lokal terakhir');
       } else if (responseBela.statusCode != 200 &&
           responsePend.statusCode != 200) {
         LoggerService.logger.e(
             'Failed to sync dashboard data code: ${responseBela.statusCode} and ${responsePend.statusCode}');
-        Get.snackbar('Error',
-            'Failed to sync dashboard data code: ${responseBela.statusCode} and ${responsePend.statusCode}');
+        Get.snackbar('Info',
+            'singkron data service gagal - gunakan data lokal terakhir');
       } else {
         LoggerService.logger.e('Failed to sync dashboard data to local db');
       }
@@ -300,9 +301,13 @@ class ApiService {
     if (response.statusCode == 200) {
       LoggerService.logger
           .i('Kendali skpd fetched successfully for idSkpd: $idSkpd');
+      Get.snackbar('Info',
+          'singkron data pohon kendali gagal pada idSKPD: $idSkpd - cek koneksi internet anda.');
       return json.decode(response.body);
     } else {
       LoggerService.logger.e('Failed to load kendali skpd for idSkpd: $idSkpd');
+      Get.snackbar('Info',
+          'singkron data pohon kendali gagal pada idSKPD: $idSkpd - cek koneksi internet anda.');
       throw Exception('Failed to load kendali skpd');
     }
   }
@@ -436,10 +441,14 @@ class ApiService {
     LoggerService.logger.i(url);
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
+      LoggerService.logger.i('LRA fetched successfully for idSkpd: $idSkpd');
+      Get.snackbar('Info', 'singkron data LRA berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
+      LoggerService.logger.e('Failed to load LRA skpd for idSkpd: $idSkpd');
+      Get.snackbar('Info', 'singkron data LRA berhasil pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -469,10 +478,18 @@ class ApiService {
     LoggerService.logger.i(url);
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
+      LoggerService.logger
+          .i('LRA Prognosis fetched successfully for idSkpd: $idSkpd');
+      Get.snackbar(
+          'Info', 'singkron data LRA Prognosis berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
+      LoggerService.logger
+          .e('Failed to load LRA Prognosis skpd for idSkpd: $idSkpd');
+      Get.snackbar(
+          'Info', 'singkron data LRA Prognosis berhasil pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -502,10 +519,18 @@ class ApiService {
     LoggerService.logger.i(url);
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
+      LoggerService.logger
+          .i('LRA Program fetched successfully for idSkpd: $idSkpd');
+      Get.snackbar(
+          'Info', 'singkron data LRA Program berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
+      LoggerService.logger
+          .e('Failed to load LRA Program skpd for idSkpd: $idSkpd');
+      Get.snackbar(
+          'Info', 'singkron data LRA Program berhasil pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -529,10 +554,14 @@ class ApiService {
     LoggerService.logger.i(url);
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
+      LoggerService.logger.i('LO fetched successfully for idSkpd: $idSkpd');
+      Get.snackbar('Info', 'singkron data LO berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
+      LoggerService.logger.e('Failed to load LO skpd for idSkpd: $idSkpd');
+      Get.snackbar('Info', 'singkron data LO berhasil pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -556,10 +585,14 @@ class ApiService {
     LoggerService.logger.i(url);
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
+      LoggerService.logger.i('LPE fetched successfully for idSkpd: $idSkpd');
+      Get.snackbar('Info', 'singkron data LPE berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
+      LoggerService.logger.e('Failed to load LPE skpd for idSkpd: $idSkpd');
+      Get.snackbar('Info', 'singkron data LPE berhasil pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -583,10 +616,16 @@ class ApiService {
     LoggerService.logger.i(url);
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
+      LoggerService.logger.i('Neraca fetched successfully for idSkpd: $idSkpd');
+      Get.snackbar(
+          'Info', 'singkron data Neraca berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
+      LoggerService.logger.e('Failed to load Neraca skpd for idSkpd: $idSkpd');
+      Get.snackbar(
+          'Info', 'singkron data Neraca berhasil pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
