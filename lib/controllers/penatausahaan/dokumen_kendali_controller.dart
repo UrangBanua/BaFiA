@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../services/api_service.dart';
-import '../dashboard_controller.dart';
+import '../auth_controller.dart';
 import '../../services/logger_service.dart'; // Import LoggerService
 
 class DokumenKendaliController extends GetxController {
@@ -12,9 +12,10 @@ class DokumenKendaliController extends GetxController {
   var kendaliKegiatan = [].obs;
   var kendaliSubKegiatan = [].obs;
   var kendaliRekening = [].obs;
-  // set var userData from get dashboard controller
-  var refreshToken = Get.find<DashboardController>().userData['refresh_token'];
-  var idSkpd = Get.find<DashboardController>().userData['id_skpd'];
+
+  // set var userData from get autenticator controller
+  var refreshToken = Get.find<AuthController>().userData['refresh_token'];
+  var idSkpd = Get.find<AuthController>().userData['id_skpd'];
 
   // Fetch kendali SKPD data
   void fetchKendaliSkpd() async {

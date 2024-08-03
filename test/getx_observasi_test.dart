@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 void main() {
   final directory = Directory('lib');
   final files = directory
@@ -9,7 +11,9 @@ void main() {
   for (var file in files) {
     final content = File(file.path).readAsStringSync();
     if (content.contains("package:get/get.dart")) {
-      print('Checking file: ${file.path}');
+      if (kDebugMode) {
+        print('Checking file: ${file.path}');
+      }
       checkGetXUsage(content);
     }
   }
@@ -21,11 +25,17 @@ void checkGetXUsage(String content) {
       RegExp(r'class\s+\w+Controller\s+extends\s+GetxController')
           .allMatches(content);
   if (controllerDefinitions.isEmpty) {
-    print('No GetX controllers found.');
+    if (kDebugMode) {
+      print('No GetX controllers found.');
+    }
   } else {
-    print('Found GetX controllers:');
+    if (kDebugMode) {
+      print('Found GetX controllers:');
+    }
     for (var match in controllerDefinitions) {
-      print(content.substring(match.start, match.end));
+      if (kDebugMode) {
+        print(content.substring(match.start, match.end));
+      }
     }
   }
 
@@ -34,11 +44,17 @@ void checkGetXUsage(String content) {
           r'Get\.put<\w+Controller>\(\)|Get\.lazyPut<\w+Controller>\(\)|Get\.find<\w+Controller>\(\)')
       .allMatches(content);
   if (controllerInitializations.isEmpty) {
-    print('No GetX controller initializations found.');
+    if (kDebugMode) {
+      print('No GetX controller initializations found.');
+    }
   } else {
-    print('Found GetX controller initializations:');
+    if (kDebugMode) {
+      print('Found GetX controller initializations:');
+    }
     for (var match in controllerInitializations) {
-      print(content.substring(match.start, match.end));
+      if (kDebugMode) {
+        print(content.substring(match.start, match.end));
+      }
     }
   }
 
@@ -46,11 +62,17 @@ void checkGetXUsage(String content) {
   final stateObservations =
       RegExp(r'Obx\(\)|GetBuilder<\w+Controller>\(\)').allMatches(content);
   if (stateObservations.isEmpty) {
-    print('No GetX state observations found.');
+    if (kDebugMode) {
+      print('No GetX state observations found.');
+    }
   } else {
-    print('Found GetX state observations:');
+    if (kDebugMode) {
+      print('Found GetX state observations:');
+    }
     for (var match in stateObservations) {
-      print(content.substring(match.start, match.end));
+      if (kDebugMode) {
+        print(content.substring(match.start, match.end));
+      }
     }
   }
 }

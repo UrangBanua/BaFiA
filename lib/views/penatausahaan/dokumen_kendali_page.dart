@@ -6,10 +6,10 @@ import '../../services/logger_service.dart'; // Impor LoggerService
 
 class DokumenKendaliPage extends StatefulWidget {
   @override
-  _DokumenKendaliPageState createState() => _DokumenKendaliPageState();
+  DokumenKendaliPageState createState() => DokumenKendaliPageState();
 }
 
-class _DokumenKendaliPageState extends State<DokumenKendaliPage> {
+class DokumenKendaliPageState extends State<DokumenKendaliPage> {
   final DokumenKendaliController controller =
       Get.put(DokumenKendaliController());
   final NumberFormat currencyFormat = NumberFormat.currency(

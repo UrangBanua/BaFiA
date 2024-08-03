@@ -69,8 +69,8 @@ class ProfileUserPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: profileImage != null
-                        ? MemoryImage(base64Decode(profileImage))
+                    image: profileImage != '-'
+                        ? MemoryImage(base64Decode(profileImage!))
                         : const AssetImage('assets/images/default_profile.png'),
                     fit: BoxFit.cover,
                   ),
@@ -108,8 +108,8 @@ class ProfileUserPage extends StatelessWidget {
           height: 300.0,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: profileImage != null
-                  ? MemoryImage(base64Decode(profileImage))
+              image: profileImage != '-'
+                  ? MemoryImage(base64Decode(profileImage!))
                   : const AssetImage('assets/images/default_profile.png'),
               fit: BoxFit.contain,
             ),

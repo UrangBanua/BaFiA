@@ -1,7 +1,9 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../controllers/auth_controller.dart';
+import '../widgets/custom/custom_loading_animation.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -106,13 +108,36 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              Obx(() {
+                if (authController.userData.isNotEmpty) {
+                  return AnimatedTextKit(
+                    animatedTexts: [
+                      ColorizeAnimatedText(
+                          'HALO ${authController.userData['nama_role']}',
+                          textStyle: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          colors: [
+                            Colors.blue,
+                            Colors.transparent,
+                            Colors.blue
+                          ]),
+                    ],
+                    totalRepeatCount: 3,
+                    isRepeatingAnimation: true,
+                  );
+                } else {
+                  return Container();
+                }
+              }),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   children: [
                     TextField(
-                      readOnly: true,
+                      readOnly: false,
                       controller: yearController,
                       decoration: InputDecoration(
                         labelText: 'Tahun',
@@ -123,21 +148,30 @@ class _LoginPageState extends State<LoginPage>
                             vertical: 10, horizontal: 20),
                       ),
                       style: const TextStyle(fontSize: 14),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(4),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     TextField(
-                      controller: usernameController,
-                      decoration: InputDecoration(
-                        labelText: 'Username',
-                        hintText: 'nip',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
+                        controller: usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Username',
+                          hintText: 'nip',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                      ),
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                        style: const TextStyle(fontSize: 14),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(18),
+                        ]),
                     const SizedBox(height: 20),
                     TextField(
                       controller: passwordController,
@@ -173,14 +207,11 @@ class _LoginPageState extends State<LoginPage>
                             vertical: 12, horizontal: 24),
                       ),
                       child: isLoading
-                          ? const SpinKitCircle(
-                              color: Colors.white,
-                              size: 24.0,
-                            )
+                          ? const CustomLoadingAnimation()
                           : const Text('Login'),
                     ),
                     // buat gab atau pemisah
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 60),
                     Obx(() {
                       if (authController.userData.isNotEmpty) {
                         return IconButton(
@@ -195,6 +226,25 @@ class _LoginPageState extends State<LoginPage>
                                   'Unable to authenticate');
                             }
                           },
+                        );
+                      } else {
+                        return Container();
+                      }
+                    }),
+                    // buat gab atau pemisah
+                    const SizedBox(height: 20),
+                    Obx(() {
+                      if (authController.userData.isNotEmpty) {
+                        return AnimatedTextKit(
+                          animatedTexts: [
+                            WavyAnimatedText(
+                                'Langsung Masuk ☝ dengan Biometrics',
+                                textStyle: const TextStyle(
+                                  fontSize: 12,
+                                )),
+                          ],
+                          totalRepeatCount: 3,
+                          isRepeatingAnimation: true,
                         );
                       } else {
                         return Container();

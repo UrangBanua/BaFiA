@@ -22,7 +22,7 @@ class UserController extends GetxController {
     LoggerService.logger.i('Fetching user data...');
     var data = await LocalStorageService.getUserData();
     if (data != null) {
-      LoggerService.logger.i('User data fetched: $data');
+      LoggerService.logger.i('User data fetched successfully.');
       userData.value = data;
     } else {
       LoggerService.logger.i('No user data found.');

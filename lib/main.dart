@@ -4,6 +4,7 @@ import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'controllers/auth_controller.dart';
 import 'routes/routes.dart';
@@ -20,7 +21,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (message.data.isNotEmpty) {
     LoggerService.logger.i('Message also contained data: ${message.data}');
     await LocalStorageService.saveMessageData(message.data);
-    // pengarahan ke halaman notifikasi
+    // Simpan status notifikasi
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasNotification', true);
+    await prefs.setString('notificationData', message.data.toString());
+
+    // Pengarahan ke halaman notifikasi
     navigatorKey.currentState?.pushNamed(
       '/notification',
       arguments: message,
@@ -28,8 +34,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
+Future<String> getInitialRoute() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool hasNotification = prefs.getBool('hasNotification') ?? false;
+  if (hasNotification) {
+    // Hapus status notifikasi setelah dibaca
+    await prefs.remove('hasNotification');
+    return '/notification';
+  }
+  return AuthController().isLoggedIn.value ? '/dashboard' : '/login';
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  String initialRoute = await getInitialRoute();
   // panggil theme controller
   final themeController = Get.put(ThemeController());
 
@@ -85,10 +103,13 @@ void main() async {
     LoggerService.logger.w('App initialization: fresh user data');
   }
 
-  runApp(BafiaApp());
+  runApp(BafiaApp(initialRoute: initialRoute));
 }
 
 class BafiaApp extends StatelessWidget {
+  final String initialRoute;
+  const BafiaApp({required this.initialRoute});
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -120,9 +141,12 @@ class BafiaApp extends StatelessWidget {
               initialBinding: BindingsBuilder(() {
                 Get.put(AuthController());
               }),
-              initialRoute:
-                  themeController.isUserData.value ? '/dashboard' : '/login',
               navigatorKey: navigatorKey,
+              initialRoute: AuthController().isLoggedIn.value
+                  ? (navigatorKey.isBlank ?? true)
+                      ? '/dashboard'
+                      : navigatorKey.toString()
+                  : '/login',
               getPages: appRoutes(),
               theme: themeController.isDarkMode.value
                   ? ThemeData.dark()

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
-import '../../dashboard_controller.dart';
+import '../../auth_controller.dart';
 import '../../../services/api_service.dart';
 import '../../../services/logger_service.dart';
 
@@ -15,9 +15,9 @@ class LKLoController extends GetxController {
   final Rx<Uint8List> filePdf = Uint8List(0).obs;
   final RxBool isLoading = false.obs; // Add loading state
 
-  // set var userData from get dashboard controller
-  var refreshToken = Get.find<DashboardController>().userData['refresh_token'];
-  var idSkpd = Get.find<DashboardController>().userData['id_skpd'];
+// set var userData from get autenticator controller
+  var refreshToken = Get.find<AuthController>().userData['refresh_token'];
+  var idSkpd = Get.find<AuthController>().userData['id_skpd'];
 
   @override
   void onInit() {

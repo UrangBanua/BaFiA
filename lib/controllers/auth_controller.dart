@@ -3,12 +3,17 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'connectivity_controller.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
+import '../widgets/custom/custom_loading_animation.dart';
 
 class AuthController extends GetxController {
   final LocalAuthentication auth = LocalAuthentication();
+  final ConnectivityController connectivityController =
+      Get.put(ConnectivityController());
+  var connectivityState = 'No Internet Available';
   var isLoggedIn = false.obs;
   var userData = {}.obs;
   var userToken = {}.obs;
@@ -19,6 +24,16 @@ class AuthController extends GetxController {
     super.onInit();
     _checkUserData();
     ApiService.checkDevelopmentModeWarning();
+  }
+
+  checkConnectivityState() {
+    connectivityState = connectivityController.connectionType ==
+            MConnectivityResult.wifi
+        ? "Wifi Connected"
+        : connectivityController.connectionType == MConnectivityResult.mobile
+            ? 'Mobile Data Connected'
+            : 'No Internet Available';
+    return connectivityState;
   }
 
   // fungsi check user data
@@ -79,14 +94,6 @@ class AuthController extends GetxController {
       // Set variable userData
       userData.value = response;
       LoggerService.logger.i('Set variable userData');
-      // // User data pre-login saved to db
-      // await LocalStorageService.saveUserData({
-      //   'id_pegawai': id_pegawai,
-      //   'username': username,
-      //   'password': password,
-      //   'tahun': tahun
-      // });
-      //LoggerService.logger.i('User data pre-login saved to db: $response');
       // ambil captcha image
       await _fetchCaptchaImage();
       LoggerService.logger.i('Captcha image fetched id: ${captchaData['id']}');
@@ -103,6 +110,12 @@ class AuthController extends GetxController {
                 onChanged: (value) async {
                   captcha = value;
                   if (captcha.length >= 6) {
+                    // Show loading dialog
+                    Get.dialog(
+                      const Center(child: CustomLoadingAnimation()),
+                      barrierDismissible: false,
+                    );
+
                     var tokenResponse = await fetchUserToken(
                         response['id_daerah'],
                         response['id_role'],
@@ -113,6 +126,10 @@ class AuthController extends GetxController {
                         username,
                         captchaData['id'],
                         captcha);
+
+                    // Close loading dialog
+                    Get.back();
+
                     if (tokenResponse != null) {
                       // Merge token response with user data and save to local storage
                       response['username'] = username;

@@ -138,7 +138,7 @@ class NotificationPage extends StatelessWidget {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   );
                 },
@@ -154,7 +154,6 @@ class NotificationPage extends StatelessWidget {
     return Obx(() {
       return ElevatedButton(
         onPressed: () => _controller.setSelectedCategory(category),
-        child: Text(category),
         style: ElevatedButton.styleFrom(
           foregroundColor: _controller.selectedCategory.value == category
               ? Colors.white
@@ -163,6 +162,7 @@ class NotificationPage extends StatelessWidget {
               ? Colors.blue
               : Colors.blue,
         ),
+        child: Text(category),
       );
     });
   }
