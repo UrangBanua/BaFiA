@@ -55,11 +55,12 @@ class DashboardController extends GetxController {
       LoggerService.logger.i('[DashboardController] Dashboard data assigned');
       updateCatatanPengajuan();
       // Load notifications unread from local storage
-      await _loadReadNotifications();
+      //await _loadReadNotifications();
     } catch (e) {
       LoggerService.logger.e('Error fetching dashboard data: $e');
       hasError(true);
-      Get.snackbar('Error', 'Connection problem, data loaded from local DB');
+      Get.snackbar(
+          'Info', 'singkron data service gagal - gunakan data lokal terakhir');
     } finally {
       isLoading(false);
       LoggerService.logger.i('[DashboardController] isLoading set to false');

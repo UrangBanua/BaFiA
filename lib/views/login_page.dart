@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/connectivity_controller.dart';
 import '../widgets/custom/custom_loading_animation.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,6 +16,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
+  final ConnectivityController connectivityController =
+      Get.put(ConnectivityController());
   final AuthController authController = Get.find();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -87,6 +90,29 @@ class _LoginPageState extends State<LoginPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // obx untuk menampilkan Connectivity Caption
+              Obx(() {
+                return SizedBox(
+                  height: 20, // Set a fixed height for the text
+                  child: AnimatedTextKit(
+                    animatedTexts: [
+                      FadeAnimatedText(
+                        connectivityController.connectivityCaption.value,
+                        textStyle: TextStyle(
+                          fontSize: 10,
+                          color: connectivityController.connectivityState.value
+                              ? Colors.green
+                              : Colors.amber,
+                        ),
+                        duration: const Duration(milliseconds: 2000),
+                      ),
+                    ],
+                    repeatForever: true,
+                  ),
+                );
+              }),
+              // buat gab atau pemisah
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: _handleLogoTap, // Add tap listener
                 child: AnimatedBuilder(
@@ -118,11 +144,7 @@ class _LoginPageState extends State<LoginPage>
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
-                          colors: [
-                            Colors.blue,
-                            Colors.transparent,
-                            Colors.blue
-                          ]),
+                          colors: [Colors.blue, Colors.red, Colors.amber]),
                     ],
                     totalRepeatCount: 3,
                     isRepeatingAnimation: true,
@@ -136,26 +158,31 @@ class _LoginPageState extends State<LoginPage>
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   children: [
-                    TextField(
-                      readOnly: false,
-                      controller: yearController,
-                      decoration: InputDecoration(
-                        labelText: 'Tahun',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    Obx(() {
+                      return TextField(
+                        readOnly: false,
+                        controller: yearController,
+                        decoration: InputDecoration(
+                          labelText: 'Tahun',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          enabled:
+                              connectivityController.connectivityState.value,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                      ),
-                      style: const TextStyle(fontSize: 14),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(4),
-                      ],
-                    ),
+                        style: const TextStyle(fontSize: 14),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(4),
+                        ],
+                      );
+                    }),
                     const SizedBox(height: 20),
-                    TextField(
+                    Obx(() {
+                      return TextField(
                         controller: usernameController,
                         decoration: InputDecoration(
                           labelText: 'Username',
@@ -165,51 +192,65 @@ class _LoginPageState extends State<LoginPage>
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
+                          enabled:
+                              connectivityController.connectivityState.value,
                         ),
                         style: const TextStyle(fontSize: 14),
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(18),
-                        ]),
+                        ],
+                      );
+                    }),
                     const SizedBox(height: 20),
-                    TextField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'password',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureText
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                    Obx(() {
+                      return TextField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          hintText: 'password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                          ),
+                          enabled:
+                              connectivityController.connectivityState.value,
                         ),
-                      ),
-                      obscureText: _obscureText,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                        obscureText: _obscureText,
+                        style: const TextStyle(fontSize: 14),
+                      );
+                    }),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: isLoading ? null : _login,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 24),
-                      ),
-                      child: isLoading
-                          ? const CustomLoadingAnimation()
-                          : const Text('Login'),
-                    ),
+                    Obx(() {
+                      return ElevatedButton(
+                        onPressed:
+                            (connectivityController.connectivityState.value &&
+                                    !isLoading)
+                                ? _login
+                                : null,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 24),
+                        ),
+                        child: isLoading
+                            ? const CustomLoadingAnimation()
+                            : const Text('Login'),
+                      );
+                    }),
                     // buat gab atau pemisah
                     const SizedBox(height: 60),
                     Obx(() {

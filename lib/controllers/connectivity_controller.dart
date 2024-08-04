@@ -9,6 +9,9 @@ class ConnectivityController extends GetxController {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription _streamSubscription;
 
+  final connectivityState = false.obs; // Tambahkan variabel connectivityState
+  final connectivityCaption = ''.obs; // Tambahkan variabel connectivityCaption
+
   MConnectivityResult get connectionType => _connectionType.value;
 
   set connectionType(value) {
@@ -40,12 +43,21 @@ class ConnectivityController extends GetxController {
     switch (result) {
       case ConnectivityResult.wifi:
         connectionType = MConnectivityResult.wifi;
+        connectivityState.value = true; // Update connectivityState
+        connectivityCaption.value =
+            'Internet WiFi tersedia'; // Update connectivityCaption
         break;
       case ConnectivityResult.mobile:
         connectionType = MConnectivityResult.mobile;
+        connectivityState.value = true; // Update connectivityState
+        connectivityCaption.value =
+            'Internet 4G tersedia'; // Update connectivityCaption
         break;
       case ConnectivityResult.none:
         connectionType = MConnectivityResult.none;
+        connectivityState.value = false; // Update connectivityState
+        connectivityCaption.value =
+            'Internet tidak tersedia'; // Update connectivityCaption
         break;
       default:
         if (kDebugMode) {

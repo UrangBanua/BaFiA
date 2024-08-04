@@ -64,7 +64,6 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
         name: 'BaFiA_PushNotif',
       );
-      await ApiFirebase().initNotifications();
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'connectivity_controller.dart';
+import '../services/api_firebase.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
@@ -13,7 +14,6 @@ class AuthController extends GetxController {
   final LocalAuthentication auth = LocalAuthentication();
   final ConnectivityController connectivityController =
       Get.put(ConnectivityController());
-  var connectivityState = 'No Internet Available';
   var isLoggedIn = false.obs;
   var userData = {}.obs;
   var userToken = {}.obs;
@@ -24,16 +24,6 @@ class AuthController extends GetxController {
     super.onInit();
     _checkUserData();
     ApiService.checkDevelopmentModeWarning();
-  }
-
-  checkConnectivityState() {
-    connectivityState = connectivityController.connectionType ==
-            MConnectivityResult.wifi
-        ? "Wifi Connected"
-        : connectivityController.connectionType == MConnectivityResult.mobile
-            ? 'Mobile Data Connected'
-            : 'No Internet Available';
-    return connectivityState;
   }
 
   // fungsi check user data

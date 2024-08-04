@@ -301,8 +301,6 @@ class ApiService {
     if (response.statusCode == 200) {
       LoggerService.logger
           .i('Kendali skpd fetched successfully for idSkpd: $idSkpd');
-      Get.snackbar('Info',
-          'singkron data pohon kendali gagal pada idSKPD: $idSkpd - cek koneksi internet anda.');
       return json.decode(response.body);
     } else {
       LoggerService.logger.e('Failed to load kendali skpd for idSkpd: $idSkpd');
@@ -324,8 +322,6 @@ class ApiService {
         '$apiServiceUrl/pengeluaran/strict/dashboard/statistik-belanja/$idSkpd/$idSubSkpd?tanggal_akhir=$getDateNow',
         pHeaders);
     if (response.statusCode == 200) {
-      LoggerService.logger.i(
-          'Kendali urusan fetched successfully for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd');
       return json.decode(response.body);
     } else {
       LoggerService.logger.e(
@@ -442,7 +438,6 @@ class ApiService {
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
       LoggerService.logger.i('LRA fetched successfully for idSkpd: $idSkpd');
-      Get.snackbar('Info', 'singkron data LRA berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
@@ -480,8 +475,6 @@ class ApiService {
     if (response.statusCode == 200) {
       LoggerService.logger
           .i('LRA Prognosis fetched successfully for idSkpd: $idSkpd');
-      Get.snackbar(
-          'Info', 'singkron data LRA Prognosis berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
@@ -521,8 +514,6 @@ class ApiService {
     if (response.statusCode == 200) {
       LoggerService.logger
           .i('LRA Program fetched successfully for idSkpd: $idSkpd');
-      Get.snackbar(
-          'Info', 'singkron data LRA Program berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
@@ -555,7 +546,6 @@ class ApiService {
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
       LoggerService.logger.i('LO fetched successfully for idSkpd: $idSkpd');
-      Get.snackbar('Info', 'singkron data LO berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
@@ -586,7 +576,6 @@ class ApiService {
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
       LoggerService.logger.i('LPE fetched successfully for idSkpd: $idSkpd');
-      Get.snackbar('Info', 'singkron data LPE berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF
@@ -617,8 +606,6 @@ class ApiService {
     //final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
       LoggerService.logger.i('Neraca fetched successfully for idSkpd: $idSkpd');
-      Get.snackbar(
-          'Info', 'singkron data Neraca berhasil pada idSKPD: $idSkpd.');
       // return data as Uint8List
       return Uint8List.fromList(response.body.codeUnits);
       //return response.body; // Assuming the API returns the URL of the PDF

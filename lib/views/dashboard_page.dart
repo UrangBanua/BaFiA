@@ -1,11 +1,13 @@
 import 'dart:io';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'drawer_menu.dart';
+import '/services/logger_service.dart';
+import '../controllers/connectivity_controller.dart';
 import '../widgets/custom/custom_button_animation.dart';
 import '../widgets/dashboard_page/radial_gauge_widget.dart';
-import 'drawer_menu.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '/services/logger_service.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/custom/custom_loading_animation.dart';
@@ -14,6 +16,8 @@ import '../widgets/custom/custom_loading_animation.dart';
 class DashboardPage extends StatelessWidget {
   int notificationCount = 0;
   //int unreadCount = 1;
+  final ConnectivityController connectivityController =
+      Get.put(ConnectivityController());
   final AuthController authController = Get.put(AuthController());
   final DashboardController dashboardController =
       Get.put(DashboardController());
@@ -206,19 +210,49 @@ class DashboardPage extends StatelessWidget {
                   }
                 });
               } else {
-                return Align(
-                  alignment: const FractionalOffset(0.5,
-                      0.3), // 0.5 untuk horizontal center, 0.7 untuk menyesuaikan tinggi
-                  child: CustomButtonSerapan(
-                    onPressed: () {
-                      dashboardController.showGauge.value = true;
-                      dashboardController.fetchDashboardData();
-                    },
-                    color: Colors.blue,
-                    borderWidth: 3.0,
-                    fontSize: 32.0,
-                    textCaption: 'MULAI',
-                  ),
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: const FractionalOffset(0.5, 0.3),
+                      child: CustomButtonSerapan(
+                        onPressed: () {
+                          dashboardController.showGauge.value = true;
+                          dashboardController.fetchDashboardData();
+                        },
+                        color: connectivityController.connectivityState.value
+                            ? Colors.blue
+                            : Colors.amber,
+                        borderWidth: 3.0,
+                        fontSize: 32.0,
+                        textCaption: 'MULAI',
+                      ),
+                    ),
+                    const SizedBox(
+                        height:
+                            20), // Add some space between the button and the text
+                    Obx(() {
+                      return SizedBox(
+                          height: 20, // Set a fixed height for the text
+                          child: AnimatedTextKit(
+                            animatedTexts: [
+                              FadeAnimatedText(
+                                connectivityController
+                                    .connectivityCaption.value,
+                                textStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: connectivityController
+                                          .connectivityState.value
+                                      ? Colors.blue
+                                      : Colors.amber,
+                                ),
+                                duration: const Duration(milliseconds: 3000),
+                              ),
+                            ],
+                            repeatForever: true,
+                          ));
+                    }),
+                  ],
                 );
               }
             }),
