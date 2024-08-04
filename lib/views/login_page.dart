@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/connectivity_controller.dart';
+import '../services/api_firebase.dart';
+import '../services/logger_service.dart';
 import '../widgets/custom/custom_loading_animation.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,10 +24,11 @@ class _LoginPageState extends State<LoginPage>
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
-  bool isLoading = false;
   late AnimationController _controller;
   late Animation<Offset> _positionAnimation;
   late Animation<double> _rotationAnimation;
+  var isFirebaseInitialed = false.obs;
+  bool isLoading = false;
   bool _obscureText = true;
 
   @override
@@ -55,6 +58,18 @@ class _LoginPageState extends State<LoginPage>
     ));
 
     _controller.forward();
+
+    // Add listener for connectivity state
+    ever(connectivityController.connectivityState, (bool isConnected) {
+      if (isConnected) {
+        _initFCM();
+      }
+    });
+
+    // Check initial connectivity state
+    if (connectivityController.connectivityState.value) {
+      _initFCM();
+    }
   }
 
   @override
@@ -64,6 +79,16 @@ class _LoginPageState extends State<LoginPage>
     passwordController.dispose();
     yearController.dispose();
     super.dispose();
+  }
+
+  void _initFCM() async {
+    //Initialize FCM setting
+    if (isFirebaseInitialed.value == false &&
+        connectivityController.connectivityState.value) {
+      await ApiFirebase().initNotifications();
+      LoggerService.logger.i('Firebase initialized...');
+      isFirebaseInitialed.value = true;
+    }
   }
 
   void _login() async {

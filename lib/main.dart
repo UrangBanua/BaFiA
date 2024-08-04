@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'controllers/auth_controller.dart';
 import 'routes/routes.dart';
-import 'services/api_firebase.dart';
 import 'services/logger_service.dart';
 import 'services/local_storage_service.dart';
 import 'controllers/theme_controller.dart';

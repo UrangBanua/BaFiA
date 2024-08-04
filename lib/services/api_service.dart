@@ -77,11 +77,35 @@ class ApiService {
   static void _handleException(Exception e, String message) {
     if (e is TimeoutException) {
       LoggerService.logger.e('$message: Request timeout');
-      Get.snackbar('Timeout', '$message: Request timeout');
+      Get.snackbar('Info',
+          'singkron data service timeout - gunakan data lokal terakhir');
     } else {
       LoggerService.logger.e('$message: $e');
-      Get.snackbar('Error', message);
+      Get.snackbar(
+          'Info', 'singkron data service gagal - gunakan data lokal terakhir');
     }
+  }
+
+  // rest api get app release version
+  static Future<Map<String, dynamic>?> getAppReleaseVersion() async {
+    LoggerService.logger.i('Attempting to get captcha image');
+    try {
+      final response = await _getRequest(
+          'https://raw.githubusercontent.com/UrangBanua/urangbanua/master/data/json/bafia/release.json',
+          {'Content-Type': 'application/json'});
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i(response.body);
+        LoggerService.logger.i('Get data release version fetched successfully');
+        return json.decode(response.body);
+      } else {
+        _handleError(response, 'Failed to get data release version');
+      }
+    } catch (e) {
+      _handleException(
+          e as Exception, 'Get data request failed with exception');
+    }
+    return null;
   }
 
   // rest api get captcha image

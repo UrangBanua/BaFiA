@@ -334,7 +334,7 @@ class DrawerMenu extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.info),
-            title: const Text('About'),
+            title: const Text('Info BaFiA'),
             onTap: () {
               Get.toNamed('/about');
             },

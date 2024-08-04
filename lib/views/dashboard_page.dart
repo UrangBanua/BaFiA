@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
@@ -33,9 +35,24 @@ class DashboardPage extends StatelessWidget {
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
       currentBackPressTime = now;
-      Get.snackbar('Exit', 'Ketuk tombol sekali lagi untuk keluar');
+      Get.snackbar(
+        '',
+        'Ketuk tombol sekali lagi untuk keluar',
+        colorText: Colors.red,
+        backgroundColor: Colors.transparent,
+        icon: const Icon(Icons.cancel, color: Colors.red),
+        snackStyle: SnackStyle.GROUNDED,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        margin:
+            const EdgeInsets.all(10), // Adjust the margin to reduce the size
+        padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 5), // Adjust the padding to reduce the size
+      );
       return Future.value(false);
     }
+
     authController.isLoggedIn.value = false; // Set isLoggedIn to false
     LoggerService.logger.i('App is exit');
     exit(0); // Force stop the application
@@ -53,51 +70,77 @@ class DashboardPage extends StatelessWidget {
           minChildSize: 0.0,
           maxChildSize: 0.5,
           builder: (context, scrollController) {
-            return ListView(
-              controller: scrollController,
+            return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // penambahan garis sebagai tanda bisa digeser
+                /* Container(
+                  width: 45,
+                  height: 5,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[700],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ), */
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed('/laporan');
-                        },
-                        child: const Column(
-                          mainAxisSize: MainAxisSize.min,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            FaIcon(FontAwesomeIcons.chartLine),
-                            SizedBox(height: 4),
-                            Text('Laporan'),
-                          ],
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed('/penatausahaan/dokumen_kendali');
-                        },
-                        child: const Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FaIcon(FontAwesomeIcons.wallet),
-                            SizedBox(height: 4),
-                            Text('Cek Kendali'),
-                          ],
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed('/profile_user');
-                        },
-                        child: const Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // ignore: deprecated_member_use
-                            FaIcon(FontAwesomeIcons.cogs),
-                            SizedBox(height: 4),
-                            Text('Pengaturan'),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.toNamed('/laporan');
+                                },
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.chartLine),
+                                    SizedBox(height: 4),
+                                    Text('Laporan',
+                                        style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8), // Spasi antar tombol
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.toNamed('/penatausahaan/dokumen_kendali');
+                                },
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.wallet),
+                                    SizedBox(height: 4),
+                                    Text('Cek Kendali',
+                                        style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8), // Spasi antar tombol
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.toNamed('/profile_user');
+                                },
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.cogs),
+                                    SizedBox(height: 4),
+                                    Text('Pengaturan',
+                                        style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -214,44 +257,58 @@ class DashboardPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Align(
-                      alignment: const FractionalOffset(0.5, 0.3),
-                      child: CustomButtonSerapan(
-                        onPressed: () {
-                          dashboardController.showGauge.value = true;
-                          dashboardController.fetchDashboardData();
-                        },
-                        color: connectivityController.connectivityState.value
-                            ? Colors.blue
-                            : Colors.amber,
-                        borderWidth: 3.0,
-                        fontSize: 32.0,
-                        textCaption: 'MULAI',
+                      alignment: const FractionalOffset(
+                          0.5, 0), // Menaikkan lebih ke atas
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 10.0), // Menambahkan jarak bawah
+                        child: CustomButtonSerapan(
+                          onPressed: () {
+                            dashboardController.showGauge.value = true;
+                            dashboardController.fetchDashboardData();
+                          },
+                          color: connectivityController.connectivityState.value
+                              ? Colors.blue
+                              : Colors.amber,
+                          borderWidth: 3.0,
+                          fontSize: 32.0,
+                          textCaption: 'MULAI',
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                        height:
-                            20), // Add some space between the button and the text
-                    Obx(() {
-                      return SizedBox(
-                          height: 20, // Set a fixed height for the text
-                          child: AnimatedTextKit(
-                            animatedTexts: [
-                              FadeAnimatedText(
-                                connectivityController
-                                    .connectivityCaption.value,
-                                textStyle: TextStyle(
-                                  fontSize: 16,
-                                  color: connectivityController
-                                          .connectivityState.value
-                                      ? Colors.blue
-                                      : Colors.amber,
-                                ),
-                                duration: const Duration(milliseconds: 3000),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                        height: 160, // Set a fixed height for the text
+                        child: AnimatedTextKit(
+                          animatedTexts: [
+                            FadeAnimatedText(
+                              connectivityController.connectivityCaption.value,
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                                color: connectivityController
+                                        .connectivityState.value
+                                    ? Colors.blue
+                                    : Colors.amber,
                               ),
-                            ],
-                            repeatForever: true,
-                          ));
-                    }),
+                              duration: const Duration(milliseconds: 2000),
+                            ),
+                            FadeAnimatedText(
+                              connectivityController.connectivityState.value
+                                  ? 'silahkan tekan tombol mulai\nuntuk singkron data terbaru'
+                                  : 'silahkan tekan tombol mulai\nuntuk singkron data lokal terakhir',
+                              textAlign: TextAlign.center,
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                                color: connectivityController
+                                        .connectivityState.value
+                                    ? Colors.blue
+                                    : Colors.amber,
+                              ),
+                              duration: const Duration(milliseconds: 4000),
+                            ),
+                          ],
+                          repeatForever: true,
+                        )),
                   ],
                 );
               }

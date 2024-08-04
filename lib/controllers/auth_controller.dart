@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'connectivity_controller.dart';
-import '../services/api_firebase.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
