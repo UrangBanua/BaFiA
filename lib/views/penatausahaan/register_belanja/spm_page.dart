@@ -26,7 +26,13 @@ class RBSpmPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.print, color: Colors.blue),
-            onPressed: controller.printPdf,
+            onPressed: () {
+              var dataToPdf = controller.jenisSP2D.value == '*'
+                  ? List<Map<String, dynamic>>.from(
+                      controller.responOutput[0]['detail'])
+                  : controller.filteredDetails;
+              controller.printPdf(dataToPdf);
+            },
           ),
         ],
       ),
@@ -169,7 +175,7 @@ class RBSpmPage extends StatelessWidget {
                           title: Text(
                               '${formatter.format(DateTime.parse(item['tanggal_pembuatan']))}, SPM - ${item['jenis']}'),
                           subtitle: Text(
-                              'SPM: ${item['nomor_dokumen']}\nNilai: ${controller.formatCurrency(item['nilai_bruto'].toDouble(), context)}'),
+                              'SPM: ${item['nomor_dokumen']}\nNilai: ${controller.formatCurrency(item['nilai_bruto'].toDouble())}'),
                           leading: Icon(
                             item['kondisi_selesai'] == 'belum_ada_pengembalian'
                                 ? Icons.hourglass_empty
@@ -232,8 +238,7 @@ class RBSpmPage extends StatelessWidget {
                                                   text:
                                                       controller.formatCurrency(
                                                           item['nilai_bruto']
-                                                              .toDouble(),
-                                                          context)),
+                                                              .toDouble())),
                                             ],
                                           ),
                                         ),
@@ -252,8 +257,7 @@ class RBSpmPage extends StatelessWidget {
                                                   text:
                                                       controller.formatCurrency(
                                                           item['nilai_potongan']
-                                                              .toDouble(),
-                                                          context)),
+                                                              .toDouble())),
                                             ],
                                           ),
                                         ),
@@ -272,8 +276,7 @@ class RBSpmPage extends StatelessWidget {
                                                   text:
                                                       controller.formatCurrency(
                                                           item['nilai_netto']
-                                                              .toDouble(),
-                                                          context)),
+                                                              .toDouble())),
                                             ],
                                           ),
                                         ),
