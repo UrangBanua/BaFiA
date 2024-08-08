@@ -37,4 +37,4 @@ Jika Anda memiliki pertanyaan atau kekhawatiran tentang Kebijakan Privasi ini, s
 
 afni.dev@gmail.com
 
-[\[Alamat Fisik Perusahaan\]](https://github.com/UrangBanua)
+(https://github.com/UrangBanua)
