@@ -36,6 +36,9 @@ class ApiService {
   // fungsi post request with header
   static Future<http.Response> _postRequest(
       String url, Map<String, dynamic> body, Map<String, String> headers) {
+    LoggerService.logger.i('url: $url');
+    LoggerService.logger.i('headers: $headers');
+    LoggerService.logger.i('body: $body');
     return client
         .post(
           Uri.parse(url),
@@ -48,6 +51,8 @@ class ApiService {
   // fungsi get request
   static Future<http.Response> _getRequest(
       String url, Map<String, String> headers) {
+    LoggerService.logger.i('url: $url');
+    LoggerService.logger.i('headers: $headers');
     return client
         .get(
           Uri.parse(url),
@@ -59,6 +64,8 @@ class ApiService {
   // fungsi get request reports
   static Future<http.Response> _getRequestReports(
       String url, Map<String, String> headers) {
+    LoggerService.logger.i('url: $url');
+    LoggerService.logger.i('headers: $headers');
     return client
         .get(
           Uri.parse(url),
@@ -639,5 +646,148 @@ class ApiService {
           'Info', 'singkron data Neraca berhasil pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
+  } /* 
+
+  // API Service untuk Register Pengajuan TU
+  static Future<dynamic> postRegisterPengajuanTU(
+    String jenisDokumen,
+    String tanggalMulai,
+    String tanggalSampai,
+    String jenisRegister,
+    int idSkpd,
+    String jenisKriteria,
+    String token,
+  ) async {
+    try {
+      final pHeaders = isDevelopmentMode
+          ? {
+              'x-api-key': fakeXApiKey ?? '',
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            }
+          : {
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            };
+      final response = await _postRequest(
+          '$apiServiceUrl/pengeluaran/strict/laporan/register/cetak',
+          {
+            'jenis_dokumen': jenisDokumen,
+            'tanggal_awal': tanggalMulai,
+            'tanggal_akhir': tanggalSampai,
+            'jenis_register': jenisRegister,
+            'id_skpd': idSkpd,
+            'jenis_kriteria': jenisKriteria,
+          },
+          pHeaders);
+
+      LoggerService.logger.i('response: $pHeaders');
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i('Register Pengajuan TU fetched successfully');
+        return json.decode(response.body);
+      }
+      if (response.statusCode == 400 &&
+          response.body.contains('Anda tidak dapat mengakses fitur ini')) {
+        LoggerService.logger
+            .i('Anda tidak memiliki akses untuk mengakses data ini');
+        Get.snackbar(
+            'Alert', 'Anda tidak memiliki akses untuk mengakses data ini');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('Token anda expired')) {
+        LoggerService.logger.i('Token anda expired, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('signature is invalid')) {
+        LoggerService.logger.i('Token anda salah, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      } else {
+        _handleError(response, 'Gagal mengambil data Register');
+      }
+    } catch (e) {
+      if (e is TimeoutException) {
+        LoggerService.logger.e('Register: Request timeout');
+        Get.snackbar('Info',
+            'Singkron data service timeout');
+      } else {
+        LoggerService.logger.e('Register: $e');
+        Get.snackbar('Info',
+            'Singkron data service gagal'); // Handle other exceptions
+      }
+    }
+    return null;
+  } */
+
+  // API Service untuk Register TU-TBP-SPP-SPM-SP2D
+  static Future<dynamic> postRegisterTuTbpSppSpmSp2d(
+    String jenisDokumen,
+    String tanggalMulai,
+    String tanggalSampai,
+    String jenisRegister,
+    int idSkpd,
+    String jenisKriteria,
+    String token,
+  ) async {
+    try {
+      final pHeaders = isDevelopmentMode
+          ? {
+              'x-api-key': fakeXApiKey ?? '',
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            }
+          : {
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            };
+      final response = await _postRequest(
+          '$apiServiceUrl/pengeluaran/strict/laporan/register/cetak',
+          {
+            'jenis_dokumen': jenisDokumen,
+            'tanggal_awal': tanggalMulai,
+            'tanggal_akhir': tanggalSampai,
+            'jenis_register': jenisRegister,
+            'id_skpd': idSkpd,
+            'jenis_kriteria': jenisKriteria,
+          },
+          pHeaders);
+
+      LoggerService.logger.i('response: $pHeaders');
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i('Register berhasil diambil');
+        return json.decode(response.body);
+      }
+      if (response.statusCode == 400 &&
+          response.body.contains('Anda tidak dapat mengakses fitur ini')) {
+        LoggerService.logger
+            .i('Anda tidak memiliki akses untuk mengakses data ini');
+        Get.snackbar(
+            'Alert', 'Anda tidak memiliki akses untuk mengakses data ini');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('Token anda expired')) {
+        LoggerService.logger.i('Token anda expired, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('signature is invalid')) {
+        LoggerService.logger.i('Token anda salah, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      } else {
+        _handleError(response, 'Gagal mengambil data Register');
+      }
+    } catch (e) {
+      if (e is TimeoutException) {
+        LoggerService.logger.e('Register: Request timeout');
+        Get.snackbar('Info', 'Singkron data service timeout');
+      } else {
+        LoggerService.logger.e('Register: $e');
+        Get.snackbar(
+            'Info', 'Singkron data service gagal'); // Handle other exceptions
+      }
+    }
+    return null;
   }
 }

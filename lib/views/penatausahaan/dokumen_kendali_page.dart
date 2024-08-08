@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/penatausahaan/dokumen_kendali_controller.dart';
-import '../../services/logger_service.dart'; // Impor LoggerService
+import '../../services/logger_service.dart';
+import '../../widgets/custom/custom_loading_animation.dart'; // Impor LoggerService
 
 class DokumenKendaliPage extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
     controller.fetchKendaliSkpd(); // Fetch kendaliSkpd data at the beginning
   }
 
-  double calculatePercentage(int anggaran, int realisasiRill) {
+  double calculatePercentage(double anggaran, double realisasiRill) {
     if (realisasiRill == 0) return 0;
     return (anggaran / realisasiRill) * 100;
   }
@@ -64,15 +65,16 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
         LoggerService.logger.i('Fetching kendaliSkpd data'); // Logging
         if (controller.kendaliSkpd.isEmpty) {
           LoggerService.logger.i('kendaliSkpd is empty'); // Logging
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CustomLoadingAnimation());
         } else {
           LoggerService.logger.i('kendaliSkpd has data'); // Logging
           return ListView.builder(
             itemCount: controller.kendaliSkpd.length,
             itemBuilder: (context, index) {
               var skpd = controller.kendaliSkpd[index];
-              double persentase =
-                  calculatePercentage(skpd['realisasi_rill'], skpd['anggaran']);
+              double persentase = calculatePercentage(
+                  skpd['realisasi_rill'].toDouble(),
+                  skpd['anggaran'].toDouble());
               return ExpansionTile(
                 backgroundColor: Colors.blueGrey[100],
                 collapsedBackgroundColor: Colors.grey[100],
@@ -94,7 +96,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                     if (controller.kendaliUrusan.isEmpty) {
                       LoggerService.logger
                           .i('kendaliUrusan is empty'); // Logging
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: CustomLoadingAnimation());
                     } else {
                       LoggerService.logger
                           .i('kendaliUrusan has data'); // Logging
@@ -105,7 +107,8 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                         itemBuilder: (context, index) {
                           var urusan = controller.kendaliUrusan[index];
                           double persentase = calculatePercentage(
-                              urusan['realisasi_rill'], urusan['anggaran']);
+                              urusan['realisasi_rill'].toDouble(),
+                              urusan['anggaran'].toDouble());
                           return ExpansionTile(
                             collapsedBackgroundColor: Colors.grey[100],
                             title: Text(
@@ -130,7 +133,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                   LoggerService.logger
                                       .i('kendaliProgram is empty'); // Logging
                                   return const Center(
-                                      child: CircularProgressIndicator());
+                                      child: CustomLoadingAnimation());
                                 } else {
                                   LoggerService.logger
                                       .i('kendaliProgram has data'); // Logging
@@ -143,8 +146,8 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                       var program =
                                           controller.kendaliProgram[index];
                                       double persentase = calculatePercentage(
-                                          program['realisasi_rill'],
-                                          program['anggaran']);
+                                          program['realisasi_rill'].toDouble(),
+                                          program['anggaran'].toDouble());
                                       return ExpansionTile(
                                         collapsedBackgroundColor:
                                             Colors.grey[100],
@@ -174,7 +177,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                   'kendaliKegiatan is empty'); // Logging
                                               return const Center(
                                                   child:
-                                                      CircularProgressIndicator());
+                                                      CustomLoadingAnimation());
                                             } else {
                                               LoggerService.logger.i(
                                                   'kendaliKegiatan has data'); // Logging
@@ -190,8 +193,10 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                   double persentase =
                                                       calculatePercentage(
                                                           kegiatan[
-                                                              'realisasi_rill'],
-                                                          kegiatan['anggaran']);
+                                                                  'realisasi_rill']
+                                                              .toDouble(),
+                                                          kegiatan['anggaran']
+                                                              .toDouble());
                                                   return ExpansionTile(
                                                     collapsedBackgroundColor:
                                                         Colors.grey[100],
@@ -228,7 +233,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                               'kendaliSubKegiatan is empty'); // Logging
                                                           return const Center(
                                                               child:
-                                                                  CircularProgressIndicator());
+                                                                  CustomLoadingAnimation());
                                                         } else {
                                                           LoggerService.logger.i(
                                                               'kendaliSubKegiatan has data'); // Logging
@@ -247,13 +252,13 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                   controller
                                                                           .kendaliSubKegiatan[
                                                                       index];
-                                                              double
-                                                                  persentase =
-                                                                  calculatePercentage(
-                                                                      subKegiatan[
-                                                                          'realisasi_rill'],
-                                                                      subKegiatan[
-                                                                          'anggaran']);
+                                                              double persentase = calculatePercentage(
+                                                                  subKegiatan[
+                                                                          'realisasi_rill']
+                                                                      .toDouble(),
+                                                                  subKegiatan[
+                                                                          'anggaran']
+                                                                      .toDouble());
                                                               return ExpansionTile(
                                                                 collapsedBackgroundColor:
                                                                     Colors.grey[
@@ -299,7 +304,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                           .i('kendaliRekening is empty'); // Logging
                                                                       return const Center(
                                                                           child:
-                                                                              CircularProgressIndicator());
+                                                                              CustomLoadingAnimation());
                                                                     } else {
                                                                       LoggerService
                                                                           .logger
@@ -320,7 +325,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                               controller.kendaliRekening[index];
                                                                           double
                                                                               persentase =
-                                                                              calculatePercentage(rekening['realisasi_rill'], rekening['anggaran']);
+                                                                              calculatePercentage(rekening['realisasi_rill'].toDouble(), rekening['anggaran'].toDouble());
                                                                           return ListTile(
                                                                             tileColor:
                                                                                 Colors.grey[100],

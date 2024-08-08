@@ -8,7 +8,7 @@ class BukuKasUmumPage extends StatelessWidget {
         title: const Text('Buku Kas Umum Page'),
       ),
       body: const Center(
-        child: Text('Buku Kas Umum Page Content'),
+        child: Text('Buku Kas Umum Masih Dalam Pengembangan'),
       ),
     );
   }

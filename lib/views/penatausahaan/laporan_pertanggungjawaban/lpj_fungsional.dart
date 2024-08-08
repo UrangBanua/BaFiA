@@ -8,7 +8,7 @@ class LPJFungsionalPage extends StatelessWidget {
         title: const Text('LPJ Fungsional Page'),
       ),
       body: const Center(
-        child: Text('LPJ Fungsional Page Content'),
+        child: Text('LPJ Fungsional Masih Dalam Pengembangan'),
       ),
     );
   }

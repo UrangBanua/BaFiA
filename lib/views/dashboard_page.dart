@@ -35,12 +35,13 @@ class DashboardPage extends StatelessWidget {
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
       currentBackPressTime = now;
+      dashboardController.showGauge.value = false;
       Get.snackbar(
         '',
-        'Ketuk tombol sekali lagi untuk keluar',
-        colorText: Colors.red,
+        '                Ketuk tombol sekali lagi untuk keluar',
+        //colorText: Colors.red,
         backgroundColor: Colors.transparent,
-        icon: const Icon(Icons.cancel, color: Colors.red),
+        //icon: const Icon(Icons.cancel, color: Colors.red),
         snackStyle: SnackStyle.GROUNDED,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),

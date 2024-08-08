@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:intl/intl.dart';
+import '../../../widgets/custom/custom_loading_animation.dart';
 import '/controllers/akuntansi/laporan_keuagan/lra_program_controller.dart';
 
 class LKLraProgramPage extends StatelessWidget {
   final LKLraProgramController controller = Get.put(LKLraProgramController());
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+  LKLraProgramPage() {
+    final String formattedDate = formatter.format(DateTime.now());
+    controller.tanggalSampaiController.text = formattedDate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +57,7 @@ class LKLraProgramPage extends StatelessWidget {
                             );
                             if (pickedDate != null) {
                               controller.tanggalMulaiController.text =
-                                  "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                                  formatter.format(pickedDate);
                             }
                           },
                         ),
@@ -71,7 +79,7 @@ class LKLraProgramPage extends StatelessWidget {
                             );
                             if (pickedDate != null) {
                               controller.tanggalSampaiController.text =
-                                  "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                                  formatter.format(pickedDate);
                             }
                           },
                         ),
@@ -171,7 +179,7 @@ class LKLraProgramPage extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CustomLoadingAnimation());
               } else if (controller.filePdf.value.isEmpty) {
                 return const Center(child: Text('No PDF to display'));
               } else {

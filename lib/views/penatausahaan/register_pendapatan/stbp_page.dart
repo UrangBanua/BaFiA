@@ -8,7 +8,7 @@ class RPStbpPPage extends StatelessWidget {
         title: const Text('Register Pendapatan - STBP'),
       ),
       body: const Center(
-        child: Text('Register Pendapatan - STBP Page Content'),
+        child: Text('Register Pendapatan - STBP Masih Dalam Pengembangan'),
       ),
     );
   }

@@ -8,7 +8,7 @@ class LPJTUPage extends StatelessWidget {
         title: const Text('LPJ TU Page'),
       ),
       body: const Center(
-        child: Text('LPJ TU Page Content'),
+        child: Text('LPJ TU Masih Dalam Pengembangan'),
       ),
     );
   }

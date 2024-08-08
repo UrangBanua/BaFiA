@@ -8,7 +8,7 @@ class LPJAdministratifPage extends StatelessWidget {
         title: const Text('LPJ Administratif Page'),
       ),
       body: const Center(
-        child: Text('LPJ Administratif Page Content'),
+        child: Text('LPJ Administratif Masih Dalam Pengembangan'),
       ),
     );
   }

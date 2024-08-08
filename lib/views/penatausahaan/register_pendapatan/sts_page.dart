@@ -8,7 +8,7 @@ class RPStsPage extends StatelessWidget {
         title: const Text('register pendapatan - STS'),
       ),
       body: const Center(
-        child: Text('Register pendapatan - STS Page Content'),
+        child: Text('Register pendapatan - STS Masih Dalam Pengembangan'),
       ),
     );
   }

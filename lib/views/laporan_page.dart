@@ -18,21 +18,46 @@ class LaporanPage extends StatelessWidget {
       ValueNotifier([]);
 
   final List<Map<String, dynamic>> buttonsPenatausahaanRegister = [
-    {'icon': Icons.paid, 'text': 'STBP'},
-    {'icon': Icons.price_check, 'text': 'STS'},
+    {
+      'icon': Icons.paid,
+      'text': 'STBP',
+      'pageToGo': '/penatausahaan/register_pendapatan/stbp'
+    },
+    {
+      'icon': Icons.price_check,
+      'text': 'STS',
+      'pageToGo': '/penatausahaan/register_pendapatan/sts'
+    },
     {
       'icon': Icons.assignment_add,
       'color': const Color.fromARGB(255, 42, 104, 211),
-      'text': 'TBP GU'
+      'text': 'TBP GU',
+      'pageToGo': '/penatausahaan/register_belanja/tbp_gu'
     },
     {
       'icon': Icons.note_add,
       'color': const Color.fromARGB(255, 42, 104, 211),
-      'text': 'Ajuan TU'
+      'text': 'Ajuan TU',
+      'pageToGo': '/penatausahaan/register_belanja/pengajuan_tu'
     },
-    {'icon': Icons.price_change, 'color': Colors.blue, 'text': 'SPP'},
-    {'icon': Icons.payment, 'color': Colors.blue, 'text': 'SPM'},
-    {'icon': Icons.credit_score, 'color': Colors.blue, 'text': 'SP2D'},
+    {
+      'icon': Icons.price_change,
+      'color': Colors.blue,
+      'text': 'SPP',
+      'pageToGo': '/penatausahaan/register_belanja/spp'
+    },
+    {
+      'icon': Icons.payment,
+      'color': Colors.blue,
+      'text': 'SPM',
+      'pageToGo': '/penatausahaan/register_belanja/spm'
+    },
+    {
+      'icon': Icons.credit_score,
+      'color': Colors.blue,
+      'text': 'SP2D',
+      'pageToGo': '/penatausahaan/register_belanja/sp2d'
+    },
   ];
 
   final List<Map<String, dynamic>> buttonsPenatausahaanLaporan = [

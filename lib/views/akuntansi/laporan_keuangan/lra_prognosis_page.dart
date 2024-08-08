@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:intl/intl.dart';
 import '../../../controllers/akuntansi/laporan_keuagan/lra_prognosis_controller.dart';
+import '../../../widgets/custom/custom_loading_animation.dart';
 
 class LKLraPrognosisPage extends StatelessWidget {
   final LKLraPrognosisController controller =
       Get.put(LKLraPrognosisController());
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+  LKLraPrognosisPage() {
+    final String formattedDate = formatter.format(DateTime.now());
+    controller.tanggalSampaiController.text = formattedDate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +58,7 @@ class LKLraPrognosisPage extends StatelessWidget {
                             );
                             if (pickedDate != null) {
                               controller.tanggalMulaiController.text =
-                                  "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                                  formatter.format(pickedDate);
                             }
                           },
                         ),
@@ -72,7 +80,7 @@ class LKLraPrognosisPage extends StatelessWidget {
                             );
                             if (pickedDate != null) {
                               controller.tanggalSampaiController.text =
-                                  "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                                  formatter.format(pickedDate);
                             }
                           },
                         ),
@@ -170,7 +178,7 @@ class LKLraPrognosisPage extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CustomLoadingAnimation());
               } else if (controller.filePdf.value.isEmpty) {
                 return const Center(child: Text('No PDF to display'));
               } else {

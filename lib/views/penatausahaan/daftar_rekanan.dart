@@ -10,7 +10,7 @@ class DaftarRekananPage extends StatelessWidget {
         title: const Text('Daftar Rekanan Page'),
       ),
       body: const Center(
-        child: Text('Daftar Rekanan Page Content'),
+        child: Text('Daftar Rekanan Masih Dalam Pengembangan'),
       ),
     );
   }
