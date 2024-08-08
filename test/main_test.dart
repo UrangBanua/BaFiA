@@ -11,7 +11,5 @@ void main() {
 
     // Verify that the app starts with a CircularProgressIndicator.
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    // TODO: Add more test cases to verify the app behavior.
   });
 }

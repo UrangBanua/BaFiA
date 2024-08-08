@@ -116,9 +116,7 @@ class LocalStorageService {
     final result = await db.rawQuery('PRAGMA table_info($tableName)');
     LoggerService.logger.i('Structure of $tableName:');
     for (var row in result) {
-      if (kDebugMode) {
-        print(row);
-      }
+      LoggerService.logger.i(row);
     }
   }
 

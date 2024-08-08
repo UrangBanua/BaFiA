@@ -45,9 +45,7 @@ class RBPengajuanTuController extends GetxController {
       refreshToken,
     );
     responOutput.value = [responData ?? {}];
-    if (kDebugMode) {
-      print('Preview Respon: $responData');
-    }
+    LoggerService.logger.i('Preview Respon: $responData');
     update(); // Update the state
     isLoading.value = false; // Set loading state to false
   }

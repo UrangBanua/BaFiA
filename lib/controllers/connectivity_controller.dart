@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../services/logger_service.dart';
 
 class ConnectivityController extends GetxController {
   final _connectionType = MConnectivityResult.none.obs;
@@ -31,9 +31,7 @@ class ConnectivityController extends GetxController {
     try {
       connectivityResult = await (_connectivity.checkConnectivity());
     } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+      LoggerService.logger.i(e);
     }
     return _updateState(connectivityResult);
   }
@@ -60,9 +58,7 @@ class ConnectivityController extends GetxController {
             'Internet tidak tersedia'; // Update connectivityCaption
         break;
       default:
-        if (kDebugMode) {
-          print('Failed to get connection type');
-        }
+        LoggerService.logger.i('Failed to get connection type');
         break;
     }
   }

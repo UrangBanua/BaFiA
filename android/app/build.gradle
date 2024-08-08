@@ -47,19 +47,34 @@ android {
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
+    
+    signingConfigs {
+        release {
+            // This configuration will be ignored by Google Play if you use Google Play App Signing
+            keyAlias = 'bafia_release_key'
+            keyPassword = 'g1g4byt3'
+            storeFile = file('release-key.jks')
+            storePassword = 'g1g4byt3'
+        }
+    }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            //signingConfig = signingConfigs.debug
+            
+            // Tambahkan konfigurasi penandatanganan rilis
+            signingConfig signingConfigs.release
         }
     }
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-messaging:22.0.0'
     // Tambahkan dependensi Firebase lainnya jika diperlukan
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+    // Mengintegrasikan Play Integrity API ke dalam aplikasi
+    implementation 'com.google.android.play:integrity:1.4.0'
 }
 
 flutter {

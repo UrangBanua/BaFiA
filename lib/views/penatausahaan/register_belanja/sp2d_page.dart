@@ -161,6 +161,7 @@ class RBSp2dPage extends StatelessWidget {
               } else {
                 var details = controller.jenisSP2D.value == '*'
                     ? controller.responOutput[0]['detail']
+                    // ignore: invalid_use_of_protected_member
                     : controller.filteredDetails.value;
                 if (details is List && details.isNotEmpty) {
                   return ListView.builder(

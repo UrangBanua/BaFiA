@@ -50,3 +50,5 @@ app.*.map.json
 *.env
 .metadata
 web/env.js
+release-key.jks
+key.properties

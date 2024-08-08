@@ -31,8 +31,24 @@ class AboutPageState extends State<AboutPage>
     );
   }
 
+  /* Future<void> _requestIntegrityToken() async {
+    const platform = MethodChannel('com.urangbanua.bafia/integrity');
+    try {
+      final String result =
+          await platform.invokeMethod('requestIntegrityToken');
+      if (kDebugMode) {
+        print('Integrity Token: $result');
+      }
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('Failed to get integrity token: ${e.message}');
+      }
+    }
+  } */
+
   Future<void> _loadVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
+    //await _requestIntegrityToken();
     setState(() {
       _version = 'Versi: ${packageInfo.version}';
     });

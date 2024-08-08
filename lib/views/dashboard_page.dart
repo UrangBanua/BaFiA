@@ -323,7 +323,7 @@ class DashboardPage extends StatelessWidget {
                   child: const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // ignore: deprecated_member_use
+                      // ignore: duplicate_ignore
                       FaIcon(FontAwesomeIcons.home),
                     ],
                   ),

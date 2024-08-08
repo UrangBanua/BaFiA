@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import '../../controllers/dashboard_controller.dart';
+import '../../services/logger_service.dart';
 
 class RadialGaugeWidget extends StatelessWidget {
   final dynamic data;
@@ -134,9 +135,7 @@ class RadialGaugeWidget extends StatelessWidget {
                     ],
                     isRepeatingAnimation: false,
                     onTap: () {
-                      if (kDebugMode) {
-                        print('Total Anggaran\n$nilaiAnggaran');
-                      }
+                      LoggerService.logger.i('Total Anggaran\n$nilaiAnggaran');
                     },
                   ),
                 ),
@@ -158,9 +157,8 @@ class RadialGaugeWidget extends StatelessWidget {
                     ],
                     isRepeatingAnimation: false,
                     onTap: () {
-                      if (kDebugMode) {
-                        print('Total Realisasi\n$nilaiRealisasi');
-                      }
+                      LoggerService.logger
+                          .i('Total Realisasi\n$nilaiRealisasi');
                     },
                   ),
                 ),
@@ -182,10 +180,8 @@ class RadialGaugeWidget extends StatelessWidget {
                     ],
                     isRepeatingAnimation: false,
                     onTap: () {
-                      if (kDebugMode) {
-                        print(
-                            'Total Selisih Pengajuan vs Realisasi\n$nilaiPengajuan');
-                      }
+                      LoggerService.logger.i(
+                          'Total Selisih Pengajuan vs Realisasi\n$nilaiPengajuan');
                     },
                   ),
                 ),
@@ -207,9 +203,7 @@ class RadialGaugeWidget extends StatelessWidget {
                     ],
                     isRepeatingAnimation: true,
                     onTap: () {
-                      if (kDebugMode) {
-                        print('Catatan...');
-                      }
+                      LoggerService.logger.i('Catatan...');
                     },
                   ),
                 ),

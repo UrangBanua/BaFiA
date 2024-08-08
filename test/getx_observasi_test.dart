@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:bafia/services/logger_service.dart';
 import 'package:flutter/foundation.dart';
 
 void main() {
@@ -11,9 +11,7 @@ void main() {
   for (var file in files) {
     final content = File(file.path).readAsStringSync();
     if (content.contains("package:get/get.dart")) {
-      if (kDebugMode) {
-        print('Checking file: ${file.path}');
-      }
+      LoggerService.logger.i('Checking file: ${file.path}');
       checkGetXUsage(content);
     }
   }
@@ -25,17 +23,11 @@ void checkGetXUsage(String content) {
       RegExp(r'class\s+\w+Controller\s+extends\s+GetxController')
           .allMatches(content);
   if (controllerDefinitions.isEmpty) {
-    if (kDebugMode) {
-      print('No GetX controllers found.');
-    }
+    LoggerService.logger.i('No GetX controllers found.');
   } else {
-    if (kDebugMode) {
-      print('Found GetX controllers:');
-    }
+    LoggerService.logger.i('Found GetX controllers:');
     for (var match in controllerDefinitions) {
-      if (kDebugMode) {
-        print(content.substring(match.start, match.end));
-      }
+      LoggerService.logger.i(content.substring(match.start, match.end));
     }
   }
 
@@ -44,17 +36,11 @@ void checkGetXUsage(String content) {
           r'Get\.put<\w+Controller>\(\)|Get\.lazyPut<\w+Controller>\(\)|Get\.find<\w+Controller>\(\)')
       .allMatches(content);
   if (controllerInitializations.isEmpty) {
-    if (kDebugMode) {
-      print('No GetX controller initializations found.');
-    }
+    LoggerService.logger.i('No GetX controller initializations found.');
   } else {
-    if (kDebugMode) {
-      print('Found GetX controller initializations:');
-    }
+    LoggerService.logger.i('Found GetX controller initializations:');
     for (var match in controllerInitializations) {
-      if (kDebugMode) {
-        print(content.substring(match.start, match.end));
-      }
+      LoggerService.logger.i(content.substring(match.start, match.end));
     }
   }
 
@@ -62,17 +48,11 @@ void checkGetXUsage(String content) {
   final stateObservations =
       RegExp(r'Obx\(\)|GetBuilder<\w+Controller>\(\)').allMatches(content);
   if (stateObservations.isEmpty) {
-    if (kDebugMode) {
-      print('No GetX state observations found.');
-    }
+    LoggerService.logger.i('No GetX state observations found.');
   } else {
-    if (kDebugMode) {
-      print('Found GetX state observations:');
-    }
+    LoggerService.logger.i('Found GetX state observations:');
     for (var match in stateObservations) {
-      if (kDebugMode) {
-        print(content.substring(match.start, match.end));
-      }
+      LoggerService.logger.i(content.substring(match.start, match.end));
     }
   }
 }
