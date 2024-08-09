@@ -20,7 +20,7 @@
 <li>[✅] Modul Akuntansi - Laporan LRA Periode, LRA Prognosis & LRA Per Program.</li>
 <li>[✅] Modul Akuntansi - Laporan LO.</li>
 <li>[✅] Modul Penatausahaan - Laporan Register STS, TBP, SPP, SPM, SP2D.</li>
-<li>[⌛] Modul Penatausahaan - Tracking Dokumen.</li>
+<li>[⌛] Modul Penatausahaan - Tracking Document untuk pengecekan dokumen pengajuan belanja.</li>
 <li>[⌛] Modul Aset - Laporan Belanja Modal & Persediaan.</li>
 <li>[⛔] Masih versi awal, menu pada Penatausahaan & Akuntansi beberapa masih dalam tahap pengembangan.</li>
 </ul>
