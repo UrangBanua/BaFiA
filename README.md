@@ -7,14 +7,16 @@
 <li>[✅] Fitur sudah menggunakan data penyimpanan lokal (sqlite), jika servcie server gagal dimuat maka data lokal yg akan di baca.</li>
 <li>[✅] Fitur login menggunakan captcha meyesuaikan dengan security service server.</li>
 <li>[✅] Fitur penggantian tema, Light &amp; Dark mode.</li>
-<li>[✅] Penambahan Serapan Realisasi per SKPD pada menu Dashboard.</li>
 <li>[✅] Fitur pull sysc server - lokal data pada halaman dashboard, dengan performa yg lebih efektif dan cepat.</li>
 <li>[✅] Fitur Push Notifikasi realtime untuk pengguna yg sudah registrasi/login menggunakan Firebase Messaging.</li>
 <li>[✅] Fitur Push Notifikasi realtime background, tanpa membuka aplikasi.</li>
 <li>[✅] Fitur Autentikasi Biometric/PIN.</li>
 <li>[✅] Fitur Connectivity Check secara Realtime untuk setiap perubahan data.</li>
 <li>[✅] Fitur Info BaFiA untuk update versi terbaru</li>
+<li>[✅] Fitur Print PDF dari Modul Laporan</li>
+<li>[✅] Fitur Dashboard Serapan Realisasi per SKPD pada menu Dashboard.</li>
 <li>[⚡] HotFix Dashboard - Serapan Realisasi pada menu utama.</li>
+<li>[✅] Fitur Pohon Kendali untuk monitoring pengajuan yang masih gantung/dalam proses.</li>
 <li>[✅] Modul Akuntansi - Laporan LRA Periode, LRA Prognosis & LRA Per Program.</li>
 <li>[✅] Modul Akuntansi - Laporan LO.</li>
 <li>[✅] Modul Penatausahaan - Laporan Register STS, TBP, SPP, SPM, SP2D.</li>
