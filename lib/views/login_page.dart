@@ -2,11 +2,12 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/connectivity_controller.dart';
 import '../services/api_firebase.dart';
 import '../services/logger_service.dart';
-import '../widgets/custom/custom_loading_animation.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,21 +21,30 @@ class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   final ConnectivityController connectivityController =
       Get.put(ConnectivityController());
-  final AuthController authController = Get.find();
+  final AuthController authController = Get.put(AuthController());
+
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
+
+  final RxString username = ''.obs;
+  final RxString password = ''.obs;
+
+  bool isLoading = false;
+  bool _obscureText = true;
+  RxBool isFirebaseInitialed = false.obs;
+
   late AnimationController _controller;
   late Animation<Offset> _positionAnimation;
   late Animation<double> _rotationAnimation;
-  var isFirebaseInitialed = false.obs;
-  bool isLoading = false;
-  bool _obscureText = true;
+
+  String _version = '';
 
   @override
   void initState() {
     super.initState();
     yearController.text = DateTime.now().year.toString();
+    _loadVersion();
 
     _controller = AnimationController(
       duration: const Duration(seconds: 3),
@@ -70,6 +80,14 @@ class _LoginPageState extends State<LoginPage>
     if (connectivityController.connectivityState.value) {
       _initFCM();
     }
+
+    // Add listeners to update Rx variables
+    usernameController.addListener(() {
+      username.value = usernameController.text;
+    });
+    passwordController.addListener(() {
+      password.value = passwordController.text;
+    });
   }
 
   @override
@@ -81,6 +99,15 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
+  // fungsi untuk load version
+  Future<void> _loadVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = packageInfo.version;
+    });
+  }
+
+  // fungsi untuk inisialisasi FCM
   void _initFCM() async {
     //Initialize FCM setting
     if (isFirebaseInitialed.value == false &&
@@ -91,17 +118,47 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
+  // fungsi untuk login
   void _login() async {
     setState(() {
       isLoading = true;
     });
-    await authController.login(yearController.text, usernameController.text,
-        passwordController.text, '');
+    try {
+      // Simpan data demo berdasarkan kondisi username
+      SharedPreferences prefsDemo = await SharedPreferences.getInstance();
+      if (usernameController.text == '111111111111111111' &&
+          passwordController.text == 'demo') {
+        LoggerService.logger.i('Demo mode activated');
+        await prefsDemo.setBool('demo', true);
+        authController.isDemo.value = true;
+      } else {
+        await prefsDemo.setBool('demo', false);
+        authController.isDemo.value = false;
+      }
+    } finally {
+      // Panggil fungsi login dari authController
+      await authController.login(yearController.text, usernameController.text,
+          passwordController.text, '');
+    }
     setState(() {
       isLoading = false;
     });
   }
 
+  // fungsi untuk peringatan text form
+  void _peringatanTextForm() {
+    Get.snackbar('Peringatan', 'Username dan Password tidak boleh kosong');
+  }
+
+  // fungsi untuk set demo mode
+  Future<void> _setDemoMode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      authController.isDemo.value = prefs.getBool('demo') ?? false;
+    });
+  }
+
+  // fungsi untuk handle logo tap
   void _handleLogoTap() {
     _controller.reset(); // Reset the animation
     _controller.forward(); // Start the animation again
@@ -194,8 +251,9 @@ class _LoginPageState extends State<LoginPage>
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
-                          enabled:
-                              connectivityController.connectivityState.value,
+                          enabled: authController.userData.isNotEmpty
+                              ? false
+                              : connectivityController.connectivityState.value,
                         ),
                         style: const TextStyle(fontSize: 14),
                         keyboardType: TextInputType.number,
@@ -217,8 +275,9 @@ class _LoginPageState extends State<LoginPage>
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
-                          enabled:
-                              connectivityController.connectivityState.value,
+                          enabled: authController.userData.isNotEmpty
+                              ? false
+                              : connectivityController.connectivityState.value,
                         ),
                         style: const TextStyle(fontSize: 14),
                         keyboardType: TextInputType.number,
@@ -252,8 +311,9 @@ class _LoginPageState extends State<LoginPage>
                               });
                             },
                           ),
-                          enabled:
-                              connectivityController.connectivityState.value,
+                          enabled: authController.userData.isNotEmpty
+                              ? false
+                              : connectivityController.connectivityState.value,
                         ),
                         obscureText: _obscureText,
                         style: const TextStyle(fontSize: 14),
@@ -261,18 +321,21 @@ class _LoginPageState extends State<LoginPage>
                     }),
                     const SizedBox(height: 20),
                     Obx(() {
+                      final isConnected =
+                          connectivityController.connectivityState.value;
+                      final isFormValid =
+                          username.isNotEmpty && password.isNotEmpty;
+
                       return ElevatedButton(
-                        onPressed:
-                            (connectivityController.connectivityState.value &&
-                                    !isLoading)
-                                ? _login
-                                : null,
+                        onPressed: (isConnected && !isLoading)
+                            ? (isFormValid ? _login : _peringatanTextForm)
+                            : null,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 24),
                         ),
                         child: isLoading
-                            ? const CustomLoadingAnimation()
+                            ? const CircularProgressIndicator()
                             : const Text('Login'),
                       );
                     }),
@@ -286,6 +349,7 @@ class _LoginPageState extends State<LoginPage>
                             bool authenticated =
                                 await authController.authenticate();
                             if (authenticated) {
+                              await _setDemoMode();
                               Get.offAllNamed('/dashboard');
                             } else {
                               Get.snackbar('Authentication Failed',
@@ -317,6 +381,17 @@ class _LoginPageState extends State<LoginPage>
                       }
                     }),
                   ],
+                ),
+              ),
+              // add text version app
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    'Versi: $_version',
+                    style: const TextStyle(fontSize: 8),
+                  ),
                 ),
               ),
             ],

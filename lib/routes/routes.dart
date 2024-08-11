@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../views/about_page.dart';
 import '../views/login_page.dart';
+import '../views/penatausahaan/tracking_document.dart';
 import '../views/profile_user_page.dart';
 import '../views/dashboard_page.dart';
 import '../views/notification_page.dart';
@@ -17,7 +18,7 @@ import '../views/penatausahaan/register_belanja/spp_page.dart';
 import '../views/penatausahaan/register_belanja/spm_page.dart';
 import '../views/penatausahaan/register_belanja/sp2d_page.dart';
 import '../views/penatausahaan/register_belanja/pengajuan_tu_page.dart';
-import '../views/penatausahaan/register_belanja/tbp_gu_page.dart';
+import '../views/penatausahaan/register_belanja/tbp_page.dart';
 import '../views/akuntansi/jurnal_approve/anggaran_page.dart';
 import '../views/akuntansi/jurnal_approve/belanja_page.dart';
 import '../views/akuntansi/jurnal_approve/pendapatan_page.dart';
@@ -61,7 +62,7 @@ List<GetPage> appRoutes() {
         name: '/penatausahaan/register_belanja/sp2d', page: () => RBSp2dPage()),
     GetPage(
         name: '/penatausahaan/register_belanja/tbp_gu',
-        page: () => RBTbpGuPage()),
+        page: () => RBTbpPage()),
     GetPage(
         name: '/penatausahaan/register_belanja/pengajuan_tu',
         page: () => RBPengajuanTuPage()),
@@ -70,6 +71,9 @@ List<GetPage> appRoutes() {
         page: () => const DaftarRekananPage()),
     GetPage(
         name: '/penatausahaan/buku_kas_umum', page: () => BukuKasUmumPage()),
+    GetPage(
+        name: '/penatausahaan/tracking_document',
+        page: () => RBTrackingDocumentPage()),
     GetPage(
         name: '/penatausahaan/laporan_pertanggungjawaban/lpj_up_gu',
         page: () => LPJGUPage()),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'connectivity_controller.dart';
+import '../services/api_firebase.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
@@ -13,10 +14,11 @@ class AuthController extends GetxController {
   final LocalAuthentication auth = LocalAuthentication();
   final ConnectivityController connectivityController =
       Get.put(ConnectivityController());
-  var isLoggedIn = false.obs;
-  var userData = {}.obs;
-  var userToken = {}.obs;
-  var captchaData = {}.obs;
+  RxBool isLoggedIn = false.obs;
+  RxMap userData = {}.obs;
+  RxMap userToken = {}.obs;
+  RxMap captchaData = {}.obs;
+  RxBool isDemo = false.obs;
 
   @override
   void onInit() {
@@ -41,7 +43,7 @@ class AuthController extends GetxController {
 
   // fungsi Captcha Image
   Future<void> _fetchCaptchaImage() async {
-    var response = await ApiService.getCaptchaImage();
+    var response = await ApiService.getCaptchaImage(isDemo.value);
     if (response != null && response['base64'] != null) {
       captchaData.value = response;
     } else {
@@ -73,7 +75,8 @@ class AuthController extends GetxController {
 
   Future<void> login(
       String year, String username, String password, String captcha) async {
-    var response = await ApiService.login(year, username, password, captcha);
+    var response =
+        await ApiService.login(year, username, password, captcha, isDemo.value);
     if (response != null) {
       var kodeSkpd = response['kode_skpd'];
       var namaSkpd = response['nama_skpd'];
@@ -127,7 +130,16 @@ class AuthController extends GetxController {
                       response['token'] = tokenResponse['token'];
                       response['refresh_token'] =
                           tokenResponse['refresh_token'];
-                      await LocalStorageService.saveUserData(response);
+                      await ApiService.getNamaDaerah(
+                              response['id_daerah'], isDemo.value)
+                          .then((value) async {
+                        //response['id_user'] = userData['id_user'];
+                        response['nama_daerah'] = value?['nama_daerah'];
+                        // save user data
+                        await LocalStorageService.saveUserData(response);
+                        LoggerService.logger.i(
+                            'Nama Daerah Merger: ${response['nama_daerah']}');
+                      });
                       userData.value = response;
                       LoggerService.logger.i('userData Merger: ');
                       userToken = (tokenResponse).obs;
@@ -182,7 +194,8 @@ class AuthController extends GetxController {
         year: year,
         username: username,
         captchaId: capcaptchaId,
-        captchaSolution: capcaptchaSolution);
+        captchaSolution: capcaptchaSolution,
+        isDemo: isDemo.value);
     if (response != null &&
         response['token'] != null &&
         response['refresh_token'] != null) {
@@ -210,9 +223,28 @@ class AuthController extends GetxController {
           TextButton(
             onPressed: () async {
               Get.back(); // Tutup dialog jika pengguna memilih 'Yakin'
-              await LocalStorageService.deleteUserData(); // Hapus data user
+
+              // Show loading dialog
+              Get.dialog(
+                const Center(child: CustomLoadingAnimation()),
+                barrierDismissible: false,
+              );
+
+              // Hapus data user
+              await LocalStorageService.deleteUserData();
+
+              // Unsuscribe all topics
+              await ApiFirebase().unsubscribeAllTopics();
+
               isLoggedIn = false.obs;
-              userData.value = {}.obs; // Mengosongkan userData
+              isDemo = false.obs;
+
+              // Mengosongkan userData
+              userData.value = {}.obs;
+
+              // Close loading dialog
+              Get.back();
+
               Get.offAllNamed('/login');
               LoggerService.logger.i('Logout completed');
             },

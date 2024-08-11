@@ -1,8 +1,8 @@
-Kebijakan Privasi
+#Kebijakan Privasi
 
 Terakhir diperbarui: 09/08/2024
 
-Kami di [Nama Aplikasi/Perusahaan] menghargai privasi Anda dan berkomitmen untuk melindungi data pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda saat Anda menggunakan aplikasi kami.
+##Kami di [Nama Aplikasi/Perusahaan] menghargai privasi Anda dan berkomitmen untuk melindungi data pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda saat Anda menggunakan aplikasi kami.
 
 1. Informasi yang Kami Kumpulkan
 Kami dapat mengumpulkan berbagai jenis informasi dari dan tentang pengguna aplikasi kami, termasuk:

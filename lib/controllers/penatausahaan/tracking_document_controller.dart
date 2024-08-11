@@ -5,14 +5,17 @@ import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import '../../auth_controller.dart';
-import '../../../services/api_service.dart';
-import '../../../services/logger_service.dart';
+import '../auth_controller.dart';
+import '../../services/api_service.dart';
+import '../../services/logger_service.dart';
 
-class RBTbpGUController extends GetxController {
+class RBTrackingDocumentController extends GetxController {
   final TextEditingController tanggalMulaiController = TextEditingController();
   final TextEditingController tanggalSampaiController = TextEditingController();
-  final RxString jenisKriteria = 'semua'.obs;
+  final RxInt pageNo = 1.obs;
+  final RxInt pagePrev = 0.obs;
+  final RxInt pageNext = 0.obs;
+  final RxInt totalPages = 1.obs;
   final RxString jenisSP2D = '*'.obs;
   final Rx<Uint8List> filePdf = Uint8List(0).obs;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -21,53 +24,82 @@ class RBTbpGUController extends GetxController {
   final RxBool isLoading = false.obs; // Add loading state
   RxList<Map<String, dynamic>> filteredDetails =
       <Map<String, dynamic>>[].obs; // Add filteredDetails
+  final searchQuery = ''.obs; // Add search query variable
+  final TextEditingController searchQueryController = TextEditingController();
 
 // set var userData from get autenticator controller
   var refreshToken = Get.find<AuthController>().userData['refresh_token'];
   var idSkpd = Get.find<AuthController>().userData['id_skpd'];
+  var isDemo = Get.find<AuthController>().isDemo.value;
 
   @override
   void onInit() {
     super.onInit();
     final now = DateTime.now();
-    tanggalMulaiController.text = "${now.year}-01-01";
-    tanggalSampaiController.text = "${now.year}-${now.month}-${now.day}";
+    tanggalMulaiController.text =
+        formatter.format(DateTime(now.year, now.month, 1));
+    tanggalSampaiController.text =
+        formatter.format(DateTime(now.year, now.month, now.day));
   }
 
-  // Fungsi filterDetails untuk menampilkan detail SP2D berdasarkan jenis SP2D
+  // Fungsi filterDetails untuk menampilkan detail TBP berdasarkan jenis TBP
   void filterDetails() {
     RxList<Map<String, dynamic>> detailFilter;
     if (jenisSP2D.value == '*') {
-      detailFilter =
-          RxList<Map<String, dynamic>>.from(responOutput[0]['detail']);
+      detailFilter = RxList<Map<String, dynamic>>.from(responOutput[0]['body']);
     } else {
-      detailFilter = RxList<Map<String, dynamic>>.from(responOutput[0]['detail']
-          .where((item) => item['jenis'] == jenisSP2D.value)
+      detailFilter = RxList<Map<String, dynamic>>.from(responOutput[0]['body']
+          .where((item) => item['jenis_spp'] == jenisSP2D.value)
           .toList());
     }
+
+    // Apply search filter
+    if (searchQuery.value.isNotEmpty) {
+      detailFilter = RxList<Map<String, dynamic>>.from(detailFilter
+          .where((item) =>
+              item['nomor_spp']
+                  .toString()
+                  .toLowerCase()
+                  .contains(searchQuery.value.toLowerCase()) ||
+              item['nomor_spm']
+                  .toString()
+                  .toLowerCase()
+                  .contains(searchQuery.value.toLowerCase()) ||
+              item['nomor_sp2d']
+                  .toString()
+                  .toLowerCase()
+                  .contains(searchQuery.value.toLowerCase()) ||
+              item['spp_skpd']
+                  .toString()
+                  .toLowerCase()
+                  .contains(searchQuery.value.toLowerCase()))
+          .toList());
+    }
+
     filteredDetails.value = detailFilter;
-    /* responOutput.value = [
-      {'detail': detailFilter}
-    ]; // Update responOutput with filtered details */
   }
 
   // Fungsi previewReport untuk menampilkan data SP2D
-  void previewReport() async {
-    isLoading.value = true; // Set loading state to true
-    const jenisDokumen = 'tbp';
+  void previewReport(int setPage) async {
+    isLoading.value = true;
     final tanggalMulai = tanggalMulaiController.text;
     final tanggalSampai = tanggalSampaiController.text;
-    const jenisRegister = 'transaksi';
-    var responData = await ApiService.postRegisterTuTbpSppSpmSp2d(
-      jenisDokumen,
-      tanggalMulai,
-      tanggalSampai,
-      jenisRegister,
-      idSkpd,
-      jenisKriteria.value,
-      refreshToken,
-    );
+    var responData = await ApiService.postTrackingDocument(
+        setPage, tanggalMulai, tanggalSampai, idSkpd, refreshToken, isDemo);
     responOutput.value = [responData ?? {}];
+
+    if (responData != null && responData.containsKey('headers')) {
+      totalPages.value =
+          int.parse(responData['headers']['x-pagination-page-count']);
+      pagePrev.value =
+          responData['headers']['x-pagination-previous-page'] != null
+              ? int.parse(responData['headers']['x-pagination-previous-page'])
+              : 0;
+      pageNext.value = responData['headers']['x-pagination-next-page'] != null
+          ? int.parse(responData['headers']['x-pagination-next-page'])
+          : 0;
+      LoggerService.logger.i('Total Pages: ${totalPages.value}');
+    }
     LoggerService.logger.i('Preview Respon: $responData');
     update(); // Update the state
     isLoading.value = false; // Set loading state to false
@@ -93,7 +125,7 @@ class RBTbpGUController extends GetxController {
             return pw.Column(
               children: [
                 pw.Text(
-                  'Register TBB - ${jenisSP2D.value == '*' ? 'Semua' : jenisSP2D.value}\n Periode: ${tanggalMulaiController.text} s/d ${tanggalSampaiController.text}',
+                  'Tracking Document - ${jenisSP2D.value == '*' ? 'Semua' : jenisSP2D.value}\n Periode: ${tanggalMulaiController.text} s/d ${tanggalSampaiController.text}',
                   style: pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,

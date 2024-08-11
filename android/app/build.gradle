@@ -66,6 +66,13 @@ android {
             
             // Tambahkan konfigurasi penandatanganan rilis
             signingConfig signingConfigs.release
+            // Menyingkat resource dan mengaktifkan minifikasi untuk rilis
+            shrinkResources true
+            minifyEnabled true
+            // Keep debug symbols
+            ndk {
+                debugSymbolLevel 'SYMBOL_TABLE'
+            }
         }
     }
 }

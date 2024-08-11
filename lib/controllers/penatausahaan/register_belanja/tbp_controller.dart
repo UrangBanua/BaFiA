@@ -9,7 +9,7 @@ import '../../auth_controller.dart';
 import '../../../services/api_service.dart';
 import '../../../services/logger_service.dart';
 
-class RBSpmController extends GetxController {
+class RBTbpController extends GetxController {
   final TextEditingController tanggalMulaiController = TextEditingController();
   final TextEditingController tanggalSampaiController = TextEditingController();
   final RxString jenisKriteria = 'semua'.obs;
@@ -37,7 +37,7 @@ class RBSpmController extends GetxController {
     tanggalSampaiController.text = "${now.year}-${now.month}-${now.day}";
   }
 
-  // Fungsi filterDetails untuk menampilkan detail SPM berdasarkan jenis SPM
+  // Fungsi filterDetails untuk menampilkan detail TBP berdasarkan jenis TBP
   void filterDetails() {
     RxList<Map<String, dynamic>> detailFilter;
     if (jenisSP2D.value == '*') {
@@ -67,10 +67,10 @@ class RBSpmController extends GetxController {
     filteredDetails.value = detailFilter;
   }
 
-  // Fungsi previewReport untuk menampilkan data SPM
+  // Fungsi previewReport untuk menampilkan data SP2D
   void previewReport() async {
     isLoading.value = true; // Set loading state to true
-    const jenisDokumen = 'spm';
+    const jenisDokumen = 'tbp';
     final tanggalMulai = tanggalMulaiController.text;
     final tanggalSampai = tanggalSampaiController.text;
     const jenisRegister = 'transaksi';
@@ -90,6 +90,7 @@ class RBSpmController extends GetxController {
   }
 
   // Fungsi printPdf untuk mencetak PDF
+
   Future<void> printPdf(List<Map<String, dynamic>> dataToPdf) async {
     // Check if dataToPdf is null or contains null values
     if (dataToPdf.isEmpty) {
@@ -108,7 +109,7 @@ class RBSpmController extends GetxController {
             return pw.Column(
               children: [
                 pw.Text(
-                  'Register SPM - ${jenisSP2D.value == '*' ? 'Semua' : jenisSP2D.value}\n Periode: ${tanggalMulaiController.text} s/d ${tanggalSampaiController.text}',
+                  'Register TBB - ${jenisSP2D.value == '*' ? 'Semua' : jenisSP2D.value}\n Periode: ${tanggalMulaiController.text} s/d ${tanggalSampaiController.text}',
                   style: pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,

@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../../../controllers/penatausahaan/register_belanja/spp_controller.dart';
-import '../../../widgets/custom/custom_loading_animation.dart';
+import '../../controllers/penatausahaan/tracking_document_controller.dart';
+import '../../widgets/custom/custom_loading_animation.dart';
 
-class RBSppPage extends StatelessWidget {
-  final RBSppController controller = Get.put(RBSppController());
+class RBTrackingDocumentPage extends StatelessWidget {
+  final RBTrackingDocumentController controller =
+      Get.put(RBTrackingDocumentController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  RBSppPage() {
+  RBTrackingDocumentPage() {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }
 
-  // Fungsi menampilkan Total Nilai SPP, Potongan, dan Netto dari SP2D
+  // Fungsi menampilkan Total Nilai TBP, Potongan, dan Netto dari SP2D
   void showTotalSnackbar(BuildContext context, Map<String, dynamic> item) {
     final snackBar = SnackBar(
-      content: Text(
-          'TOTAL ${controller.jenisKriteria.value.toUpperCase()} dari SPP\n'
-          'Bruto: ${controller.formatCurrency(item['total_bruto'].toDouble())}\n'
-          'Potongan: ${controller.formatCurrency(item['total_potongan'].toDouble())}\n'
-          'Netto: ${controller.formatCurrency(item['total_netto'].toDouble())}'),
+      content: Text('TOTAL Tracking Document\n'
+          'SPP: ${controller.formatCurrency(item['total_spp'].toDouble())}\n'
+          'SPM: ${controller.formatCurrency(item['total_spm'].toDouble())}\n'
+          'SP2D: ${controller.formatCurrency(item['total_sp2d'].toDouble())}'),
       duration:
           const Duration(seconds: 5), // Keep the Snackbar displayed 5 seconds
       action: SnackBarAction(
@@ -41,8 +41,8 @@ class RBSppPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Register SPP',
-          style: TextStyle(fontSize: 20),
+          'Tracking Document Pengajuan Belanja',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -119,7 +119,7 @@ class RBSppPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          width: 100,
+                          width: 200,
                           child: Obx(() => DropdownButton<String?>(
                                 value: controller.jenisSP2D.value,
                                 onChanged: controller.responOutput.isEmpty
@@ -137,15 +137,15 @@ class RBSppPage extends StatelessWidget {
                                   ),
                                   DropdownMenuItem<String?>(
                                     value: 'LS',
-                                    child: Text('SPP - LS'),
+                                    child: Text('Pengajuan - LS'),
+                                  ),
+                                  DropdownMenuItem<String?>(
+                                    value: 'UP',
+                                    child: Text('Pengajuan - UP'),
                                   ),
                                   DropdownMenuItem<String?>(
                                     value: 'TU',
-                                    child: Text('SPP - TU'),
-                                  ),
-                                  DropdownMenuItem<String?>(
-                                    value: 'GU',
-                                    child: Text('SPP - GU'),
+                                    child: Text('Pengajuan - TU'),
                                   ),
                                 ],
                               )),
@@ -174,7 +174,7 @@ class RBSppPage extends StatelessWidget {
                       const SizedBox(width: 8.0),
                       Center(
                         child: IconButton(
-                          onPressed: controller.previewReport,
+                          onPressed: () => controller.previewReport(1),
                           icon: const Icon(
                             Icons.pageview,
                             color: Colors.blue,
@@ -184,6 +184,35 @@ class RBSppPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                  Obx(() => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: controller.pageNo.value > 1
+                                ? () {
+                                    controller.pageNo.value--;
+                                    controller.previewReport(
+                                        controller.pagePrev.value);
+                                  }
+                                : null,
+                          ),
+                          Text(
+                              'Page ${controller.pageNo.value} of ${controller.totalPages.value}'),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_forward),
+                            onPressed: controller.pageNo.value <
+                                    controller.totalPages.value
+                                ? () {
+                                    controller.pageNo.value++;
+                                    controller.previewReport(
+                                        controller.pageNext.value);
+                                  }
+                                : null,
+                          ),
+                        ],
+                      )),
+                  const SizedBox(height: 8.0),
                 ],
               ),
             ),
@@ -197,18 +226,10 @@ class RBSppPage extends StatelessWidget {
                 return const Center(child: Text('No data display'));
               } else {
                 var details = controller.jenisSP2D.value == '*'
-                    ? controller.responOutput[0]['detail']
+                    ? controller.responOutput[0]['body']
                     // ignore: invalid_use_of_protected_member
                     : controller.filteredDetails.value;
-                var totals = controller.responOutput[0];
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 if (details is List && details.isNotEmpty) {
-                  if (controller.jenisSP2D.value == '*' &&
-                      controller.searchQuery.value.isEmpty) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      showTotalSnackbar(context, totals);
-                    });
-                  }
                   return ListView.builder(
                     itemCount: details.length,
                     itemBuilder: (context, index) {
@@ -223,13 +244,13 @@ class RBSppPage extends StatelessWidget {
                         child: ListTile(
                           //tileColor: tileColor,
                           title: Text(
-                              '${formatter.format(DateTime.parse(item['tanggal_pembuatan']))}, SPP - ${item['jenis']} ${item['keterangan'].toLowerCase().contains('gaji') ? ' Gaji' : ''}'),
+                              '${formatter.format(DateTime.parse(item['tanggal_spp']))}, Pengajuan - ${item['jenis_spp']}'),
                           subtitle: Text(
-                              'SPP: ${item['nomor_dokumen']}\nNilai: ${controller.formatCurrency(item['nilai_bruto'].toDouble())}'),
+                              'TBP: ${item['nomor_spp']}\nNilai: ${controller.formatCurrency(item['nilai_spp'].toDouble())}'),
                           leading: Icon(
-                            item['kondisi_selesai'] == 'belum_ada_pengembalian'
+                            item['nomor_sp2d'] == '-'
                                 ? Icons.hourglass_empty
-                                : item['kondisi_selesai'] == 'menunggu-ver-peng'
+                                : item['nomor_spm'] == '-'
                                     ? Icons.hourglass_empty
                                     : Icons.price_check,
                           ),
@@ -241,7 +262,7 @@ class RBSppPage extends StatelessWidget {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: Text(
-                                    '${item['nomor_dokumen']}\n\nDengan Uraian:',
+                                    '${item['jenis_spp']} Pada ${item['spp_skpd']}\n\nSPP >> SPM >> SP2D:',
                                     textAlign: TextAlign.left,
                                     style: const TextStyle(
                                         fontSize: 16,
@@ -255,40 +276,35 @@ class RBSppPage extends StatelessWidget {
                                         const SizedBox(
                                           height: 8.0,
                                         ),
+                                        IconButton(
+                                          icon: const Icon(
+                                              Icons.keyboard_double_arrow_down),
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: item['nomor_spp']));
+                                            Get.snackbar(
+                                              'Salin Nomor SPP',
+                                              'Nomor SPP sudah disalin',
+                                              snackPosition: SnackPosition.TOP,
+                                            );
+                                          },
+                                          tooltip: 'Salin Nomor SPP',
+                                          iconSize: 20,
+                                          color: Colors.blue,
+                                          hoverColor: Colors.lightBlueAccent,
+                                        ),
                                         RichText(
                                           text: TextSpan(
                                             style: DefaultTextStyle.of(context)
                                                 .style,
                                             children: [
                                               const TextSpan(
-                                                text: 'Jenis: ',
+                                                text: 'No SPP: ',
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              TextSpan(text: item['jenis']),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 8.0,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: DefaultTextStyle.of(context)
-                                                .style,
-                                            children: [
-                                              const TextSpan(
-                                                text: 'Nilai\nBruto: ',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              TextSpan(
-                                                  text:
-                                                      controller.formatCurrency(
-                                                          item['nilai_bruto']
-                                                              .toDouble())),
+                                              TextSpan(text: item['nomor_spp']),
                                             ],
                                           ),
                                         ),
@@ -298,48 +314,7 @@ class RBSppPage extends StatelessWidget {
                                                 .style,
                                             children: [
                                               const TextSpan(
-                                                text: 'Potongan: ',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              TextSpan(
-                                                  text:
-                                                      controller.formatCurrency(
-                                                          item['nilai_potongan']
-                                                              .toDouble())),
-                                            ],
-                                          ),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: DefaultTextStyle.of(context)
-                                                .style,
-                                            children: [
-                                              const TextSpan(
-                                                text: 'Netto: ',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              TextSpan(
-                                                  text:
-                                                      controller.formatCurrency(
-                                                          item['nilai_netto']
-                                                              .toDouble())),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 8.0,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: DefaultTextStyle.of(context)
-                                                .style,
-                                            children: [
-                                              const TextSpan(
-                                                text: 'Tanggal\nPembuatan: ',
+                                                text: 'Tanggal SPP: ',
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
@@ -347,7 +322,7 @@ class RBSppPage extends StatelessWidget {
                                               TextSpan(
                                                   text: formatter.format(
                                                       DateTime.parse(item[
-                                                          'tanggal_pembuatan']))),
+                                                          'tanggal_spp']))),
                                             ],
                                           ),
                                         ),
@@ -357,35 +332,183 @@ class RBSppPage extends StatelessWidget {
                                                 .style,
                                             children: [
                                               const TextSpan(
-                                                text: 'Pencairan: ',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              TextSpan(
-                                                  text: formatter.format(
-                                                      DateTime.parse(item[
-                                                          'tanggal_pencairan']))),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 8.0,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: DefaultTextStyle.of(context)
-                                                .style,
-                                            children: [
-                                              const TextSpan(
-                                                text: 'Keterangan: ',
+                                                text: 'Nilai SPP: ',
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
                                               TextSpan(
                                                   text:
-                                                      '\n${item['keterangan']}\n\n'),
+                                                      controller.formatCurrency(
+                                                          item['nilai_spp']
+                                                              .toDouble())),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 8.0,
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            item['nomor_spm'] == '-'
+                                                ? Icons.question_mark
+                                                : Icons
+                                                    .keyboard_double_arrow_down,
+                                          ),
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: item['nomor_spm']));
+                                            Get.snackbar(
+                                              'Salin Nomor SPM',
+                                              'Nomor SP2D sudah disalin',
+                                              snackPosition: SnackPosition.TOP,
+                                            );
+                                          },
+                                          tooltip: 'Salin Nomor SPM',
+                                          iconSize: 20,
+                                          color: item['nomor_spm'] == '-'
+                                              ? Colors.red
+                                              : Colors.blue,
+                                          highlightColor:
+                                              Colors.lightBlueAccent,
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              const TextSpan(
+                                                text: 'No SPM: ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              TextSpan(text: item['nomor_spm']),
+                                            ],
+                                          ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              const TextSpan(
+                                                text: 'Tanggal SPM: ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    item['tanggal_spm'] != null
+                                                        ? formatter.format(
+                                                            DateTime.parse(item[
+                                                                'tanggal_spm']))
+                                                        : '-',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              const TextSpan(
+                                                text: 'Nilai SPM: ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                  text:
+                                                      controller.formatCurrency(
+                                                          item['nilai_spm']
+                                                              .toDouble())),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 8.0,
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            item['nomor_sp2d'] == '-'
+                                                ? Icons.question_mark
+                                                : Icons
+                                                    .keyboard_double_arrow_down,
+                                          ),
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: item['nomor_sp2d']));
+                                            Get.snackbar(
+                                              'Salin Nomor SP2D',
+                                              'Nomor SP2D sudah disalin',
+                                              snackPosition: SnackPosition.TOP,
+                                            );
+                                          },
+                                          tooltip: 'Salin Nomor SP2D',
+                                          iconSize: 20,
+                                          color: item['nomor_sp2d'] == '-'
+                                              ? Colors.red
+                                              : Colors.blue,
+                                          highlightColor:
+                                              Colors.lightBlueAccent,
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              const TextSpan(
+                                                text: 'No SP2D: ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                  text: item['nomor_sp2d']),
+                                            ],
+                                          ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              const TextSpan(
+                                                text: 'Tanggal SP2D: ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                text: item['tanggal_sp2d'] !=
+                                                        null
+                                                    ? formatter.format(
+                                                        DateTime.parse(item[
+                                                            'tanggal_sp2d']))
+                                                    : '-',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              const TextSpan(
+                                                text: 'Nilai SP2D: ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                  text:
+                                                      controller.formatCurrency(
+                                                          item['nilai_sp2d']
+                                                              .toDouble())),
                                             ],
                                           ),
                                         ),
@@ -393,19 +516,6 @@ class RBSppPage extends StatelessWidget {
                                     ),
                                   ),
                                   actions: <Widget>[
-                                    IconButton(
-                                      icon: const Icon(Icons.copy),
-                                      onPressed: () {
-                                        Clipboard.setData(ClipboardData(
-                                            text: item['nomor_dokumen']));
-                                        Get.snackbar(
-                                          'Salin Nomor',
-                                          'Nomor Dokumen sudah disalin',
-                                          snackPosition: SnackPosition.TOP,
-                                        );
-                                      },
-                                      tooltip: 'Salin Nomor SP2D',
-                                    ),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();

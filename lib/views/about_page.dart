@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
+import '../controllers/auth_controller.dart';
 import '../services/api_service.dart';
 
 class AboutPage extends StatefulWidget {
@@ -17,6 +18,7 @@ class AboutPageState extends State<AboutPage>
   String _version = '';
   late AnimationController _controller;
   late Animation<double> _animation;
+  final String namaSkpd = Get.find<AuthController>().userData['nama_daerah'];
 
   @override
   void initState() {
@@ -88,11 +90,11 @@ class AboutPageState extends State<AboutPage>
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-                'Aplikasi Asisten Keuangan\nUntuk keluarga LKPD\nKabupaten Hulu Sungai Tengah',
-                style: TextStyle(fontSize: 18.0),
+                'Aplikasi Asisten Keuangan\nUntuk keluarga LKPD\n$namaSkpd',
+                style: const TextStyle(fontSize: 18.0),
                 textAlign: TextAlign.center),
           ),
           Padding(

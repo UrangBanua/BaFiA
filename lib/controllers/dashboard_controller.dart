@@ -14,6 +14,7 @@ class DashboardController extends GetxController {
   var showGauge = false.obs;
   var catatanPengajuan = '';
   var dnotifications = <Map<String, dynamic>>[].obs;
+  var isDemo = Get.find<AuthController>().isDemo.value;
 
   final AuthController authController = Get.put(AuthController());
 
@@ -46,7 +47,7 @@ class DashboardController extends GetxController {
       var refreshToken = authController.userData['refresh_token'];
       LoggerService.logger.i(
           '[DashboardController] Database fetched with token: $refreshToken');
-      await ApiService.syncDashboardToLocalDB(db, refreshToken);
+      await ApiService.syncDashboardToLocalDB(db, refreshToken, isDemo);
       LoggerService.logger
           .i('[DashboardController] Dashboard synced to local DB');
       var data = await db.query('dashboard');

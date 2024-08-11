@@ -18,6 +18,7 @@ class LKLraController extends GetxController {
 // set var userData from get autenticator controller
   var refreshToken = Get.find<AuthController>().userData['refresh_token'];
   var idSkpd = Get.find<AuthController>().userData['id_skpd'];
+  var isDemo = Get.find<AuthController>().isDemo.value;
 
   @override
   void onInit() {
@@ -38,6 +39,7 @@ class LKLraController extends GetxController {
       konsolidasiSKPD.value,
       idSkpd,
       refreshToken,
+      isDemo,
     );
     filePdf.value = responData;
     isLoading.value = false; // Set loading state to false

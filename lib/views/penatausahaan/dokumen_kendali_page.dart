@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/penatausahaan/dokumen_kendali_controller.dart';
 import '../../services/logger_service.dart';
+import '../../widgets/custom/custom_arrow_animation.dart';
 import '../../widgets/custom/custom_loading_animation.dart'; // Impor LoggerService
 
 class DokumenKendaliPage extends StatefulWidget {
@@ -34,7 +35,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
         return AlertDialog(
           title: const Text('Penjelasan'),
           content: const Text(
-              'Pohon Kendali ini befungsi untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan.\nNilai ini juga termasuk dari jumlah pengembalian belanja'),
+              'Pohon Kendali ini befungsi untuk memastikan pengajuan realisasi tidak terkendala dalam proses atau hanya lupa dihapus/dibatalkan.\nNilai ini juga termasuk dari jumlah pengembalian belanja (STS TU)'),
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
@@ -67,8 +68,10 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
           LoggerService.logger.i('kendaliSkpd is empty'); // Logging
           return const Center(child: CustomLoadingAnimation());
         } else {
-          LoggerService.logger.i('kendaliSkpd has data'); // Logging
-          return ListView.builder(
+          LoggerService.logger.i('kendaliSkpd has data');
+          return
+              // add childern under return
+              ListView.builder(
             itemCount: controller.kendaliSkpd.length,
             itemBuilder: (context, index) {
               var skpd = controller.kendaliSkpd[index];
@@ -76,8 +79,9 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                   skpd['realisasi_rill'].toDouble(),
                   skpd['anggaran'].toDouble());
               return ExpansionTile(
-                backgroundColor: Colors.blueGrey[100],
+                backgroundColor: Colors.blue[50],
                 collapsedBackgroundColor: Colors.grey[100],
+                iconColor: Colors.blue,
                 title: Text(
                     '${skpd['kode_sub_skpd']} - ${skpd['nama_sub_skpd']} \nAnggaran    : ${currencyFormat.format(skpd['anggaran'])} \nRealisasi     : ${currencyFormat.format(skpd['realisasi_rill'])} \nPersentase : ${persentase.toStringAsFixed(2)}% \nPengajuan  : ${currencyFormat.format(skpd['realisasi_rencana'] - skpd['realisasi_rill'])}',
                     style: const TextStyle(fontSize: 12, color: Colors.black)),
@@ -111,6 +115,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                               urusan['anggaran'].toDouble());
                           return ExpansionTile(
                             collapsedBackgroundColor: Colors.grey[100],
+                            iconColor: Colors.blue,
                             title: Text(
                                 '   [ URUSAN ]\n   ${urusan['kode_bidang_urusan']} - ${urusan['nama_bidang_urusan']} \n   Anggaran    : ${currencyFormat.format(urusan['anggaran'])} \n   Realisasi     : ${currencyFormat.format(urusan['realisasi_rill'])} \n   Persentase : ${persentase.toStringAsFixed(2)}% \n   Pengajuan  : ${currencyFormat.format(urusan['realisasi_rencana'] - urusan['realisasi_rill'])}',
                                 style: const TextStyle(
@@ -151,6 +156,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                       return ExpansionTile(
                                         collapsedBackgroundColor:
                                             Colors.grey[100],
+                                        iconColor: Colors.blue,
                                         title: Text(
                                             '      [ PROGRAM ]\n${program['kode_program']} - ${program['nama_program']} \n      Anggaran    : ${currencyFormat.format(program['anggaran'])} \n      Realisasi     : ${currencyFormat.format(program['realisasi_rill'])} \n      Persentase : ${persentase.toStringAsFixed(2)}% \n      Pengajuan  : ${currencyFormat.format(program['realisasi_rencana'] - program['realisasi_rill'])}',
                                             style: const TextStyle(
@@ -200,6 +206,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                   return ExpansionTile(
                                                     collapsedBackgroundColor:
                                                         Colors.grey[100],
+                                                    iconColor: Colors.blue,
                                                     title: Text(
                                                         '         [ KEGIATAN ]\n${kegiatan['kode_giat']} - ${kegiatan['nama_giat']} \n         Anggaran    : ${currencyFormat.format(kegiatan['anggaran'])} \n         Realisasi     : ${currencyFormat.format(kegiatan['realisasi_rill'])} \n         Persentase : ${persentase.toStringAsFixed(2)}% \n         Pengajuan  : ${currencyFormat.format(kegiatan['realisasi_rencana'] - kegiatan['realisasi_rill'])}',
                                                         style: const TextStyle(
@@ -263,6 +270,8 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                 collapsedBackgroundColor:
                                                                     Colors.grey[
                                                                         100],
+                                                                iconColor:
+                                                                    Colors.blue,
                                                                 title: Text(
                                                                     '            [ SUBKEGIATAN ]\n${subKegiatan['kode_sub_giat']} - ${subKegiatan['nama_sub_giat']} \n            Anggaran    : ${currencyFormat.format(subKegiatan['anggaran'])} \n            Realisasi     : ${currencyFormat.format(subKegiatan['realisasi_rill'])} \n            Persentase : ${persentase.toStringAsFixed(2)}% \n            Pengajuan  : ${currencyFormat.format(subKegiatan['realisasi_rencana'] - subKegiatan['realisasi_rill'])}',
                                                                     style: const TextStyle(
@@ -366,6 +375,23 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                       );
                     }
                   }),
+                  const CustomArrowAnimation(
+                    iconHeight: 20,
+                    textList: [
+                      "periksa dengan teliti",
+                      "jika ada pengajuan lebih dari Rp. 0",
+                      "cek sampai ke rekening belanja",
+                      "pada masing-masing subkegiatan",
+                      "pastikan pengajuan tidak terkendala",
+                      "atau hanya lupa dihapus/dibatalkan",
+                      "karena pengajuan sudah memotong sisa pagu",
+                      "dari anggaran belanja per subkegiatan",
+                      ".............................."
+                    ],
+                    iconColor: Colors.blue,
+                    textColor: Colors.black54,
+                    direction: ArrowDirection.up,
+                  ),
                 ],
               );
             },

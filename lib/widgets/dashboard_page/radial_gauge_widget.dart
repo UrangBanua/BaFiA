@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -47,7 +46,7 @@ class RadialGaugeWidget extends StatelessWidget {
           title: const GaugeTitle(
             text: 'Belanja',
             textStyle: TextStyle(
-              color: Colors.blue,
+              //color: Colors.blue,
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
             ),

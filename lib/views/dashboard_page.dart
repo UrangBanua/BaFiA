@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'drawer_menu.dart';
 import '/services/logger_service.dart';
+import '../services/api_firebase.dart';
 import '../controllers/connectivity_controller.dart';
 import '../widgets/custom/custom_button_animation.dart';
 import '../widgets/dashboard_page/radial_gauge_widget.dart';
@@ -23,6 +24,10 @@ class DashboardPage extends StatelessWidget {
   final AuthController authController = Get.put(AuthController());
   final DashboardController dashboardController =
       Get.put(DashboardController());
+  var idDaerah = Get.find<AuthController>().userData['id_daerah'];
+  var idSkpd = Get.find<AuthController>().userData['id_skpd'];
+  var namaRole = Get.find<AuthController>().userData['nama_role'];
+  var userName = Get.find<AuthController>().userData['username'];
   //final NotificationController notificationController =
   //    Get.put(NotificationController()); // Initialize NotificationController
 
@@ -254,6 +259,20 @@ class DashboardPage extends StatelessWidget {
                   }
                 });
               } else {
+                // Set Topic Subscribe User
+                if (connectivityController.connectivityState.value &&
+                    dashboardController.isDemo == false) {
+                  // Set Topic Subscribe Id Daerah
+                  ApiFirebase().subscribeTopic('bafia-info-$idDaerah');
+                  // Set Topic Subscribe IdDaerah-IdSKPD
+                  ApiFirebase().subscribeTopic(
+                      'bafia-info-$idDaerah-${idSkpd.toString().toLowerCase().replaceAll(' ', '_')}');
+                  // Set Topic Subscribe IdDaerah-NamaJabatan
+                  ApiFirebase().subscribeTopic(
+                      'bafia-info-$idDaerah-${namaRole.toString().toLowerCase().replaceAll(' ', '_')}');
+                  // Topic Subscribe NIP User
+                  ApiFirebase().subscribeTopic('bafia-info-$userName');
+                }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

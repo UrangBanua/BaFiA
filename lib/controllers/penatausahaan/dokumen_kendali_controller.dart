@@ -16,13 +16,14 @@ class DokumenKendaliController extends GetxController {
   // set var userData from get autenticator controller
   var refreshToken = Get.find<AuthController>().userData['refresh_token'];
   var idSkpd = Get.find<AuthController>().userData['id_skpd'];
+  var isDemo = Get.find<AuthController>().isDemo.value;
 
   // Fetch kendali SKPD data
   void fetchKendaliSkpd() async {
     var token = refreshToken;
     var kSkpd = idSkpd;
     LoggerService.logger.i('Fetching kendali SKPD data for idSkpd: $kSkpd');
-    var data = await ApiService.getKendaliSkpd(kSkpd, token);
+    var data = await ApiService.getKendaliSkpd(kSkpd, token, isDemo);
     kendaliSkpd.value = data;
   }
 
@@ -31,7 +32,8 @@ class DokumenKendaliController extends GetxController {
     LoggerService.logger.i(
         'Fetching kendali Urusan data for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd');
     var token = refreshToken;
-    var data = await ApiService.getKendaliUrusan(idSkpd, idSubSkpd, token);
+    var data =
+        await ApiService.getKendaliUrusan(idSkpd, idSubSkpd, token, isDemo);
     kendaliUrusan.value = data;
   }
 
@@ -42,7 +44,7 @@ class DokumenKendaliController extends GetxController {
         'Fetching kendali Program data for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan');
     var token = refreshToken;
     var data = await ApiService.getKendaliProgram(
-        idSkpd, idSubSkpd, idBidangUrusan, token);
+        idSkpd, idSubSkpd, idBidangUrusan, token, isDemo);
     kendaliProgram.value = data;
   }
 
@@ -53,7 +55,7 @@ class DokumenKendaliController extends GetxController {
         'Fetching kendali Kegiatan data for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram');
     var token = refreshToken;
     var data = await ApiService.getKendaliKegiatan(
-        idSkpd, idSubSkpd, idBidangUrusan, idProgram, token);
+        idSkpd, idSubSkpd, idBidangUrusan, idProgram, token, isDemo);
     kendaliKegiatan.value = data;
   }
 
@@ -64,7 +66,7 @@ class DokumenKendaliController extends GetxController {
         'Fetching kendali Sub Kegiatan data for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram, idGiat: $idGiat');
     var token = refreshToken;
     var data = await ApiService.getKendaliSubKegiatan(
-        idSkpd, idSubSkpd, idBidangUrusan, idProgram, idGiat, token);
+        idSkpd, idSubSkpd, idBidangUrusan, idProgram, idGiat, token, isDemo);
     kendaliSubKegiatan.value = data;
   }
 
@@ -74,8 +76,8 @@ class DokumenKendaliController extends GetxController {
     LoggerService.logger.i(
         'Fetching kendali Rekening data for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram, idGiat: $idGiat, idSubGiat: $idSubGiat');
     var token = refreshToken;
-    var data = await ApiService.getKendaliRekening(
-        idSkpd, idSubSkpd, idBidangUrusan, idProgram, idGiat, idSubGiat, token);
+    var data = await ApiService.getKendaliRekening(idSkpd, idSubSkpd,
+        idBidangUrusan, idProgram, idGiat, idSubGiat, token, isDemo);
     kendaliRekening.value = data;
   }
 

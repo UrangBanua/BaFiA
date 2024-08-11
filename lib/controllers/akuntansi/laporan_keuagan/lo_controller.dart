@@ -18,6 +18,7 @@ class LKLoController extends GetxController {
 // set var userData from get autenticator controller
   var refreshToken = Get.find<AuthController>().userData['refresh_token'];
   var idSkpd = Get.find<AuthController>().userData['id_skpd'];
+  var isDemo = Get.find<AuthController>().isDemo.value;
 
   @override
   void onInit() {
@@ -32,13 +33,13 @@ class LKLoController extends GetxController {
     final tanggalMulai = tanggalMulaiController.text;
     final tanggalSampai = tanggalSampaiController.text;
     final responData = await ApiService.getLraReport(
-      tanggalMulai,
-      tanggalSampai,
-      klasifikasi.value,
-      konsolidasiSKPD.value,
-      idSkpd,
-      refreshToken,
-    );
+        tanggalMulai,
+        tanggalSampai,
+        klasifikasi.value,
+        konsolidasiSKPD.value,
+        idSkpd,
+        refreshToken,
+        isDemo);
     filePdf.value = responData;
     isLoading.value = false; // Set loading state to false
   }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:bafia/services/logger_service.dart';
-import 'package:flutter/foundation.dart';
 
 void main() {
   final directory = Directory('lib');

@@ -15,6 +15,27 @@ class RBPengajuanTuPage extends StatelessWidget {
     controller.tanggalSampaiController.text = formattedDate;
   }
 
+  // Fungsi menampilkan Total SP2D, Total Pertanggungjawaban, dan Total Pengembalian
+  void showTotalSnackbar(BuildContext context, Map<String, dynamic> item) {
+    final snackBar = SnackBar(
+      content: Text(
+          'TOTAL ${controller.jenisKriteria.value.toUpperCase()} dari Pengajuan TU\n'
+          'SP2D: ${controller.formatCurrency(item['total_sp2d'].toDouble())}\n'
+          'Pertanggungjawaban: ${controller.formatCurrency(item['total_pertanggungjawaban'].toDouble())}\n'
+          'Pengembalian: ${controller.formatCurrency(item['total_pengembalian'].toDouble())}'),
+      duration:
+          const Duration(seconds: 5), // Keep the Snackbar displayed 5 seconds
+      action: SnackBarAction(
+        label: 'x',
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,7 +166,13 @@ class RBPengajuanTuPage extends StatelessWidget {
                 return const Center(child: Text('No data display'));
               } else {
                 var details = controller.responOutput[0]['detail'];
+                var totals = controller.responOutput[0];
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 if (details is List && details.isNotEmpty) {
+                  // Tampilkan Total dari list Pengajuan TU
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    showTotalSnackbar(context, totals);
+                  });
                   return ListView.builder(
                     itemCount: details.length,
                     itemBuilder: (context, index) {
@@ -162,7 +189,7 @@ class RBPengajuanTuPage extends StatelessWidget {
                           title: Text(
                               '${formatter.format(DateTime.parse(item['tanggal_sp2d']))}, ${item['kondisi_selesai']} - ${item['umur']} hari'),
                           subtitle: Text(
-                              'SP2D: ${item['nomor_sp2d']}\nNilai: ${controller.formatCurrency(item['nilai_sp2d'].toDouble(), context)}'),
+                              'SP2D: ${item['nomor_sp2d']}\nNilai: ${controller.formatCurrency(item['nilai_sp2d'].toDouble())}'),
                           leading: Icon(
                             item['kondisi_selesai'] == 'belum_ada_pengembalian'
                                 ? Icons.hourglass_empty
@@ -207,8 +234,7 @@ class RBPengajuanTuPage extends StatelessWidget {
                                                   text:
                                                       controller.formatCurrency(
                                                           item['nilai_sp2d']
-                                                              .toDouble(),
-                                                          context)),
+                                                              .toDouble())),
                                             ],
                                           ),
                                         ),
@@ -226,8 +252,7 @@ class RBPengajuanTuPage extends StatelessWidget {
                                               TextSpan(
                                                   text: controller.formatCurrency(
                                                       item['nilai_pertanggungjawaban']
-                                                          .toDouble(),
-                                                      context)),
+                                                          .toDouble())),
                                             ],
                                           ),
                                         ),
@@ -245,8 +270,7 @@ class RBPengajuanTuPage extends StatelessWidget {
                                               TextSpan(
                                                   text: controller.formatCurrency(
                                                       item['nilai_pengembalian']
-                                                          .toDouble(),
-                                                      context)),
+                                                          .toDouble())),
                                             ],
                                           ),
                                         ),

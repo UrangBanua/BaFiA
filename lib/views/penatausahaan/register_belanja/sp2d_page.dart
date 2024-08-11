@@ -15,6 +15,27 @@ class RBSp2dPage extends StatelessWidget {
     controller.tanggalSampaiController.text = formattedDate;
   }
 
+  // Fungsi menampilkan Total Nilai Bruto, Potongan, dan Netto dari SP2D
+  void showTotalSnackbar(BuildContext context, Map<String, dynamic> item) {
+    final snackBar = SnackBar(
+      content: Text(
+          'TOTAL ${controller.jenisKriteria.value.toUpperCase()} dari SP2D\n'
+          'Bruto: ${controller.formatCurrency(item['total_bruto'].toDouble())}\n'
+          'Potongan: ${controller.formatCurrency(item['total_potongan'].toDouble())}\n'
+          'Netto: ${controller.formatCurrency(item['total_netto'].toDouble())}'),
+      duration:
+          const Duration(seconds: 5), // Keep the Snackbar displayed 5 seconds
+      action: SnackBarAction(
+        label: 'x',
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,6 +156,26 @@ class RBSp2dPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8.0),
+                      Expanded(
+                        child: Obx(
+                          () => SizedBox(
+                            height: 32.0,
+                            child: TextField(
+                              controller: controller.searchQueryController,
+                              decoration: const InputDecoration(
+                                hintText: 'Cari',
+                              ),
+                              enabled: controller.responOutput.isNotEmpty,
+                              onChanged: (value) {
+                                controller.searchQuery.value = value;
+                                controller
+                                    .filterDetails(); // Call the filter function
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
                       Center(
                         child: IconButton(
                           onPressed: controller.previewReport,
@@ -163,7 +204,15 @@ class RBSp2dPage extends StatelessWidget {
                     ? controller.responOutput[0]['detail']
                     // ignore: invalid_use_of_protected_member
                     : controller.filteredDetails.value;
+                var totals = controller.responOutput[0];
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 if (details is List && details.isNotEmpty) {
+                  if (controller.jenisSP2D.value == '*' &&
+                      controller.searchQuery.value.isEmpty) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showTotalSnackbar(context, totals);
+                    });
+                  }
                   return ListView.builder(
                     itemCount: details.length,
                     itemBuilder: (context, index) {
@@ -178,7 +227,7 @@ class RBSp2dPage extends StatelessWidget {
                         child: ListTile(
                           //tileColor: tileColor,
                           title: Text(
-                              '${formatter.format(DateTime.parse(item['tanggal_pembuatan']))}, SP2D - ${item['jenis']}'),
+                              '${formatter.format(DateTime.parse(item['tanggal_pembuatan']))}, SP2D - ${item['jenis']} ${item['keterangan'].toLowerCase().contains('gaji') ? ' Gaji' : ''}'),
                           subtitle: Text(
                               'SP2D: ${item['nomor_dokumen']}\nNilai: ${controller.formatCurrency(item['nilai_bruto'].toDouble())}'),
                           leading: Icon(

@@ -21,10 +21,13 @@ class RBSp2dController extends GetxController {
   final RxBool isLoading = false.obs; // Add loading state
   RxList<Map<String, dynamic>> filteredDetails =
       <Map<String, dynamic>>[].obs; // Add filteredDetails
+  final searchQuery = ''.obs; // Add search query variable
+  final TextEditingController searchQueryController = TextEditingController();
 
 // set var userData from get autenticator controller
   var refreshToken = Get.find<AuthController>().userData['refresh_token'];
   var idSkpd = Get.find<AuthController>().userData['id_skpd'];
+  var isDemo = Get.find<AuthController>().isDemo.value;
 
   @override
   void onInit() {
@@ -45,10 +48,23 @@ class RBSp2dController extends GetxController {
           .where((item) => item['jenis'] == jenisSP2D.value)
           .toList());
     }
+
+    // Apply search filter
+    if (searchQuery.value.isNotEmpty) {
+      detailFilter = RxList<Map<String, dynamic>>.from(detailFilter
+          .where((item) =>
+              item['nomor_dokumen']
+                  .toString()
+                  .toLowerCase()
+                  .contains(searchQuery.value.toLowerCase()) ||
+              item['keterangan']
+                  .toString()
+                  .toLowerCase()
+                  .contains(searchQuery.value.toLowerCase()))
+          .toList());
+    }
+
     filteredDetails.value = detailFilter;
-    /* responOutput.value = [
-      {'detail': detailFilter}
-    ]; // Update responOutput with filtered details */
   }
 
   // Fungsi previewReport untuk menampilkan data SP2D
@@ -59,14 +75,14 @@ class RBSp2dController extends GetxController {
     final tanggalSampai = tanggalSampaiController.text;
     const jenisRegister = 'transaksi';
     var responData = await ApiService.postRegisterTuTbpSppSpmSp2d(
-      jenisDokumen,
-      tanggalMulai,
-      tanggalSampai,
-      jenisRegister,
-      idSkpd,
-      jenisKriteria.value,
-      refreshToken,
-    );
+        jenisDokumen,
+        tanggalMulai,
+        tanggalSampai,
+        jenisRegister,
+        idSkpd,
+        jenisKriteria.value,
+        refreshToken,
+        isDemo);
     responOutput.value = [responData ?? {}];
     LoggerService.logger.i('Preview Respon: $responData');
     update(); // Update the state

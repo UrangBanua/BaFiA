@@ -34,11 +34,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<String> getInitialRoute() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  bool hasNotification = prefs.getBool('hasNotification') ?? false;
+  SharedPreferences prefsNotif = await SharedPreferences.getInstance();
+  bool hasNotification = prefsNotif.getBool('hasNotification') ?? false;
   if (hasNotification) {
     // Hapus status notifikasi setelah dibaca
-    await prefs.remove('hasNotification');
+    await prefsNotif.remove('hasNotification');
     return '/notification';
   }
   return AuthController().isLoggedIn.value ? '/dashboard' : '/login';

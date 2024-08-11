@@ -20,6 +20,7 @@ class RBPengajuanTuController extends GetxController {
 // set var userData from get autenticator controller
   var refreshToken = Get.find<AuthController>().userData['refresh_token'];
   var idSkpd = Get.find<AuthController>().userData['id_skpd'];
+  var isDemo = Get.find<AuthController>().isDemo.value;
 
   @override
   void onInit() {
@@ -36,14 +37,14 @@ class RBPengajuanTuController extends GetxController {
     final tanggalSampai = tanggalSampaiController.text;
     const jenisRegister = 'transaksi';
     var responData = await ApiService.postRegisterTuTbpSppSpmSp2d(
-      jenisDokumen,
-      tanggalMulai,
-      tanggalSampai,
-      jenisRegister,
-      idSkpd,
-      jenisKriteria.value,
-      refreshToken,
-    );
+        jenisDokumen,
+        tanggalMulai,
+        tanggalSampai,
+        jenisRegister,
+        idSkpd,
+        jenisKriteria.value,
+        refreshToken,
+        isDemo);
     responOutput.value = [responData ?? {}];
     LoggerService.logger.i('Preview Respon: $responData');
     update(); // Update the state
@@ -69,11 +70,11 @@ class RBPengajuanTuController extends GetxController {
     }
   }
 
-  String formatCurrency(double value, BuildContext context) {
+  String formatCurrency(double value) {
     return NumberFormat.currency(
       symbol: 'Rp ',
       decimalDigits: 2,
-      locale: Localizations.localeOf(context).toString(),
+      locale: 'id-ID',
     ).format(value);
   }
 }

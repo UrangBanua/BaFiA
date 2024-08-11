@@ -3,16 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../../../controllers/penatausahaan/register_belanja/tbp_gu_controller.dart';
+import '../../../controllers/penatausahaan/register_belanja/tbp_controller.dart';
 import '../../../widgets/custom/custom_loading_animation.dart';
 
-class RBTbpGuPage extends StatelessWidget {
-  final RBTbpGUController controller = Get.put(RBTbpGUController());
+class RBTbpPage extends StatelessWidget {
+  final RBTbpController controller = Get.put(RBTbpController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  RBTbpGuPage() {
+  RBTbpPage() {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
+  }
+
+  // Fungsi menampilkan Total Nilai TBP, Potongan, dan Netto dari SP2D
+  void showTotalSnackbar(BuildContext context, Map<String, dynamic> item) {
+    final snackBar = SnackBar(
+      content: Text(
+          'TOTAL ${controller.jenisKriteria.value.toUpperCase()} dari TBP\n'
+          'Bruto: ${controller.formatCurrency(item['total_bruto'].toDouble())}\n'
+          'Potongan: ${controller.formatCurrency(item['total_potongan'].toDouble())}\n'
+          'Netto: ${controller.formatCurrency(item['total_netto'].toDouble())}'),
+      duration:
+          const Duration(seconds: 5), // Keep the Snackbar displayed 5 seconds
+      action: SnackBarAction(
+        label: 'x',
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -20,7 +41,7 @@ class RBTbpGuPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Register SPP',
+          'Register TBP - GU & TU',
           style: TextStyle(fontSize: 20),
         ),
         actions: [
@@ -127,6 +148,26 @@ class RBTbpGuPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8.0),
+                      Expanded(
+                        child: Obx(
+                          () => SizedBox(
+                            height: 32.0,
+                            child: TextField(
+                              controller: controller.searchQueryController,
+                              decoration: const InputDecoration(
+                                hintText: 'Cari',
+                              ),
+                              enabled: controller.responOutput.isNotEmpty,
+                              onChanged: (value) {
+                                controller.searchQuery.value = value;
+                                controller
+                                    .filterDetails(); // Call the filter function
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
                       Center(
                         child: IconButton(
                           onPressed: controller.previewReport,
@@ -155,7 +196,15 @@ class RBTbpGuPage extends StatelessWidget {
                     ? controller.responOutput[0]['detail']
                     // ignore: invalid_use_of_protected_member
                     : controller.filteredDetails.value;
+                var totals = controller.responOutput[0];
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 if (details is List && details.isNotEmpty) {
+                  if (controller.jenisSP2D.value == '*' &&
+                      controller.searchQuery.value.isEmpty) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showTotalSnackbar(context, totals);
+                    });
+                  }
                   return ListView.builder(
                     itemCount: details.length,
                     itemBuilder: (context, index) {
@@ -170,7 +219,7 @@ class RBTbpGuPage extends StatelessWidget {
                         child: ListTile(
                           //tileColor: tileColor,
                           title: Text(
-                              '${formatter.format(DateTime.parse(item['tanggal_pembuatan']))}, TBP GU - ${item['jenis']}'),
+                              '${formatter.format(DateTime.parse(item['tanggal_pembuatan']))}, TBP - ${item['jenis']}'),
                           subtitle: Text(
                               'TBP: ${item['nomor_dokumen']}\nNilai: ${controller.formatCurrency(item['nilai_bruto'].toDouble())}'),
                           leading: Icon(

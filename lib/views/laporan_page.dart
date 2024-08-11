@@ -58,6 +58,12 @@ class LaporanPage extends StatelessWidget {
       'text': 'SP2D',
       'pageToGo': '/penatausahaan/register_belanja/sp2d'
     },
+    {
+      'icon': Icons.content_paste_search,
+      'color': Colors.purpleAccent,
+      'text': 'Tracking',
+      'pageToGo': '/penatausahaan/tracking_document'
+    },
   ];
 
   final List<Map<String, dynamic>> buttonsPenatausahaanLaporan = [
