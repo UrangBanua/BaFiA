@@ -1,6 +1,6 @@
 <p><img src="https://github.com/user-attachments/assets/ecb0faba-bdcf-4ce0-abe1-3a178897d054" width="150" height="150" align="left" /></p>
 <h1 align="center">Banua Financial Assistant (BaFiA)</h1>
-<p align="center"><strong>Aplikasi Asisten Keuangan untuk Keluarga LKPD Kabupaten Hulu Sungai Tengah</strong></p>
+<p align="center"><strong>Aplikasi Asisten Keuangan untuk Keluarga LKPD</strong></p>
 <p align="center">&nbsp;</p>
 <p align="center">&nbsp;</p>
 <ul style="list-style-type: circle;">
