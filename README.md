@@ -13,6 +13,7 @@
 <li>[✅] Fitur Autentikasi Biometric/PIN.</li>
 <li>[✅] Fitur Connectivity Check secara Realtime untuk setiap perubahan data.</li>
 <li>[✅] Fitur Info BaFiA untuk update versi terbaru</li>
+<li>[✅] Fitur Login Demo</li>
 <li>[✅] Fitur Print PDF dari Modul Laporan</li>
 <li>[✅] Fitur Dashboard Serapan Realisasi per SKPD pada menu Dashboard.</li>
 <li>[⚡] HotFix Dashboard - Serapan Realisasi pada menu utama.</li>
