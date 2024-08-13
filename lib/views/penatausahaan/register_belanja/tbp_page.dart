@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../controllers/penatausahaan/register_belanja/tbp_controller.dart';
-import '../../../widgets/custom/custom_loading_animation.dart';
+import '../../../widgets/custom/animations/custom_loading_animation.dart';
 
 class RBTbpPage extends StatelessWidget {
   final RBTbpController controller = Get.put(RBTbpController());

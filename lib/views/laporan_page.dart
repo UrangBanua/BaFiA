@@ -62,7 +62,8 @@ class LaporanPage extends StatelessWidget {
       'icon': Icons.content_paste_search,
       'color': Colors.purpleAccent,
       'text': 'Tracking',
-      'pageToGo': '/penatausahaan/tracking_document'
+      'pageToGoDok': '/penatausahaan/tracking_document',
+      'pageToGoRea': '/penatausahaan/tracking_realisasi'
     },
   ];
 
@@ -254,7 +255,44 @@ class LaporanPage extends StatelessWidget {
                                   onPressed: () {
                                     LoggerService.logger
                                         .i('Navigasi ke ${button['pageToGo']}');
-                                    Get.toNamed(button['pageToGo']);
+
+                                    if (button['text'] == 'Tracking') {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Pilih Tracking'),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Tutup dialog
+                                                    Get.toNamed(
+                                                        button['pageToGoDok']);
+                                                  },
+                                                  child: const Text(
+                                                      'Tracking Dokumen'),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Tutup dialog
+                                                    Get.toNamed(
+                                                        button['pageToGoRea']);
+                                                  },
+                                                  child: const Text(
+                                                      'Tracking Realisasi'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      Get.toNamed(button['pageToGo']);
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(20),

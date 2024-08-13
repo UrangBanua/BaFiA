@@ -325,10 +325,13 @@ class _LoginPageState extends State<LoginPage>
                           connectivityController.connectivityState.value;
                       final isFormValid =
                           username.isNotEmpty && password.isNotEmpty;
+                      final isLogin = authController.userData.isNotEmpty;
 
                       return ElevatedButton(
                         onPressed: (isConnected && !isLoading)
-                            ? (isFormValid ? _login : _peringatanTextForm)
+                            ? (isFormValid
+                                ? _login
+                                : (isLogin ? null : _peringatanTextForm))
                             : null,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
@@ -342,8 +345,10 @@ class _LoginPageState extends State<LoginPage>
                     // buat gab atau pemisah
                     const SizedBox(height: 60),
                     Obx(() {
-                      if (authController.userData.isNotEmpty) {
+                      if (authController.userData.isNotEmpty &&
+                          authController.userToken.isNotEmpty) {
                         return IconButton(
+                          iconSize: 30,
                           icon: const Icon(Icons.fingerprint),
                           onPressed: () async {
                             bool authenticated =
@@ -364,7 +369,8 @@ class _LoginPageState extends State<LoginPage>
                     // buat gab atau pemisah
                     const SizedBox(height: 20),
                     Obx(() {
-                      if (authController.userData.isNotEmpty) {
+                      if (authController.userData.isNotEmpty &&
+                          authController.userToken.isNotEmpty) {
                         return AnimatedTextKit(
                           animatedTexts: [
                             WavyAnimatedText(

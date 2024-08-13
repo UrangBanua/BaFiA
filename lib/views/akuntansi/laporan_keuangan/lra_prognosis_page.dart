@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:intl/intl.dart';
 import '../../../controllers/akuntansi/laporan_keuagan/lra_prognosis_controller.dart';
-import '../../../widgets/custom/custom_loading_animation.dart';
+import '../../../widgets/custom/animations/custom_loading_animation.dart';
 
 class LKLraPrognosisPage extends StatelessWidget {
   final LKLraPrognosisController controller =

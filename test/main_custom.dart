@@ -2,7 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bafia/controllers/connectivity_controller.dart';
-import 'package:bafia/widgets/custom/custom_button_animation.dart';
+import 'package:bafia/widgets/custom/animations/custom_button_animation.dart';
 
 void main() {
   runApp(CustomApp());

@@ -17,7 +17,7 @@ class ApiService {
       : dotenv.env['API_SERVICE_URL'] ?? '';
   static final String? apiDemoUrl = dotenv.env['API_DEMO_URL'];
   static final String? fakeXApiKey = dotenv.env['FAKE_X_API_KEY'];
-  static const int timeoutDuration = 10;
+  static const int timeoutDuration = 20;
   static const int timeoutDurationReports = 60;
 
   static get getDateNow {
@@ -924,5 +924,73 @@ class ApiService {
       }
     }
     return null;
+  }
+
+  // API Service untuk Tracking Realisasi
+  static Future<dynamic> postTrackingRealisasi(
+    int pilihBulan,
+    int idSkpd,
+    String token,
+    bool isDemo,
+  ) async {
+    try {
+      LoggerService.logger
+          .i('Attempting to get Tracking Document ${isDemo ? 'DEMO' : ''}');
+      final pHeaders = isDevelopmentMode
+          ? {
+              'x-api-key': fakeXApiKey ?? '',
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            }
+          : {
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            };
+      final response = isDemo
+          ? await _getRequest(
+              '$apiDemoUrl/pengeluaran/strict/laporan/register/tracking-document.json',
+              {
+                  'Content-Type': 'application/json'
+                })
+          : await _getRequest(
+              '$apiServiceUrl/pengeluaran/strict/laporan/realisasi/cetak?tipe=bulan&skpd=$idSkpd&bulan=$pilihBulan',
+              pHeaders);
+
+      LoggerService.logger.i('response: $pHeaders');
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i('Tracking Document berhasil diambil');
+        return json.decode(response.body);
+      }
+      if (response.statusCode == 400 &&
+          response.body.contains('Anda tidak dapat mengakses fitur ini')) {
+        LoggerService.logger
+            .i('Anda tidak memiliki akses untuk mengakses data ini');
+        Get.snackbar(
+            'Alert', 'Anda tidak memiliki akses untuk mengakses data ini');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('Token anda expired')) {
+        LoggerService.logger.i('Token anda expired, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('signature is invalid')) {
+        LoggerService.logger.i('Token anda salah, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      } else {
+        _handleError(response, 'Gagal mengambil data Register');
+      }
+    } catch (e) {
+      if (e is TimeoutException) {
+        LoggerService.logger.e('Tracking Document: Request timeout');
+        Get.snackbar('Info', 'Singkron data service timeout');
+      } else {
+        LoggerService.logger.e('Tracking Document: $e');
+        Get.snackbar(
+            'Info', 'Singkron data service gagal'); // Handle other exceptions
+      }
+    }
+    return {};
   }
 }

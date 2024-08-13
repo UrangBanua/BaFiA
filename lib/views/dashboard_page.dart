@@ -9,11 +9,11 @@ import 'drawer_menu.dart';
 import '/services/logger_service.dart';
 import '../services/api_firebase.dart';
 import '../controllers/connectivity_controller.dart';
-import '../widgets/custom/custom_button_animation.dart';
-import '../widgets/dashboard_page/radial_gauge_widget.dart';
+import '../widgets/custom/animations/custom_button_animation.dart';
+import '../widgets/custom/custom_radial_gauge_widget.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/dashboard_controller.dart';
-import '../widgets/custom/custom_loading_animation.dart';
+import '../widgets/custom/animations/custom_loading_animation.dart';
 
 // ignore: must_be_immutable
 class DashboardPage extends StatelessWidget {

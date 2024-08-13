@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/penatausahaan/tracking_document_controller.dart';
-import '../../widgets/custom/custom_loading_animation.dart';
+import '../../widgets/custom/animations/custom_loading_animation.dart';
 
 class RBTrackingDocumentPage extends StatelessWidget {
   final RBTrackingDocumentController controller =

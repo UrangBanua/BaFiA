@@ -1,13 +1,14 @@
 import 'package:get/get.dart';
 import '../views/about_page.dart';
 import '../views/login_page.dart';
-import '../views/penatausahaan/tracking_document.dart';
 import '../views/profile_user_page.dart';
 import '../views/dashboard_page.dart';
 import '../views/notification_page.dart';
 import '../views/penatausahaan/buku_kas_umum.dart';
 import '../views/penatausahaan/daftar_rekanan.dart';
 import '../views/penatausahaan/dokumen_kendali_page.dart';
+import '../views/penatausahaan/tracking_document.dart';
+import '../views/penatausahaan/tracking_realisasi.dart';
 import '../views/penatausahaan/laporan_pertanggungjawaban/lpj_administratif.dart';
 import '../views/penatausahaan/laporan_pertanggungjawaban/lpj_fungsional.dart';
 import '../views/penatausahaan/laporan_pertanggungjawaban/lpj_tu.dart';
@@ -71,6 +72,9 @@ List<GetPage> appRoutes() {
         page: () => const DaftarRekananPage()),
     GetPage(
         name: '/penatausahaan/buku_kas_umum', page: () => BukuKasUmumPage()),
+    GetPage(
+        name: '/penatausahaan/tracking_realisasi',
+        page: () => RBTrackingRealisasiPage()),
     GetPage(
         name: '/penatausahaan/tracking_document',
         page: () => RBTrackingDocumentPage()),

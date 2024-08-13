@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../controllers/penatausahaan/register_belanja/spm_controller.dart';
-import '../../../widgets/custom/custom_loading_animation.dart';
+import '../../../widgets/custom/animations/custom_loading_animation.dart';
 
 class RBSpmPage extends StatelessWidget {
   final RBSpmController controller = Get.put(RBSpmController());

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import '../../../widgets/custom/custom_loading_animation.dart';
+import '../../../widgets/custom/animations/custom_loading_animation.dart';
 import '/controllers/akuntansi/laporan_keuagan/lo_controller.dart';
 
 class LKLoPage extends StatelessWidget {

@@ -8,7 +8,7 @@ import '../services/api_firebase.dart';
 import '../services/api_service.dart';
 import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
-import '../widgets/custom/custom_loading_animation.dart';
+import '../widgets/custom/animations/custom_loading_animation.dart';
 
 class AuthController extends GetxController {
   final LocalAuthentication auth = LocalAuthentication();
@@ -30,7 +30,7 @@ class AuthController extends GetxController {
   // fungsi check user data
   Future<void> _checkUserData() async {
     var data = await LocalStorageService.getUserData();
-    if (data != null) {
+    if (data != null && data['token'] != null) {
       userData.value = data;
       isLoggedIn.value = true;
       userToken = ({
@@ -38,6 +38,9 @@ class AuthController extends GetxController {
         'refresh_token': userData['refresh_token']
       }).obs;
       //LoggerService.logger.i('User token: ' + userToken['refresh_token']);
+    } else {
+      isLoggedIn.value = false;
+      LoggerService.logger.i('No user data found');
     }
   }
 
@@ -154,10 +157,15 @@ class AuthController extends GetxController {
                     }
                   }
                 },
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(6),
+                ],
               ),
             ],
           ),
-          actions: [
+          /* actions: [
             TextButton(
               onPressed: () {
                 Get.back();
@@ -165,7 +173,7 @@ class AuthController extends GetxController {
               },
               child: const Text('Cancel'),
             ),
-          ],
+          ], */
         ),
       );
     } else {

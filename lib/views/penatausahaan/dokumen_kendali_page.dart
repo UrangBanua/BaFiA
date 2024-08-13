@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/penatausahaan/dokumen_kendali_controller.dart';
 import '../../services/logger_service.dart';
-import '../../widgets/custom/custom_arrow_animation.dart';
-import '../../widgets/custom/custom_loading_animation.dart'; // Impor LoggerService
+import '../../widgets/custom/animations/custom_arrow_animation.dart';
+import '../../widgets/custom/animations/custom_loading_animation.dart'; // Impor LoggerService
 
 class DokumenKendaliPage extends StatefulWidget {
   @override
