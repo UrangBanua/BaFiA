@@ -5,9 +5,12 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'drawer_menu.dart';
-import '/services/logger_service.dart';
+import '../services/logger_service.dart';
 import '../services/api_firebase.dart';
+import '../services/tutorial_service.dart';
 import '../controllers/connectivity_controller.dart';
 import '../widgets/custom/animations/custom_button_animation.dart';
 import '../widgets/custom/custom_radial_gauge_widget.dart';
@@ -19,6 +22,8 @@ import '../widgets/custom/animations/custom_loading_animation.dart';
 class DashboardPage extends StatelessWidget {
   int notificationCount = 0;
   //int unreadCount = 1;
+  final TutorialService tutorialService = TutorialService();
+  final GetStorage storage = GetStorage();
   final ConnectivityController connectivityController =
       Get.put(ConnectivityController());
   final AuthController authController = Get.put(AuthController());
@@ -33,7 +38,65 @@ class DashboardPage extends StatelessWidget {
 
   DateTime? currentBackPressTime;
 
-  DashboardPage({super.key});
+  DashboardPage({
+    super.key,
+  });
+
+  // Create global keys for each widget dashboard
+  final GlobalKey keyNotifikasi = GlobalKey();
+  final GlobalKey keyHome = GlobalKey();
+  final GlobalKey keyLaporan = GlobalKey();
+  final GlobalKey keyCekKendali = GlobalKey();
+  final GlobalKey keyPengaturan = GlobalKey();
+
+  // Setup tutorial Awal
+  void _setupTutorialAwal() {
+    tutorialService.clearTargets(); // Bersihkan target sebelumnya
+    tutorialService.addTarget(
+      keyNotifikasi,
+      'Untuk menihat Notifikasi/Pesan masuk ada disini.',
+      title: 'Notifikasi',
+      align: ContentAlign.bottom,
+      icon: Icons.notifications_active,
+    );
+    tutorialService.addTarget(
+      keyHome,
+      'ini adalah Tombol Cepat dari Fitur Utama. Laporan, Cek Kendali dan Pengaturan.',
+      title: 'Fitur Utama',
+      align: ContentAlign.top,
+      icon: Icons.calendar_today_rounded,
+      shape: ShapeLightFocus.RRect,
+    );
+  }
+
+  // Setup tutorial Menu Utama
+  void _setupTutorialMenu() {
+    tutorialService.clearTargets(); // Bersihkan target sebelumnya
+    tutorialService.addTarget(
+      keyLaporan,
+      'Semua Fitur dari Laporan, Register & Tracking Realisasi ada disini. sesuai hak akses masing-masing.',
+      title: 'Laporan',
+      align: ContentAlign.top,
+      icon: Icons.person_pin,
+      shape: ShapeLightFocus.RRect,
+    );
+    tutorialService.addTarget(
+      keyCekKendali,
+      'Untuk Cek Pohon Kendali disini.',
+      title: 'Pohon Kendali',
+      align: ContentAlign.top,
+      icon: Icons.person_pin,
+      shape: ShapeLightFocus.RRect,
+    );
+    tutorialService.addTarget(
+      keyPengaturan,
+      'Untuk Pengaturan Profil Pengguna dan Cek Saldo ada disini, sesuai hak akses masing-masing.',
+      title: 'Pengaturan',
+      align: ContentAlign.top,
+      icon: Icons.person_pin,
+      shape: ShapeLightFocus.RRect,
+    );
+  }
 
   Future<bool> _onWillPop() async {
     DateTime now = DateTime.now();
@@ -99,6 +162,7 @@ class DashboardPage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: ElevatedButton(
+                                key: keyLaporan,
                                 onPressed: () {
                                   Get.toNamed('/laporan');
                                 },
@@ -116,6 +180,7 @@ class DashboardPage extends StatelessWidget {
                             const SizedBox(width: 8), // Spasi antar tombol
                             Expanded(
                               child: ElevatedButton(
+                                key: keyCekKendali,
                                 onPressed: () {
                                   Get.toNamed('/penatausahaan/dokumen_kendali');
                                 },
@@ -133,6 +198,7 @@ class DashboardPage extends StatelessWidget {
                             const SizedBox(width: 8), // Spasi antar tombol
                             Expanded(
                               child: ElevatedButton(
+                                key: keyPengaturan,
                                 onPressed: () {
                                   Get.toNamed('/profile_user');
                                 },
@@ -163,6 +229,15 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool hasShownTutorial = storage.read('tutorialDashboard') ?? false;
+    if (!hasShownTutorial) {
+      _setupTutorialAwal();
+      tutorialService.showTutorial(
+        context,
+        delayInSeconds: 3,
+        tutorialName: 'tutorialDashboard',
+      );
+    }
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -173,6 +248,7 @@ class DashboardPage extends StatelessWidget {
             Stack(
               children: [
                 IconButton(
+                  key: keyNotifikasi,
                   icon: const Icon(Icons.notifications_active,
                       color: Colors.blueAccent),
                   onPressed: () {
@@ -272,6 +348,10 @@ class DashboardPage extends StatelessWidget {
                       'bafia-info-$idDaerah-${namaRole.toString().toLowerCase().replaceAll(' ', '_')}');
                   // Topic Subscribe NIP User
                   ApiFirebase().subscribeTopic('bafia-info-$userName');
+                } else if (connectivityController.connectivityState.value &&
+                    dashboardController.isDemo == true) {
+                  // Set Topic Subscribe Demo
+                  ApiFirebase().subscribeTopic('bafia-info-demo');
                 }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -337,16 +417,35 @@ class DashboardPage extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  onPressed: () => _showBottomSheet(context),
-                  child: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // ignore: duplicate_ignore
-                      FaIcon(FontAwesomeIcons.home),
-                    ],
-                  ),
-                ),
+                child: Obx(() {
+                  return ElevatedButton(
+                    key: keyHome,
+                    onPressed: () {
+                      try {
+                        _showBottomSheet(context);
+                      } catch (e) {
+                        LoggerService.logger.e('Error: $e');
+                      } finally {
+                        bool hasShownTutorial =
+                            storage.read('tutorialMenuUtama') ?? false;
+                        if (!hasShownTutorial) {
+                          _setupTutorialMenu();
+                          tutorialService.showTutorial(
+                            context,
+                            delayInSeconds: 1,
+                            tutorialName: 'tutorialMenuUtama',
+                          );
+                        }
+                      }
+                    },
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FaIcon(FontAwesomeIcons.home),
+                      ],
+                    ),
+                  );
+                }),
               ),
             ),
           ],

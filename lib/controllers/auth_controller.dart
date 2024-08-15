@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'connectivity_controller.dart';
 import '../services/api_firebase.dart';
@@ -243,6 +244,10 @@ class AuthController extends GetxController {
 
               // Unsuscribe all topics
               await ApiFirebase().unsubscribeAllTopics();
+
+              // Hapus Overboard status
+              final box = GetStorage();
+              box.remove('isOverboard');
 
               isLoggedIn = false.obs;
               isDemo = false.obs;

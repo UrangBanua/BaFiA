@@ -948,7 +948,7 @@ class ApiService {
             };
       final response = isDemo
           ? await _getRequest(
-              '$apiDemoUrl/pengeluaran/strict/laporan/register/tracking-document.json',
+              '$apiDemoUrl/pengeluaran/strict/laporan/register/tracking-realisasi.json',
               {
                   'Content-Type': 'application/json'
                 })

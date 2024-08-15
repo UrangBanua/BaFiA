@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart'
 Future<void> loadEnv() async {
   try {
     await dotenv.load(fileName: ".env");
-    LoggerService.logger.d("Environment variables loaded successfully.");
+    LoggerService.logger.i("Environment variables loaded successfully.");
   } catch (e) {
     LoggerService.logger.e("Failed to load environment variables: $e");
   }
@@ -22,17 +22,17 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        LoggerService.logger.d(
+        LoggerService.logger.i(
             'Current platform is Android key: ${dotenv.env['API_KEY_ANDROID']}');
         return android;
       case TargetPlatform.iOS:
-        LoggerService.logger.d('Current platform is iOS');
+        LoggerService.logger.i('Current platform is iOS');
         return ios;
       case TargetPlatform.macOS:
-        LoggerService.logger.d('Current platform is macOS');
+        LoggerService.logger.i('Current platform is macOS');
         return macos;
       case TargetPlatform.windows:
-        LoggerService.logger.d(
+        LoggerService.logger.i(
             'Current platform is Windows key: ${dotenv.env['API_KEY_WINDOWS']}');
         return windows;
       case TargetPlatform.linux:

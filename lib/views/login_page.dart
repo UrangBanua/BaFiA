@@ -2,15 +2,20 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/connectivity_controller.dart';
 import '../services/api_firebase.dart';
 import '../services/logger_service.dart';
+import '../services/tutorial_service.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  LoginPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -22,6 +27,7 @@ class _LoginPageState extends State<LoginPage>
   final ConnectivityController connectivityController =
       Get.put(ConnectivityController());
   final AuthController authController = Get.put(AuthController());
+  final TutorialService tutorialService = TutorialService();
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -39,6 +45,65 @@ class _LoginPageState extends State<LoginPage>
   late Animation<double> _rotationAnimation;
 
   String _version = '';
+
+  // Create global keys for each widget
+  final GlobalKey keyKoneksi = GlobalKey();
+  final GlobalKey keyRule = GlobalKey();
+  final GlobalKey keyTahun = GlobalKey();
+  final GlobalKey keyUsername = GlobalKey();
+  final GlobalKey keyPassword = GlobalKey();
+  final GlobalKey keyLogin = GlobalKey();
+  final GlobalKey keyBiometric = GlobalKey();
+
+  // Setup tutorial Awal frehs install
+  void _setupTutorialAwal() {
+    tutorialService.clearTargets(); // Bersihkan target sebelumnya
+    tutorialService.addTarget(
+      keyKoneksi,
+      'Status koneksi internet anda, sebelum login pastikan koneksi internet anda aktif.',
+      title: 'Koneksi',
+      align: ContentAlign.bottom,
+      icon: Icons.cell_wifi,
+    );
+    tutorialService.addTarget(
+      keyTahun,
+      'ini tahun anggaran berjalan.',
+      title: 'Tahun Anggaran',
+      align: ContentAlign.top,
+      icon: Icons.calendar_today_rounded,
+      shape: ShapeLightFocus.RRect,
+    );
+    tutorialService.addTarget(
+      keyUsername,
+      'Silahkan isi username/nip anda disini.',
+      title: 'Username/NIP',
+      align: ContentAlign.top,
+      icon: Icons.person_pin,
+      shape: ShapeLightFocus.RRect,
+    );
+    tutorialService.showTutorial(context, delayInSeconds: 2);
+  }
+
+  // Setup tutorial untuk User yg sudah masuk
+  void _setupTutorialUser() {
+    tutorialService.clearTargets(); // Bersihkan target sebelumnya
+    tutorialService.addTarget(
+      keyRule,
+      'Status Anda sudah login, silahkan langsung masuk lewat verifikasi Biometric',
+      title: 'Status',
+      align: ContentAlign.bottom,
+      icon: Icons.badge,
+      shape: ShapeLightFocus.RRect, // Custom shape for this target
+    );
+    tutorialService.addTarget(
+      keyBiometric,
+      'Silahkan verifikasi data anda disini.',
+      title: 'Login Biometric',
+      align: ContentAlign.top,
+      icon: Icons.fingerprint,
+    );
+    tutorialService.showTutorial(context, delayInSeconds: 1);
+  }
 
   @override
   void initState() {
@@ -70,9 +135,9 @@ class _LoginPageState extends State<LoginPage>
     _controller.forward();
 
     // Add listener for connectivity state
-    ever(connectivityController.connectivityState, (bool isConnected) {
+    ever(connectivityController.connectivityState, (bool isConnected) async {
       if (isConnected) {
-        _initFCM();
+        await _initFCM();
       }
     });
 
@@ -87,6 +152,16 @@ class _LoginPageState extends State<LoginPage>
     });
     passwordController.addListener(() {
       password.value = passwordController.text;
+    });
+
+    // Add delay before setting up the tutorial
+    Future.delayed(const Duration(seconds: 3), () {
+      // Set Tutorial based on user status
+      if (authController.userData.isEmpty) {
+        _setupTutorialAwal();
+      } else {
+        _setupTutorialUser();
+      }
     });
   }
 
@@ -108,7 +183,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   // fungsi untuk inisialisasi FCM
-  void _initFCM() async {
+  Future<void> _initFCM() async {
     //Initialize FCM setting
     if (isFirebaseInitialed.value == false &&
         connectivityController.connectivityState.value) {
@@ -125,14 +200,14 @@ class _LoginPageState extends State<LoginPage>
     });
     try {
       // Simpan data demo berdasarkan kondisi username
-      SharedPreferences prefsDemo = await SharedPreferences.getInstance();
+      final box = GetStorage();
       if (usernameController.text == '111111111111111111' &&
           passwordController.text == 'demo') {
         LoggerService.logger.i('Demo mode activated');
-        await prefsDemo.setBool('demo', true);
+        await box.write('demo', true);
         authController.isDemo.value = true;
       } else {
-        await prefsDemo.setBool('demo', false);
+        await box.write('demo', false);
         authController.isDemo.value = false;
       }
     } finally {
@@ -152,9 +227,9 @@ class _LoginPageState extends State<LoginPage>
 
   // fungsi untuk set demo mode
   Future<void> _setDemoMode() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final box = GetStorage();
     setState(() {
-      authController.isDemo.value = prefs.getBool('demo') ?? false;
+      authController.isDemo.value = box.read('demo') ?? false;
     });
   }
 
@@ -177,6 +252,7 @@ class _LoginPageState extends State<LoginPage>
                 return SizedBox(
                   height: 20, // Set a fixed height for the text
                   child: AnimatedTextKit(
+                    key: keyKoneksi,
                     animatedTexts: [
                       FadeAnimatedText(
                         connectivityController.connectivityCaption.value,
@@ -219,6 +295,7 @@ class _LoginPageState extends State<LoginPage>
               Obx(() {
                 if (authController.userData.isNotEmpty) {
                   return AnimatedTextKit(
+                    key: keyRule,
                     animatedTexts: [
                       ColorizeAnimatedText(
                           'HALO ${authController.userData['nama_role']}',
@@ -242,6 +319,7 @@ class _LoginPageState extends State<LoginPage>
                   children: [
                     Obx(() {
                       return TextField(
+                        key: keyTahun,
                         readOnly: false,
                         controller: yearController,
                         decoration: InputDecoration(
@@ -266,6 +344,7 @@ class _LoginPageState extends State<LoginPage>
                     const SizedBox(height: 20),
                     Obx(() {
                       return TextField(
+                        key: keyUsername,
                         controller: usernameController,
                         decoration: InputDecoration(
                           labelText: 'Username',
@@ -290,6 +369,7 @@ class _LoginPageState extends State<LoginPage>
                     const SizedBox(height: 20),
                     Obx(() {
                       return TextField(
+                        key: keyPassword,
                         controller: passwordController,
                         decoration: InputDecoration(
                           labelText: 'Password',
@@ -328,6 +408,7 @@ class _LoginPageState extends State<LoginPage>
                       final isLogin = authController.userData.isNotEmpty;
 
                       return ElevatedButton(
+                        key: keyLogin,
                         onPressed: (isConnected && !isLoading)
                             ? (isFormValid
                                 ? _login
@@ -348,6 +429,7 @@ class _LoginPageState extends State<LoginPage>
                       if (authController.userData.isNotEmpty &&
                           authController.userToken.isNotEmpty) {
                         return IconButton(
+                          key: keyBiometric,
                           iconSize: 30,
                           icon: const Icon(Icons.fingerprint),
                           onPressed: () async {

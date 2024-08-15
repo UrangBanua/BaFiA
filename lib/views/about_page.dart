@@ -109,7 +109,7 @@ class AboutPageState extends State<AboutPage>
             padding: const EdgeInsets.all(16.0),
             child: Linkify(
               text:
-                  'Cek release versi terbaru disini\nhttps://github.com/UrangBanua/BaFiA/releases',
+                  'Cek versi terbaru dengan mengklik logo di atas ☝\n\nkode sumber terbuka dari github\nhttps://github.com/UrangBanua/BaFiA/releases',
               options: const LinkifyOptions(humanize: false),
               onOpen: (link) async {
                 FlutterWebBrowser.openWebPage(url: link.url);

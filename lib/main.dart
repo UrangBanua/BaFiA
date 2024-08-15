@@ -4,7 +4,7 @@ import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 import 'controllers/auth_controller.dart';
 import 'routes/routes.dart';
@@ -21,9 +21,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     LoggerService.logger.i('Message also contained data: ${message.data}');
     await LocalStorageService.saveMessageData(message.data);
     // Simpan status notifikasi
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasNotification', true);
-    await prefs.setString('notificationData', message.data.toString());
+    final box = GetStorage();
+    box.write('hasNotification', true);
+    box.write('notificationData', message.data.toString());
 
     // Pengarahan ke halaman notifikasi
     navigatorKey.currentState?.pushNamed(
@@ -34,18 +34,35 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<String> getInitialRoute() async {
-  SharedPreferences prefsNotif = await SharedPreferences.getInstance();
-  bool hasNotification = prefsNotif.getBool('hasNotification') ?? false;
-  if (hasNotification) {
-    // Hapus status notifikasi setelah dibaca
-    await prefsNotif.remove('hasNotification');
-    return '/notification';
+  final box = GetStorage();
+  //box.remove('isOverboard');
+  // Membaca status overboard
+  bool isOverboard = box.read('isOverboard') ?? true; // Default value is true
+  LoggerService.logger.i('isOverboard: $isOverboard');
+
+  // Membaca status notifikasi
+  bool hasNotification = box.read('hasNotification') ?? false;
+
+  if (AuthController().isLoggedIn.value) {
+    if (hasNotification) {
+      // Hapus status notifikasi setelah dibaca
+      box.remove('hasNotification');
+      return '/notification';
+    } else if (isOverboard) {
+      return '/overboard';
+    } else {
+      return '/login';
+    }
+  } else if (isOverboard) {
+    return '/overboard';
+  } else {
+    return '/login';
   }
-  return AuthController().isLoggedIn.value ? '/dashboard' : '/login';
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   String initialRoute = await getInitialRoute();
   // panggil theme controller
   final themeController = Get.put(ThemeController());
@@ -140,15 +157,14 @@ class BafiaApp extends StatelessWidget {
                 Get.put(AuthController());
               }),
               navigatorKey: navigatorKey,
-              initialRoute: AuthController().isLoggedIn.value
-                  ? (navigatorKey.isBlank ?? true)
-                      ? '/dashboard'
-                      : navigatorKey.toString()
-                  : '/login',
-              getPages: appRoutes(),
-              theme: themeController.isDarkMode.value
-                  ? ThemeData.dark()
-                  : ThemeData.light(),
+              initialRoute: initialRoute,
+              getPages: appRoutes(), // Set the routes here
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+                brightness: themeController.isDarkMode.value
+                    ? Brightness.dark
+                    : Brightness.light,
+              ),
               localizationsDelegates: const [
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,

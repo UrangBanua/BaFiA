@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../widgets/custom/custom_overboard_widget.dart';
 import '../views/about_page.dart';
 import '../views/login_page.dart';
 import '../views/profile_user_page.dart';
@@ -40,7 +41,8 @@ import '../views/akuntansi/neraca_saldo_page.dart';
 
 List<GetPage> appRoutes() {
   return [
-    GetPage(name: '/login', page: () => const LoginPage()),
+    GetPage(name: '/overboard', page: () => CustomOverboard()),
+    GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/dashboard', page: () => DashboardPage()),
     GetPage(name: '/profile_user', page: () => ProfileUserPage()),
     GetPage(name: '/about', page: () => const AboutPage()),

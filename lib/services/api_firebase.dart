@@ -1,10 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-//import 'package:url_launcher/url_launcher.dart';
-//import '../main.dart';
-//import 'local_storage_service.dart';
 import 'logger_service.dart';
 
 class ApiFirebase {
@@ -12,23 +9,16 @@ class ApiFirebase {
 
   static final bool isDevelopmentMode = dotenv.env['DEVELOPMENT_MODE'] == 'ON';
 
-  static SharedPreferences? _prefs;
-  static SharedPreferences? _prefsFcmToken;
-
-  // Inisialisasi SharedPreferences
-  Future<void> initSharedPreferences() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
+  static final GetStorage _storage = GetStorage();
+  static final GetStorage _storageFcmToken = GetStorage('fcm_token');
 
   // Fungsi untuk subscribe topic
   Future<void> subscribeTopic(String topic) async {
-    if (_prefs == null) return;
-
     // Cek apakah topic sudah disubscribe
-    if (_prefs!.containsKey(topic)) return;
+    if (_storage.read(topic) != null) return;
 
-    // Simpan topik ke SharedPreferences
-    await _prefs!.setBool(topic, true);
+    // Simpan topik ke GetStorage
+    await _storage.write(topic, true);
 
     // Subscribe ke topik menggunakan FirebaseMessaging
     await _firebaseMessaging.subscribeToTopic(topic);
@@ -37,16 +27,17 @@ class ApiFirebase {
 
   // Fungsi untuk unsubscribe semua topic
   Future<void> unsubscribeAllTopics() async {
-    if (_prefs == null) return;
-
-    final keys = _prefs!.getKeys();
+    final keys = // get keys include 'bafia-info' from GetStorage
+        _storage
+            .getKeys()
+            .where((String key) => key.contains('bafia-info'))
+            .toList();
     for (String topic in keys) {
       await _firebaseMessaging.unsubscribeFromTopic(topic);
       LoggerService.logger.i('Unsubscribed topic: $topic');
+      // Hapus data topic dari GetStorage
+      await _storage.remove(topic);
     }
-
-    // Hapus semua data dari SharedPreferences
-    await _prefs!.clear();
   }
 
   Future<void> initNotifications() async {
@@ -69,13 +60,12 @@ class ApiFirebase {
           .i('User declined or has not accepted permission for notifications');
     }
 
-    // init SharedPreferences
-    _prefsFcmToken = await SharedPreferences.getInstance();
-    String? fCMToken = _prefsFcmToken!.getString('fcm_token');
+    // init GetStorage for FCM token
+    String? fCMToken = _storageFcmToken.read('fcm_token');
     if (fCMToken == null) {
       fCMToken = kIsWeb ? 'web_token' : await _firebaseMessaging.getToken();
       if (fCMToken != null) {
-        await _prefsFcmToken!.setString('fcm_token', fCMToken);
+        await _storageFcmToken.write('fcm_token', fCMToken);
       }
     }
 
@@ -92,10 +82,9 @@ class ApiFirebase {
     }
 
     // Subscribe to the 'bafia-info' topic
-    await initSharedPreferences();
     isDevelopmentMode
-        ? {await subscribeTopic('bafia-info-dev')}
-        : {await subscribeTopic('bafia-info')};
+        ? await subscribeTopic('bafia-info-dev')
+        : await subscribeTopic('bafia-info');
   }
 
   /* Future<void> handleMessage(RemoteMessage? message) async {
