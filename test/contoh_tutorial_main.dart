@@ -98,7 +98,7 @@ class _MainPageState extends State<MainPage> {
   // Method untuk menampilkan tutorial
   void _showTutorial() {
     tutorialService.showTutorial(context, onFinish: () {
-      print("Tutorial Selesai");
+      //print("Tutorial Selesai");
     });
   }
 }

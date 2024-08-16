@@ -16,6 +16,7 @@ import '../widgets/custom/animations/custom_button_animation.dart';
 import '../widgets/custom/custom_radial_gauge_widget.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/dashboard_controller.dart';
+import '../widgets/custom/custom_bottom_sheet.dart';
 import '../widgets/custom/animations/custom_loading_animation.dart';
 
 // ignore: must_be_immutable
@@ -29,6 +30,7 @@ class DashboardPage extends StatelessWidget {
   final AuthController authController = Get.put(AuthController());
   final DashboardController dashboardController =
       Get.put(DashboardController());
+  final CustomBottomSheet bottomSheetController = Get.put(CustomBottomSheet());
   var idDaerah = Get.find<AuthController>().userData['id_daerah'];
   var idSkpd = Get.find<AuthController>().userData['id_skpd'];
   var namaRole = Get.find<AuthController>().userData['nama_role'];
@@ -45,9 +47,6 @@ class DashboardPage extends StatelessWidget {
   // Create global keys for each widget dashboard
   final GlobalKey keyNotifikasi = GlobalKey();
   final GlobalKey keyHome = GlobalKey();
-  final GlobalKey keyLaporan = GlobalKey();
-  final GlobalKey keyCekKendali = GlobalKey();
-  final GlobalKey keyPengaturan = GlobalKey();
 
   // Setup tutorial Awal
   void _setupTutorialAwal() {
@@ -65,35 +64,6 @@ class DashboardPage extends StatelessWidget {
       title: 'Fitur Utama',
       align: ContentAlign.top,
       icon: Icons.calendar_today_rounded,
-      shape: ShapeLightFocus.RRect,
-    );
-  }
-
-  // Setup tutorial Menu Utama
-  void _setupTutorialMenu() {
-    tutorialService.clearTargets(); // Bersihkan target sebelumnya
-    tutorialService.addTarget(
-      keyLaporan,
-      'Semua Fitur dari Laporan, Register & Tracking Realisasi ada disini. sesuai hak akses masing-masing.',
-      title: 'Laporan',
-      align: ContentAlign.top,
-      icon: Icons.person_pin,
-      shape: ShapeLightFocus.RRect,
-    );
-    tutorialService.addTarget(
-      keyCekKendali,
-      'Untuk Cek Pohon Kendali disini.',
-      title: 'Pohon Kendali',
-      align: ContentAlign.top,
-      icon: Icons.person_pin,
-      shape: ShapeLightFocus.RRect,
-    );
-    tutorialService.addTarget(
-      keyPengaturan,
-      'Untuk Pengaturan Profil Pengguna dan Cek Saldo ada disini, sesuai hak akses masing-masing.',
-      title: 'Pengaturan',
-      align: ContentAlign.top,
-      icon: Icons.person_pin,
       shape: ShapeLightFocus.RRect,
     );
   }
@@ -126,105 +96,6 @@ class DashboardPage extends StatelessWidget {
     LoggerService.logger.i('App is exit');
     exit(0); // Force stop the application
     //return Future.value(true);
-  }
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.1,
-          minChildSize: 0.0,
-          maxChildSize: 0.5,
-          builder: (context, scrollController) {
-            return Column(
-              children: [
-                // penambahan garis sebagai tanda bisa digeser
-                /* Container(
-                  width: 45,
-                  height: 5,
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[700],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ), */
-                Expanded(
-                  child: ListView(
-                    controller: scrollController,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                key: keyLaporan,
-                                onPressed: () {
-                                  Get.toNamed('/laporan');
-                                },
-                                child: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.chartLine),
-                                    SizedBox(height: 4),
-                                    Text('Laporan',
-                                        style: TextStyle(fontSize: 12)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8), // Spasi antar tombol
-                            Expanded(
-                              child: ElevatedButton(
-                                key: keyCekKendali,
-                                onPressed: () {
-                                  Get.toNamed('/penatausahaan/dokumen_kendali');
-                                },
-                                child: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.wallet),
-                                    SizedBox(height: 4),
-                                    Text('Cek Kendali',
-                                        style: TextStyle(fontSize: 12)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8), // Spasi antar tombol
-                            Expanded(
-                              child: ElevatedButton(
-                                key: keyPengaturan,
-                                onPressed: () {
-                                  Get.toNamed('/profile_user');
-                                },
-                                child: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.cogs),
-                                    SizedBox(height: 4),
-                                    Text('Pengaturan',
-                                        style: TextStyle(fontSize: 12)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -417,35 +288,34 @@ class DashboardPage extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Obx(() {
-                  return ElevatedButton(
-                    key: keyHome,
-                    onPressed: () {
-                      try {
-                        _showBottomSheet(context);
-                      } catch (e) {
-                        LoggerService.logger.e('Error: $e');
-                      } finally {
-                        bool hasShownTutorial =
-                            storage.read('tutorialMenuUtama') ?? false;
-                        if (!hasShownTutorial) {
-                          _setupTutorialMenu();
-                          tutorialService.showTutorial(
-                            context,
-                            delayInSeconds: 1,
-                            tutorialName: 'tutorialMenuUtama',
-                          );
-                        }
+                child: ElevatedButton(
+                  key: keyHome,
+                  onPressed: () {
+                    try {
+                      bottomSheetController.showBottomSheet(context);
+                    } catch (e) {
+                      LoggerService.logger.e('Error: $e');
+                    } finally {
+                      bool hasShownTutorial =
+                          storage.read('tutorialMenuUtama') ?? false;
+                      if (!hasShownTutorial) {
+                        bottomSheetController.setupTutorialMenu();
+                        tutorialService.showTutorial(
+                          context,
+                          delayInSeconds: 1,
+                          tutorialName: 'tutorialMenuUtama',
+                        );
+                        LoggerService.logger.i('Show Tutorial Menu Utama');
                       }
-                    },
-                    child: const Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FaIcon(FontAwesomeIcons.home),
-                      ],
-                    ),
-                  );
-                }),
+                    }
+                  },
+                  child: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FaIcon(FontAwesomeIcons.home, color: Colors.blue),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],

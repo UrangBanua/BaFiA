@@ -1,3 +1,4 @@
+import 'package:bafia/services/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -5,6 +6,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 class TutorialService {
   List<TargetFocus> targets = [];
   final GetStorage storage = GetStorage();
+  TutorialCoachMark? _tutorialCoachMark; // Tambahkan properti ini
 
   // Method untuk menambahkan target tutorial
   void addTarget(GlobalKey key, String description,
@@ -73,7 +75,7 @@ class TutorialService {
     }
 
     Future.delayed(Duration(seconds: delayInSeconds), () {
-      TutorialCoachMark(
+      _tutorialCoachMark = TutorialCoachMark(
         targets: targets,
         colorShadow: colorShadow,
         textSkip: textSkip,
@@ -82,18 +84,27 @@ class TutorialService {
           // Mark the tutorial as shown
           if (tutorialName != null) {
             storage.write(tutorialName, true);
+            LoggerService.logger
+                .i("Tutorial $tutorialName has been shown and marked as done");
           }
           if (onFinish != null) {
             onFinish();
           }
         },
         onClickTarget: onClickTarget ?? (target) {},
-      ).show(context: context);
+      );
+
+      _tutorialCoachMark?.show(context: context);
     });
   }
 
   // Method untuk membersihkan targets (jika ingin mengulang tutorial)
   void clearTargets() {
     targets.clear();
+  }
+
+  // Method untuk membatalkan tutorial
+  void cancelTutorial() {
+    _tutorialCoachMark?.hideSkip;
   }
 }

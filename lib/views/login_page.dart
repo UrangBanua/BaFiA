@@ -198,6 +198,7 @@ class _LoginPageState extends State<LoginPage>
     setState(() {
       isLoading = true;
     });
+    tutorialService.cancelTutorial();
     try {
       // Simpan data demo berdasarkan kondisi username
       final box = GetStorage();
@@ -433,6 +434,7 @@ class _LoginPageState extends State<LoginPage>
                           iconSize: 30,
                           icon: const Icon(Icons.fingerprint),
                           onPressed: () async {
+                            tutorialService.cancelTutorial();
                             bool authenticated =
                                 await authController.authenticate();
                             if (authenticated) {

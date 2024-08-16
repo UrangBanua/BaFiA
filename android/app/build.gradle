@@ -7,6 +7,7 @@ plugins {
     id "com.google.gms.google-services"
     //id("com.google.gms.google-services") version "4.4.2" apply false
     //id "org.jetbrains.kotlin.jvm" version "2.0.0"
+    id "org.jetbrains.kotlin.android" version "1.7.10"
 }
 
 def localProperties = new Properties()
@@ -79,7 +80,7 @@ android {
 
 dependencies {
     // Tambahkan dependensi Firebase lainnya jika diperlukan
-    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+    implementation 'com.google.firebase:firebase-messaging:24.0.0'
     // Mengintegrasikan Play Integrity API ke dalam aplikasi
     implementation 'com.google.android.play:integrity:1.4.0'
 }

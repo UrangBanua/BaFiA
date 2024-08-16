@@ -7,10 +7,10 @@ class JAAnggaranPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Jurnal Aprrove Anggaran Page'),
+        title: const Text('Jurnal Anggaran'),
       ),
       body: const Center(
-        child: Text('Jurnal Aprrove Anggaran Page Content'),
+        child: Text('Jurnal Anggaran masih dalam tahap pengembangan'),
       ),
     );
   }

@@ -568,7 +568,7 @@ class ApiService {
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
       LoggerService.logger.e('Failed to load LRA skpd for idSkpd: $idSkpd');
-      Get.snackbar('Info', 'singkron data LRA berhasil pada idSKPD: $idSkpd.');
+      Get.snackbar('Info', 'singkron data LRA gagal pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -612,7 +612,7 @@ class ApiService {
       LoggerService.logger
           .e('Failed to load LRA Prognosis skpd for idSkpd: $idSkpd');
       Get.snackbar(
-          'Info', 'singkron data LRA Prognosis berhasil pada idSKPD: $idSkpd.');
+          'Info', 'singkron data LRA Prognosis gagal pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -656,7 +656,7 @@ class ApiService {
       LoggerService.logger
           .e('Failed to load LRA Program skpd for idSkpd: $idSkpd');
       Get.snackbar(
-          'Info', 'singkron data LRA Program berhasil pada idSKPD: $idSkpd.');
+          'Info', 'singkron data LRA Program gagal pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -691,7 +691,7 @@ class ApiService {
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
       LoggerService.logger.e('Failed to load LO skpd for idSkpd: $idSkpd');
-      Get.snackbar('Info', 'singkron data LO berhasil pada idSKPD: $idSkpd.');
+      Get.snackbar('Info', 'singkron data LO gagal pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -708,11 +708,17 @@ class ApiService {
   ) async {
     LoggerService.logger
         .i('Attempting to get Laporan Keuagan - LPE ${isDemo ? 'DEMO' : ''}');
+    int? klevel;
+    if (klasifikasi == 0) {
+      klevel = null;
+    } else {
+      klevel = klasifikasi;
+    }
     final pHeaders = isDevelopmentMode
         ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
         : {'Authorization': 'Bearer $token'};
     final url =
-        '$apiServiceUrl/aklap/api/report/lpe/cetak?tanggalFrom=$tanggalMulai&tanggalTo=$tanggalSampai&format=$klasifikasi&konsolidasi_unit=$konsolidasiSKPD&filetype=pdf';
+        '$apiServiceUrl/aklap/api/report/lpe/cetak?tanggalFrom=$tanggalMulai&tanggalTo=$tanggalSampai&format=$klevel&konsolidasi_unit=$konsolidasiSKPD&filetype=pdf';
     final response = isDemo
         ? await _getRequest('$apiDemoUrl/aklap/api/report/demo.pdf', {})
         : await _getRequestReports(url, pHeaders);
@@ -726,7 +732,7 @@ class ApiService {
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
       LoggerService.logger.e('Failed to load LPE skpd for idSkpd: $idSkpd');
-      Get.snackbar('Info', 'singkron data LPE berhasil pada idSKPD: $idSkpd.');
+      Get.snackbar('Info', 'singkron data LPE gagal pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }
@@ -743,11 +749,17 @@ class ApiService {
   ) async {
     LoggerService.logger.i(
         'Attempting to get Laporan Keuagan - Neraca ${isDemo ? 'DEMO' : ''}');
+    int? klevel;
+    if (klasifikasi == 0) {
+      klevel = null;
+    } else {
+      klevel = klasifikasi;
+    }
     final pHeaders = isDevelopmentMode
         ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
         : {'Authorization': 'Bearer $token'};
     final url =
-        '$apiServiceUrl/aklap/api/report/load-report-konsolidasi-neraca??searchparams={"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klasifikasi,"is_combine":"$konsolidasiSKPD","skpd":$idSkpd}&formatFile=pdf';
+        '$apiServiceUrl/aklap/api/report/load-report-konsolidasi-neraca?searchparams={"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klevel,"is_combine":"$konsolidasiSKPD","skpd":$idSkpd}&formatFile=pdf';
     final response = isDemo
         ? await _getRequest('$apiDemoUrl/aklap/api/report/demo.pdf', {})
         : await _getRequestReports(url, pHeaders);
@@ -761,8 +773,7 @@ class ApiService {
       //return response.body; // Assuming the API returns the URL of the PDF
     } else {
       LoggerService.logger.e('Failed to load Neraca skpd for idSkpd: $idSkpd');
-      Get.snackbar(
-          'Info', 'singkron data Neraca berhasil pada idSKPD: $idSkpd.');
+      Get.snackbar('Info', 'singkron data Neraca gagal pada idSKPD: $idSkpd.');
       throw Exception('Failed to load report');
     }
   }

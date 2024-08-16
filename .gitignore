@@ -52,3 +52,10 @@ app.*.map.json
 web/env.js
 release-key.jks
 key.properties
+assets/images/jurnal_pendapatan.png
+assets/images/jurnal_belanja.png
+assets/images/jurnal_anggaran.png
+assets/images/jurnal_pembalik.png
+assets/images/jurnal_pembiayaan.png
+assets/images/jurnal_penutup.png
+assets/images/jurnal_umum.png
