@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BukuKasUmumPage extends StatelessWidget {
+  const BukuKasUmumPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

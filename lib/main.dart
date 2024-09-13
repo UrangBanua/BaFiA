@@ -124,7 +124,7 @@ void main() async {
 
 class BafiaApp extends StatelessWidget {
   final String initialRoute;
-  const BafiaApp({required this.initialRoute});
+  const BafiaApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {

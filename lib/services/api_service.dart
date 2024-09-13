@@ -169,7 +169,7 @@ class ApiService {
           ? await _getRequest('$apiDemoUrl/masterdata/daerah/demo.json',
               {'Content-Type': 'application/json'})
           : await _getRequest('$apiServiceUrl/masterdata/daerah/$idDaerah',
-              {'Content-Type': 'application/json'});
+              {'Content-Type': 'application/json', 'Origin': apiServiceUrl});
 
       if (response.statusCode == 200) {
         LoggerService.logger.i(response.body);
@@ -195,7 +195,7 @@ class ApiService {
           ? await _getRequest('$apiDemoUrl/auth/captcha/new.json',
               {'Content-Type': 'application/json'})
           : await _getRequest('$apiServiceUrl/auth/captcha/new',
-              {'Content-Type': 'application/json'});
+              {'Content-Type': 'application/json', 'Origin': apiServiceUrl});
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Captcha image fetched successfully');
@@ -215,41 +215,32 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to login with username: $username ${isDemo ? 'DEMO' : ''}');
     try {
-      final pHeaders =
-          isDevelopmentMode ? {'x-api-key': fakeXApiKey ?? ''} : {};
+      final pHeaders = isDevelopmentMode
+          ? {'x-api-key': fakeXApiKey ?? ''}
+          : {'Content-Type': 'application/json', 'Origin': apiServiceUrl};
       final response = isDemo
           ? await _getRequest('$apiDemoUrl/auth/auth/pre-login.json',
-              {'Content-Type': 'application/json'})
-          : await client.post(Uri.parse('$apiServiceUrl/auth/auth/pre-login'),
-              headers:
-                  isDevelopmentMode ? pHeaders as Map<String, String>? : null,
-              body: {
-                  'username': username,
-                  'password': password,
-                  'tahun': year
-                }).timeout(const Duration(seconds: 10));
+              {'Content-Type': 'application/json', 'Origin': apiServiceUrl})
+          : await _postRequest(
+              '$apiServiceUrl/auth/auth/pre-login',
+              {
+                'username': username,
+                'password': password,
+                'tahun': int.parse(year) // Convert year to integer
+              },
+              pHeaders);
+
+      LoggerService.logger.i(response.body);
 
       if (response.statusCode == 200) {
         LoggerService.logger.i('Login successful for username: $username');
         final data = (json.decode(response.body) as List).first;
         return data;
       } else {
-        LoggerService.logger.e(
-            'Login failed for username: $username. Status code: ${response.statusCode}');
-        Get.snackbar('Error', 'Login failed');
-        throw Exception(
-            'Login failed'); // Throw an exception instead of rethrowing
+        _handleError(response, 'Failed Login');
       }
     } catch (e) {
-      if (e is TimeoutException) {
-        LoggerService.logger.e('Login request timeout for from service server');
-        Get.snackbar('Timeout', 'Login request timeout');
-        // Handle the TimeoutException accordingly
-      } else {
-        LoggerService.logger.e('Login request failed for from service server');
-        Get.snackbar(
-            'Failed', 'Login request failed'); // Handle other exceptions
-      }
+      _handleException(e as Exception, 'Login request failed');
     }
     return null;
   }
@@ -292,7 +283,10 @@ class ApiService {
                       'x-api-key': fakeXApiKey ?? '',
                       'Content-Type': 'application/json'
                     }
-                  : {'Content-Type': 'application/json'},
+                  : {
+                      'Content-Type': 'application/json',
+                      'Origin': apiServiceUrl
+                    },
             );
 
       if (response.statusCode == 200) {
@@ -314,8 +308,12 @@ class ApiService {
         'Attempting to sync dashboard data to local db ${isDemo ? 'DEMO' : ''}');
     try {
       final pHeaders = isDevelopmentMode
-          ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-          : {'Authorization': 'Bearer $token'};
+          ? {
+              'x-api-key': fakeXApiKey ?? '',
+              'Authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
+            }
+          : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
 
       /* final responsePend = await _getRequest(
         '$apiServiceUrl/penerimaan/strict/dashboard/statistik-pendapatan',
@@ -369,8 +367,12 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to get kendali skpd for idSkpd: $idSkpd ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final response = isDemo
         ? await _getRequest(
             '$apiDemoUrl/pengeluaran/strict/dashboard/statistik-belanja/skpd.json',
@@ -398,8 +400,12 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to get kendali urusan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final response = isDemo
         ? await _getRequest(
             '$apiDemoUrl/pengeluaran/strict/dashboard/statistik-belanja/urusan.json',
@@ -424,8 +430,12 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to get kendali program for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final response = isDemo
         ? await _getRequest(
             '$apiDemoUrl/pengeluaran/strict/dashboard/statistik-belanja/program.json',
@@ -452,8 +462,12 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to get kendali kegiatan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final response = isDemo
         ? await _getRequest(
             '$apiDemoUrl/pengeluaran/strict/dashboard/statistik-belanja/kegiatan.json',
@@ -486,8 +500,12 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to get kendali sub kegiatan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram, idGiat: $idGiat ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final response = isDemo
         ? await _getRequest(
             '$apiDemoUrl/pengeluaran/strict/dashboard/statistik-belanja/subkegiatan.json',
@@ -521,8 +539,12 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to get kendali sub kegiatan for idSkpd: $idSkpd, idSubSkpd: $idSubSkpd, idBidangUrusan: $idBidangUrusan, idProgram: $idProgram, idGiat: $idGiat, Rekening ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final response = isDemo
         ? await _getRequest(
             '$apiDemoUrl/pengeluaran/strict/dashboard/statistik-belanja/rekening.json',
@@ -552,8 +574,12 @@ class ApiService {
     LoggerService.logger.i(
         'Attempting to get Laporan Keuagan - LRA Periode ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final url =
         '$apiServiceUrl/aklap/api/report/cetaklra?searchparams={"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klasifikasi,"is_combine":"$konsolidasiSKPD","skpd":$idSkpd}&formatFile=pdf';
     final response = isDemo
@@ -593,8 +619,12 @@ class ApiService {
       klevel = klasifikasi;
     }
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final url =
         '$apiServiceUrl/aklap/api/report/cetak-prognosis?searchparams={"idSkpd":$idSkpd,"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klevel,"is_anggaran":"false","tahapan":{"id_jadwal":null,"id_jadwal_sipd":null,"id_tahap":null},"is_combine":"$konsolidasiSKPD"}&formatFile=pdf';
     final response = isDemo
@@ -637,8 +667,12 @@ class ApiService {
       klevel = klasifikasi;
     }
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final url =
         '$apiServiceUrl/aklap/api/report/cetak-lra-per-program?searchparams={"id_skpd":$idSkpd,"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","uraian":$klevel,"klasifikasi":null,"filter":0,"is_combine":"$konsolidasiSKPD","formatFile":"pdf"}';
     final response = isDemo
@@ -675,8 +709,12 @@ class ApiService {
     LoggerService.logger
         .i('Attempting to get Laporan Keuagan - LO ${isDemo ? 'DEMO' : ''}');
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final url =
         '$apiServiceUrl/aklap/api/report/cetaklo?id_skpd=$idSkpd&tanggalFrom=$tanggalMulai&tanggalTo=$tanggalSampai&level=$klasifikasi&is_combine=$konsolidasiSKPD&filetype=pdf';
     final response = isDemo
@@ -716,8 +754,12 @@ class ApiService {
       klevel = klasifikasi;
     }
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final url =
         '$apiServiceUrl/aklap/api/report/lpe/cetak?tanggalFrom=$tanggalMulai&tanggalTo=$tanggalSampai&format=$klevel&konsolidasi_unit=$konsolidasiSKPD&filetype=pdf';
     final response = isDemo
@@ -757,8 +799,12 @@ class ApiService {
       klevel = klasifikasi;
     }
     final pHeaders = isDevelopmentMode
-        ? {'x-api-key': fakeXApiKey ?? '', 'Authorization': 'Bearer $token'}
-        : {'Authorization': 'Bearer $token'};
+        ? {
+            'x-api-key': fakeXApiKey ?? '',
+            'Authorization': 'Bearer $token',
+            'Origin': apiServiceUrl
+          }
+        : {'Authorization': 'Bearer $token', 'Origin': apiServiceUrl};
     final url =
         '$apiServiceUrl/aklap/api/report/load-report-konsolidasi-neraca?searchparams={"tanggalFrom":"$tanggalMulai","tanggalTo":"$tanggalSampai","formatFile":"pdf","level":$klevel,"is_combine":"$konsolidasiSKPD","skpd":$idSkpd}&formatFile=pdf';
     final response = isDemo
@@ -797,11 +843,13 @@ class ApiService {
           ? {
               'x-api-key': fakeXApiKey ?? '',
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             }
           : {
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             };
       final response = isDemo
           ? await _getRequest(
@@ -873,11 +921,13 @@ class ApiService {
           ? {
               'x-api-key': fakeXApiKey ?? '',
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             }
           : {
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             };
       final response = isDemo
           ? await _getRequest(
@@ -952,11 +1002,13 @@ class ApiService {
           ? {
               'x-api-key': fakeXApiKey ?? '',
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             }
           : {
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             };
       final response = isDemo
           ? await _getRequest(
@@ -1018,11 +1070,13 @@ class ApiService {
           ? {
               'x-api-key': fakeXApiKey ?? '',
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             }
           : {
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             };
       final response = isDemo
           ? await _getRequest(
@@ -1092,11 +1146,13 @@ class ApiService {
           ? {
               'x-api-key': fakeXApiKey ?? '',
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             }
           : {
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             };
       final response = isDemo
           ? await _getRequest(
@@ -1177,11 +1233,13 @@ class ApiService {
           ? {
               'x-api-key': fakeXApiKey ?? '',
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             }
           : {
               'Content-Type': 'application/json',
-              'authorization': 'Bearer $token'
+              'authorization': 'Bearer $token',
+              'Origin': apiServiceUrl
             };
       final response = isDemo
           ? await _getRequest('$apiDemoUrl/aklap/api/belanja/list.json',

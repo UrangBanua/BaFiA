@@ -10,7 +10,7 @@ class RBPengajuanTuPage extends StatelessWidget {
   final RBPengajuanTuController controller = Get.put(RBPengajuanTuController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  RBPengajuanTuPage() {
+  RBPengajuanTuPage({super.key}) {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }

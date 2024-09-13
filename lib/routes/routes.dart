@@ -51,20 +51,20 @@ List<GetPage> appRoutes() {
     GetPage(name: '/overboard', page: () => CustomOverboard()),
     GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/dashboard', page: () => DashboardPage()),
-    GetPage(name: '/profile_user', page: () => ProfileUserPage()),
+    GetPage(name: '/profile_user', page: () => const ProfileUserPage()),
     GetPage(name: '/about', page: () => const AboutPage()),
     GetPage(name: '/laporan', page: () => LaporanPage()),
-    GetPage(name: '/task_list', page: () => TaskPage()),
+    GetPage(name: '/task_list', page: () => const TaskPage()),
     GetPage(name: '/notification', page: () => NotificationPage()),
     GetPage(
         name: '/penatausahaan/dokumen_kendali',
-        page: () => DokumenKendaliPage()),
+        page: () => const DokumenKendaliPage()),
     GetPage(
         name: '/penatausahaan/register_pendapatan/stbp',
-        page: () => RPStbpPPage()),
+        page: () => const RPStbpPPage()),
     GetPage(
         name: '/penatausahaan/register_pendapatan/sts',
-        page: () => RPStsPage()),
+        page: () => const RPStsPage()),
     GetPage(
         name: '/penatausahaan/register_belanja/spp', page: () => RBSppPage()),
     GetPage(
@@ -81,7 +81,8 @@ List<GetPage> appRoutes() {
         name: '/penatausahaan/daftar_rekanan',
         page: () => const DaftarRekananPage()),
     GetPage(
-        name: '/penatausahaan/buku_kas_umum', page: () => BukuKasUmumPage()),
+        name: '/penatausahaan/buku_kas_umum',
+        page: () => const BukuKasUmumPage()),
     GetPage(
         name: '/penatausahaan/tracking_realisasi',
         page: () => RBTrackingRealisasiPage()),
@@ -90,18 +91,18 @@ List<GetPage> appRoutes() {
         page: () => RBTrackingDocumentPage()),
     GetPage(
         name: '/penatausahaan/laporan_pertanggungjawaban/lpj_up_gu',
-        page: () => LPJGUPage()),
+        page: () => const LPJGUPage()),
     GetPage(
         name: '/penatausahaan/laporan_pertanggungjawaban/lpj_tu',
-        page: () => LPJTUPage()),
+        page: () => const LPJTUPage()),
     GetPage(
         name: '/penatausahaan/laporan_pertanggungjawaban/lpj_administratif',
-        page: () => LPJAdministratifPage()),
+        page: () => const LPJAdministratifPage()),
     GetPage(
         name: '/penatausahaan/laporan_pertanggungjawaban/lpj_fungsional',
-        page: () => LPJFungsionalPage()),
-    GetPage(name: '/akuntansi/menu_jurnal', page: () => JurnalPage()),
-    GetPage(name: '/akuntansi/menu_buku', page: () => BukuPage()),
+        page: () => const LPJFungsionalPage()),
+    GetPage(name: '/akuntansi/menu_jurnal', page: () => const JurnalPage()),
+    GetPage(name: '/akuntansi/menu_buku', page: () => const BukuPage()),
     GetPage(
         name: '/akuntansi/jurnal_approve/anggaran',
         page: () => const JAAnggaranPage()),

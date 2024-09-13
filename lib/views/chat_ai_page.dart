@@ -6,6 +6,8 @@ import '../services/bafia_ai_service.dart';
 import '../services/logger_service.dart';
 
 class ChatAiPage extends StatefulWidget {
+  const ChatAiPage({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _ChatAiPageState createState() => _ChatAiPageState();
@@ -29,6 +31,8 @@ class _ChatAiPageState extends State<ChatAiPage> {
   }
 
   void _playNotificationSound() async {
+    // set volume to 50%
+    await _audioPlayer.setVolume(0.5);
     await _audioPlayer.play(AssetSource('sounds/notif-bafia.mp3'));
     LoggerService.logger.i('Play Sound, From BaFia...');
 

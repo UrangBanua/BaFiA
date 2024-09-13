@@ -7,6 +7,8 @@ import '../controllers/theme_controller.dart';
 import '../services/logger_service.dart';
 
 class ProfileUserPage extends StatefulWidget {
+  const ProfileUserPage({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _ProfileUserPageState createState() => _ProfileUserPageState();

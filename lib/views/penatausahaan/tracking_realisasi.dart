@@ -10,6 +10,8 @@ class RBTrackingRealisasiPage extends StatelessWidget {
   final RBTrackingRealisasi controller = Get.put(RBTrackingRealisasi());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
+  RBTrackingRealisasiPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

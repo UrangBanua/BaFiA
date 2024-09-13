@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/user_controller.dart';
 
+// ignore: use_key_in_widget_constructors
 class DrawerMenu extends StatelessWidget {
   final AuthController authController = Get.find<AuthController>();
   final UserController userController = Get.put(UserController());

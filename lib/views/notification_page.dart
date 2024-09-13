@@ -6,6 +6,7 @@ import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:flutter_markdown/flutter_markdown.dart'; // Import the flutter_markdown package
 import '../controllers/notification_controller.dart';
 
+// ignore: use_key_in_widget_constructors
 class NotificationPage extends StatelessWidget {
   final NotificationController _controller = Get.put(NotificationController());
 

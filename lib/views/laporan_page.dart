@@ -160,7 +160,7 @@ class LaporanPage extends StatelessWidget {
     },
   ];
 
-  LaporanPage() {
+  LaporanPage({super.key}) {
     filteredButtonsPenatausahaanRegister.value = buttonsPenatausahaanRegister;
     filteredButtonsPenatausahaanLaporan.value = buttonsPenatausahaanLaporan;
     filteredButtonsAkuntansiLaporan.value = buttonsAkuntansiLaporan;

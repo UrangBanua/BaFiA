@@ -11,7 +11,7 @@ class RBTrackingDocumentPage extends StatelessWidget {
       Get.put(RBTrackingDocumentController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  RBTrackingDocumentPage() {
+  RBTrackingDocumentPage({super.key}) {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }

@@ -9,7 +9,7 @@ class LKLraPage extends StatelessWidget {
   final LKLraController controller = Get.put(LKLraController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  LKLraPage() {
+  LKLraPage({super.key}) {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }

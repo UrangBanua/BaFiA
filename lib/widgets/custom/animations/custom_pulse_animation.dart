@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../views/chat_ai_page.dart';
 
 class CustomPulseButton extends StatefulWidget {
+  const CustomPulseButton({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _CustomPulseButtonState createState() => _CustomPulseButtonState();
@@ -34,7 +36,7 @@ class _CustomPulseButtonState extends State<CustomPulseButton> {
       transitionDuration: const Duration(milliseconds: 600),
       pageBuilder: (BuildContext buildContext, Animation animation,
           Animation secondaryAnimation) {
-        return ChatAiPage(); // Use the new ChatDialog class
+        return const ChatAiPage(); // Use the new ChatDialog class
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(

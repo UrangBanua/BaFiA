@@ -17,6 +17,8 @@ class CustomBottomSheet extends StatelessWidget {
   final GlobalKey keyCekKendali = GlobalKey();
   final GlobalKey keyPengaturan = GlobalKey();
 
+  CustomBottomSheet({super.key});
+
   // Setup tutorial Menu Utama
   void setupTutorialMenu() {
     tutorialService.clearTargets(); // Bersihkan target sebelumnya
@@ -189,7 +191,7 @@ class CustomBottomSheet extends StatelessWidget {
                                     LoggerService.logger
                                         .i('Tampilkan Asisten BaFiA');
                                   },
-                                  child: CustomPulseButton(),
+                                  child: const CustomPulseButton(),
                                 ),
                               ),
                             ),

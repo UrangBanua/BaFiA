@@ -7,6 +7,8 @@ import '../../widgets/custom/animations/custom_arrow_animation.dart';
 import '../../widgets/custom/animations/custom_loading_animation.dart'; // Impor LoggerService
 
 class DokumenKendaliPage extends StatefulWidget {
+  const DokumenKendaliPage({super.key});
+
   @override
   DokumenKendaliPageState createState() => DokumenKendaliPageState();
 }

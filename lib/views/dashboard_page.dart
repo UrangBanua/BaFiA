@@ -1,9 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_storage/get_storage.dart';
@@ -73,31 +73,25 @@ class DashboardPage extends StatelessWidget {
     LoggerService.logger.i('Back button pressed');
     DateTime now = DateTime.now();
     if (currentBackPressTime == null ||
-        now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
+        now.difference(currentBackPressTime!) >const Duration(seconds: 2)) {
       currentBackPressTime = now;
       dashboardController.showGauge.value = false;
       Get.snackbar(
         '',
         '                Ketuk tombol sekali lagi untuk keluar',
-        //colorText: Colors.red,
         backgroundColor: Colors.transparent,
-        //icon: const Icon(Icons.cancel, color: Colors.red),
         snackStyle: SnackStyle.GROUNDED,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
-        margin:
-            const EdgeInsets.all(10), // Adjust the margin to reduce the size
-        padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 5), // Adjust the padding to reduce the size
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       );
       return Future.value(false);
     }
 
-    authController.isLoggedIn.value = false; // Set isLoggedIn to false
     LoggerService.logger.i('App is exit');
-    exit(0); // Force stop the application
-    //return Future.value(true);
+    SystemNavigator.pop();
+    return Future.value(true);
   }
 
   @override

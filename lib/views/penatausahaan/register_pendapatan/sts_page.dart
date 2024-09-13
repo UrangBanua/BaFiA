@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class RPStsPage extends StatelessWidget {
+  const RPStsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

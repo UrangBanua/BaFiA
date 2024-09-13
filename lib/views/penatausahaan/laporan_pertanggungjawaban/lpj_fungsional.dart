@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LPJFungsionalPage extends StatelessWidget {
+  const LPJFungsionalPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

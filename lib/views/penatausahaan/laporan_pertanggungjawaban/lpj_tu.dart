@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LPJTUPage extends StatelessWidget {
+  const LPJTUPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

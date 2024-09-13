@@ -10,7 +10,7 @@ class LKLraPrognosisPage extends StatelessWidget {
       Get.put(LKLraPrognosisController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  LKLraPrognosisPage() {
+  LKLraPrognosisPage({super.key}) {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }

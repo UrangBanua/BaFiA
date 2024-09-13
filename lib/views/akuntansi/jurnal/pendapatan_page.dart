@@ -10,7 +10,7 @@ class JRPendapatanPage extends StatelessWidget {
   final JRPendapatanController controller = Get.put(JRPendapatanController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  JRPendapatanPage() {
+  JRPendapatanPage({super.key}) {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }

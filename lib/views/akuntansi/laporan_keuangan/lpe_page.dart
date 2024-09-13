@@ -9,7 +9,7 @@ class LKLpePage extends StatelessWidget {
   final LKLoController controller = Get.put(LKLoController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  LKLpePage() {
+  LKLpePage({super.key}) {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }

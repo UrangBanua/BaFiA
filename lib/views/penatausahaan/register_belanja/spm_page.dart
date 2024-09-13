@@ -10,7 +10,7 @@ class RBSpmPage extends StatelessWidget {
   final RBSpmController controller = Get.put(RBSpmController());
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  RBSpmPage() {
+  RBSpmPage({super.key}) {
     final String formattedDate = formatter.format(DateTime.now());
     controller.tanggalSampaiController.text = formattedDate;
   }

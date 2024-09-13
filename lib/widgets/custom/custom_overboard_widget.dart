@@ -10,6 +10,8 @@ class CustomOverboard extends StatelessWidget {
       Get.put(CustomOverboardController());
   final TutorialService tutorialService = TutorialService();
 
+  CustomOverboard({super.key});
+
   @override
   Widget build(BuildContext context) {
     _setupTutorialAggrement();

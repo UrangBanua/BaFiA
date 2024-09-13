@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart'; // Tambahkan ini
 
 class BukuPage extends StatefulWidget {
+  const BukuPage({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _BukuPageState createState() => _BukuPageState();
