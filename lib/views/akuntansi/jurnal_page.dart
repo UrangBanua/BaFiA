@@ -5,13 +5,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:get/get.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart'; // Tambahkan ini
 
-class AklapPage extends StatefulWidget {
+class JurnalPage extends StatefulWidget {
   @override
   // ignore: library_private_types_in_public_api
-  _AklapPageState createState() => _AklapPageState();
+  _JurnalPageState createState() => _JurnalPageState();
 }
 
-class _AklapPageState extends State<AklapPage> {
+class _JurnalPageState extends State<JurnalPage> {
   final PageController _controller = PageController();
   int _currentPage = 0;
 
@@ -94,10 +94,6 @@ class _AklapPageState extends State<AklapPage> {
                 url:
                     'https://raw.githubusercontent.com/UrangBanua/BaFiA/master/doc/manual_book.pdf', // Ganti dengan URL file PDF
                 customTabsOptions: const CustomTabsOptions(
-                  toolbarColor: Colors.blue,
-                  secondaryToolbarColor: Colors.green,
-                  navigationBarColor: Colors.black,
-                  addDefaultShareMenuItem: true,
                   instantAppsEnabled: true,
                   showTitle: true,
                   urlBarHidingEnabled: true,

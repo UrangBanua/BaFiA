@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:flutter_markdown/flutter_markdown.dart'; // Import the flutter_markdown package
 import '../controllers/notification_controller.dart';
 
 class NotificationPage extends StatelessWidget {
@@ -100,7 +101,10 @@ class NotificationPage extends StatelessWidget {
                                       content: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(notification['content']),
+                                          MarkdownBody(
+                                            data: notification['content'],
+                                            selectable: true,
+                                          ),
                                           if (isImage) ...[
                                             const SizedBox(height: 10),
                                             Image.network(link),

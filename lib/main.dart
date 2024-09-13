@@ -80,6 +80,7 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
         name: 'BaFiA_PushNotif',
       );
+      LoggerService.logger.i('Initialized Firebase - BaFiA_PushNotif');
     }
   }
 

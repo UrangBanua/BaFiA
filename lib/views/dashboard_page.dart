@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -69,6 +70,7 @@ class DashboardPage extends StatelessWidget {
   }
 
   Future<bool> _onWillPop() async {
+    LoggerService.logger.i('Back button pressed');
     DateTime now = DateTime.now();
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
@@ -207,22 +209,24 @@ class DashboardPage extends StatelessWidget {
                 });
               } else {
                 // Set Topic Subscribe User
-                if (connectivityController.connectivityState.value &&
-                    dashboardController.isDemo == false) {
-                  // Set Topic Subscribe Id Daerah
-                  ApiFirebase().subscribeTopic('bafia-info-$idDaerah');
-                  // Set Topic Subscribe IdDaerah-IdSKPD
-                  ApiFirebase().subscribeTopic(
-                      'bafia-info-$idDaerah-${idSkpd.toString().toLowerCase().replaceAll(' ', '_')}');
-                  // Set Topic Subscribe IdDaerah-NamaJabatan
-                  ApiFirebase().subscribeTopic(
-                      'bafia-info-$idDaerah-${namaRole.toString().toLowerCase().replaceAll(' ', '_')}');
-                  // Topic Subscribe NIP User
-                  ApiFirebase().subscribeTopic('bafia-info-$userName');
-                } else if (connectivityController.connectivityState.value &&
-                    dashboardController.isDemo == true) {
-                  // Set Topic Subscribe Demo
-                  ApiFirebase().subscribeTopic('bafia-info-demo');
+                if (!kIsWeb) {
+                  if (connectivityController.connectivityState.value &&
+                      dashboardController.isDemo == false) {
+                    // Set Topic Subscribe Id Daerah
+                    ApiFirebase().subscribeTopic('bafia-info-$idDaerah');
+                    // Set Topic Subscribe IdDaerah-IdSKPD
+                    ApiFirebase().subscribeTopic(
+                        'bafia-info-$idDaerah-${idSkpd.toString().toLowerCase().replaceAll(' ', '_')}');
+                    // Set Topic Subscribe IdDaerah-NamaJabatan
+                    ApiFirebase().subscribeTopic(
+                        'bafia-info-$idDaerah-${namaRole.toString().toLowerCase().replaceAll(' ', '_')}');
+                    // Topic Subscribe NIP User
+                    ApiFirebase().subscribeTopic('bafia-info-$userName');
+                  } else if (connectivityController.connectivityState.value &&
+                      dashboardController.isDemo == true) {
+                    // Set Topic Subscribe Demo
+                    ApiFirebase().subscribeTopic('bafia-info-demo');
+                  }
                 }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -300,11 +304,6 @@ class DashboardPage extends StatelessWidget {
                           storage.read('tutorialMenuUtama') ?? false;
                       if (!hasShownTutorial) {
                         bottomSheetController.setupTutorialMenu();
-                        tutorialService.showTutorial(
-                          context,
-                          delayInSeconds: 1,
-                          tutorialName: 'tutorialMenuUtama',
-                        );
                         LoggerService.logger.i('Show Tutorial Menu Utama');
                       }
                     }

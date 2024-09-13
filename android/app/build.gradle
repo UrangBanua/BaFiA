@@ -52,10 +52,10 @@ android {
     signingConfigs {
         release {
             // This configuration will be ignored by Google Play if you use Google Play App Signing
-            keyAlias = 'bafia_release_key'
-            keyPassword = 'g1g4byt3'
-            storeFile = file('release-key.jks')
-            storePassword = 'g1g4byt3'
+            keyAlias = project.findProperty("KEY_ALIAS") ?: ""
+            keyPassword = project.findProperty("KEY_PASSWORD") ?: ""
+            storeFile = file(project.findProperty("STORE_FILE") ?: "")
+            storePassword = project.findProperty("STORE_PASSWORD") ?: ""
         }
     }
 

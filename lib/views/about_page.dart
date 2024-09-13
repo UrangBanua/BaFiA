@@ -112,7 +112,22 @@ class AboutPageState extends State<AboutPage>
                   'Cek versi terbaru dengan mengklik logo di atas ☝\n\nkode sumber terbuka dari github\nhttps://github.com/UrangBanua/BaFiA/releases',
               options: const LinkifyOptions(humanize: false),
               onOpen: (link) async {
-                FlutterWebBrowser.openWebPage(url: link.url);
+                FlutterWebBrowser.openWebPage(
+                  url: link.url, // Ganti dengan URL file PDF
+                  customTabsOptions: const CustomTabsOptions(
+                    instantAppsEnabled: true,
+                    showTitle: true,
+                    urlBarHidingEnabled: true,
+                  ),
+                  safariVCOptions: const SafariViewControllerOptions(
+                    barCollapsingEnabled: true,
+                    preferredBarTintColor: Colors.blue,
+                    preferredControlTintColor: Colors.white,
+                    dismissButtonStyle:
+                        SafariViewControllerDismissButtonStyle.close,
+                    modalPresentationCapturesStatusBarAppearance: true,
+                  ),
+                );
               },
             ),
           ),
@@ -190,7 +205,21 @@ Future<void> _showDialogInfo(context) async {
                   onPressed: () {
                     // Download & Install the latest version of the app
                     FlutterWebBrowser.openWebPage(
-                      url: response['url_download_apk'],
+                      url: response[
+                          'url_download_apk'], // Ganti dengan URL file PDF
+                      customTabsOptions: const CustomTabsOptions(
+                        instantAppsEnabled: true,
+                        showTitle: true,
+                        urlBarHidingEnabled: true,
+                      ),
+                      safariVCOptions: const SafariViewControllerOptions(
+                        barCollapsingEnabled: true,
+                        preferredBarTintColor: Colors.blue,
+                        preferredControlTintColor: Colors.white,
+                        dismissButtonStyle:
+                            SafariViewControllerDismissButtonStyle.close,
+                        modalPresentationCapturesStatusBarAppearance: true,
+                      ),
                     );
                   },
                 ),

@@ -94,6 +94,7 @@ class TutorialService {
         onClickTarget: onClickTarget ?? (target) {},
       );
 
+      // ignore: use_build_context_synchronously
       _tutorialCoachMark?.show(context: context);
     });
   }

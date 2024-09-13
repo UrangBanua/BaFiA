@@ -140,7 +140,7 @@ class RadialGaugeWidget extends StatelessWidget {
                 ),
                 GaugeAnnotation(
                   angle: 90,
-                  positionFactor: 1.2,
+                  positionFactor: 1.1,
                   widget: AnimatedTextKit(
                     animatedTexts: [
                       TypewriterAnimatedText(
@@ -163,7 +163,7 @@ class RadialGaugeWidget extends StatelessWidget {
                 ),
                 GaugeAnnotation(
                   angle: 90,
-                  positionFactor: 1.6,
+                  positionFactor: 1.4,
                   widget: AnimatedTextKit(
                     animatedTexts: [
                       TypewriterAnimatedText(
@@ -186,7 +186,7 @@ class RadialGaugeWidget extends StatelessWidget {
                 ),
                 GaugeAnnotation(
                   angle: 90,
-                  positionFactor: 1.95,
+                  positionFactor: 1.7,
                   widget: AnimatedTextKit(
                     animatedTexts: [
                       TyperAnimatedText(

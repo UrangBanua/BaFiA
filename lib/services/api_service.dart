@@ -17,12 +17,13 @@ class ApiService {
       : dotenv.env['API_SERVICE_URL'] ?? '';
   static final String? apiDemoUrl = dotenv.env['API_DEMO_URL'];
   static final String? fakeXApiKey = dotenv.env['FAKE_X_API_KEY'];
+  static final String? apiKeyGemini = dotenv.env['API_KEY_GEMINI'];
   static const int timeoutDuration = 20;
   static const int timeoutDurationReports = 60;
 
   static get getDateNow {
     DateTime now = DateTime.now();
-    String formattedDate = "${now.year}-${now.month}-${now.day}";
+    String formattedDate = '${now.year}-${now.month}-${now.day}';
     return formattedDate;
   }
 
@@ -998,6 +999,237 @@ class ApiService {
         Get.snackbar('Info', 'Singkron data service timeout');
       } else {
         LoggerService.logger.e('Tracking Document: $e');
+        Get.snackbar(
+            'Info', 'Singkron data service gagal'); // Handle other exceptions
+      }
+    }
+    return {};
+  }
+
+  // API Service untuk Cek Saldo UP Bendahara
+  static Future<dynamic> getCekSaldoBendahara(
+    String token,
+    bool isDemo,
+  ) async {
+    try {
+      LoggerService.logger
+          .i('Attempting to get Cek Saldo Bendahara ${isDemo ? 'DEMO' : ''}');
+      final pHeaders = isDevelopmentMode
+          ? {
+              'x-api-key': fakeXApiKey ?? '',
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            }
+          : {
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            };
+      final response = isDemo
+          ? await _getRequest(
+              '$apiDemoUrl/pengeluaran/strict/tbp/saldo-bendahara.json',
+              {'Content-Type': 'application/json'})
+          : await _getRequest(
+              '$apiServiceUrl/pengeluaran/strict/tbp/saldo-bendahara',
+              pHeaders);
+
+      LoggerService.logger.i('response: $pHeaders');
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i('Cek Saldo Bendahara berhasil diambil');
+        return json.decode(response.body);
+      }
+      if (response.statusCode == 400 &&
+          response.body.contains('Anda tidak dapat mengakses fitur ini')) {
+        LoggerService.logger
+            .i('Anda tidak memiliki akses untuk mengakses data ini');
+        //Get.snackbar(
+        //    'Alert', 'Anda tidak memiliki akses untuk mengakses data ini');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('Token anda expired')) {
+        LoggerService.logger.i('Token anda expired, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('signature is invalid')) {
+        LoggerService.logger.i('Token anda salah, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      } else {
+        _handleError(response, 'Gagal mengambil data Saldo Bendahara');
+      }
+    } catch (e) {
+      if (e is TimeoutException) {
+        LoggerService.logger.e('Cek Saldo Bendahara: Request timeout');
+        Get.snackbar('Info', 'Singkron data service timeout');
+      } else {
+        LoggerService.logger.e('Cek Saldo Bendahara: $e');
+        Get.snackbar(
+            'Info', 'Singkron data service gagal'); // Handle other exceptions
+      }
+    }
+    return {};
+  }
+
+  // API Service untuk List Jurnal Pendapatan
+  static Future<dynamic> postListJurnalPendapatan(
+    int isPengembalian,
+    int jenis,
+    int status,
+    String filterKey,
+    String filterKeyword,
+    int idSkpd,
+    int page,
+    int max,
+    String tanggalFrom,
+    String tanggalTo,
+    String token,
+    bool isDemo,
+  ) async {
+    try {
+      LoggerService.logger.i(
+          'Attempting to get List Jurnal Pendapatan ${isDemo ? 'DEMO' : ''}');
+      final pHeaders = isDevelopmentMode
+          ? {
+              'x-api-key': fakeXApiKey ?? '',
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            }
+          : {
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            };
+      final response = isDemo
+          ? await _getRequest(
+              '$apiDemoUrl/aklap/api/jurnal/pendapatan/list.json',
+              {'Content-Type': 'application/json'})
+          : await _postRequest(
+              '$apiServiceUrl/aklap/api/jurnal/pendapatan/list',
+              {
+                'isPengembalian': '$isPengembalian',
+                'jenis': '$jenis',
+                'status': '$status',
+                'filter_key': filterKey,
+                'idSkpd': '$idSkpd',
+                'page': '$page',
+                'max': '$max',
+                'tanggalFrom': tanggalFrom,
+                'tanggalTo': tanggalTo,
+                'filter_keyword': filterKeyword,
+              },
+              pHeaders);
+
+      //LoggerService.logger.i('Set Response Body: $response');
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i('List Jurnal Pendapatan berhasil diambil');
+        return json.decode(response.body);
+      }
+      if (response.statusCode == 400 &&
+          response.body.contains('Anda tidak dapat mengakses fitur ini')) {
+        LoggerService.logger
+            .i('Anda tidak memiliki akses untuk mengakses data ini');
+        Get.snackbar(
+            'Alert', 'Anda tidak memiliki akses untuk mengakses data ini');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('Token anda expired')) {
+        LoggerService.logger.i('Token anda expired, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('signature is invalid')) {
+        LoggerService.logger.i('Token anda salah, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      } else {
+        _handleError(response, 'Gagal mengambil data List Jurnal Pendapatan');
+      }
+    } catch (e) {
+      if (e is TimeoutException) {
+        LoggerService.logger.e('List Jurnal Pendapatan: Request timeout');
+        Get.snackbar('Info', 'Singkron data service timeout');
+      } else {
+        LoggerService.logger.e('List Jurnal Pendapatan: $e');
+        Get.snackbar(
+            'Info', 'Singkron data service gagal'); // Handle other exceptions
+      }
+    }
+    return {};
+  }
+
+  // API Service untuk List Jurnal Belanja
+  static Future<dynamic> postListJurnalBelanja(
+    String jenisDokumen,
+    int journalStatus,
+    String filterKey,
+    String filterText,
+    int idSkpd,
+    int page,
+    int length,
+    String tanggalFrom,
+    String tanggalTo,
+    String token,
+    bool isDemo,
+  ) async {
+    try {
+      LoggerService.logger
+          .i('Attempting to get List Jurnal Belanja ${isDemo ? 'DEMO' : ''}');
+      final pHeaders = isDevelopmentMode
+          ? {
+              'x-api-key': fakeXApiKey ?? '',
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            }
+          : {
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer $token'
+            };
+      final response = isDemo
+          ? await _getRequest('$apiDemoUrl/aklap/api/belanja/list.json',
+              {'Content-Type': 'application/json'})
+          : await _postRequest(
+              '$apiServiceUrl/aklap/api/belanja/list', pHeaders, {
+              'jenis_dokumen': jenisDokumen,
+              'journal_status': '$journalStatus',
+              'filter_key': filterKey,
+              'idSkpd': '$idSkpd',
+              'page': '$page',
+              'length': '$length',
+              'tanggalFrom': tanggalFrom,
+              'tanggalTo': tanggalTo,
+              'filter_text': filterText,
+            });
+
+      LoggerService.logger.i('response: $pHeaders');
+
+      if (response.statusCode == 200) {
+        LoggerService.logger.i('List Jurnal Belanja berhasil diambil');
+        return json.decode(response.body);
+      }
+      if (response.statusCode == 400 &&
+          response.body.contains('Anda tidak dapat mengakses fitur ini')) {
+        LoggerService.logger
+            .i('Anda tidak memiliki akses untuk mengakses data ini');
+        Get.snackbar(
+            'Alert', 'Anda tidak memiliki akses untuk mengakses data ini');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('Token anda expired')) {
+        LoggerService.logger.i('Token anda expired, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      }
+      if (response.statusCode == 401 &&
+          response.body.contains('signature is invalid')) {
+        LoggerService.logger.i('Token anda salah, harap login ulang');
+        Get.snackbar('Alert', 'Token anda expired');
+      } else {
+        _handleError(response, 'Gagal mengambil data List Jurnal Belanja');
+      }
+    } catch (e) {
+      if (e is TimeoutException) {
+        LoggerService.logger.e('List Jurnal Belanja: Request timeout');
+        Get.snackbar('Info', 'Singkron data service timeout');
+      } else {
+        LoggerService.logger.e('List Jurnal Belanja: $e');
         Get.snackbar(
             'Info', 'Singkron data service gagal'); // Handle other exceptions
       }

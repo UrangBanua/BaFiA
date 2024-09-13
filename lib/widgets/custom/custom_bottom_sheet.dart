@@ -1,15 +1,16 @@
 // buat class CustomBottomSheet
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-
+import 'animations/custom_pulse_animation.dart';
+import '../../controllers/auth_controller.dart';
 import '../../services/logger_service.dart';
 import '../../services/tutorial_service.dart';
 
 class CustomBottomSheet extends StatelessWidget {
   final TutorialService tutorialService = TutorialService();
+  final AuthController authController = Get.find<AuthController>();
 
   // Key untuk tombol Tutorial
   final GlobalKey keyLaporan = GlobalKey();
@@ -47,6 +48,7 @@ class CustomBottomSheet extends StatelessWidget {
 
   void showBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      barrierColor: Colors.blue.withOpacity(0.1),
       context: context,
       isScrollControlled: true,
       builder: (context) {
@@ -159,7 +161,7 @@ class CustomBottomSheet extends StatelessWidget {
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Get.toNamed('/akuntansi/menu_aklap');
+                                  Get.toNamed('/akuntansi/menu_jurnal');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors
@@ -187,16 +189,7 @@ class CustomBottomSheet extends StatelessWidget {
                                     LoggerService.logger
                                         .i('Tampilkan Asisten BaFiA');
                                   },
-                                  child: Image.asset(
-                                    //Image.network(
-                                    //'https://mir-s3-cdn-cf.behance.net/project_modules/disp/04de2e31234507.564a1d23645bf.gif',
-                                    //'https://mir-s3-cdn-cf.behance.net/project_modules/disp/35771931234507.564a1d2403b3a.gif',
-                                    'assets/images/menu.gif',
-                                    height:
-                                        80, // Sesuaikan ukuran sesuai kebutuhan
-                                    width:
-                                        80, // Sesuaikan ukuran sesuai kebutuhan
-                                  ),
+                                  child: CustomPulseButton(),
                                 ),
                               ),
                             ),
@@ -269,6 +262,80 @@ class CustomBottomSheet extends StatelessWidget {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.toNamed('/akuntansi/menu_buku');
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors
+                                      .transparent, // Set background color to transparent
+                                  elevation: 0, // Remove elevation
+                                ),
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.menu_book, color: Colors.green),
+                                    SizedBox(height: 4),
+                                    Text('Pembukuan',
+                                        style: TextStyle(fontSize: 11)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8), // Spasi antar tombol
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.toNamed('/task_list');
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors
+                                      .transparent, // Set background color to transparent
+                                  elevation: 0, // Remove elevation
+                                ),
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.task_alt_rounded,
+                                        color: Colors.green),
+                                    SizedBox(height: 4),
+                                    Text('Task List',
+                                        style: TextStyle(fontSize: 11)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  authController.logout();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors
+                                      .transparent, // Set background color to transparent
+                                  elevation: 0, // Remove elevation
+                                ),
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.logout, color: Colors.amber),
+                                    SizedBox(height: 4),
+                                    Text('Logout',
+                                        style: TextStyle(fontSize: 11)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -277,6 +344,11 @@ class CustomBottomSheet extends StatelessWidget {
           },
         );
       },
+    );
+    tutorialService.showTutorial(
+      context,
+      delayInSeconds: 1,
+      tutorialName: 'tutorialMenuUtama',
     );
   }
 

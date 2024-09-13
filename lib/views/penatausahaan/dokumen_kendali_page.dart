@@ -20,7 +20,7 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
   @override
   void initState() {
     super.initState();
-    controller.fetchKendaliSkpd(); // Fetch kendaliSkpd data at the beginning
+    controller.fetchKendaliSkpd();
   }
 
   double calculatePercentage(double anggaran, double realisasiRill) {
@@ -79,6 +79,10 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                   skpd['realisasi_rill'].toDouble(),
                   skpd['anggaran'].toDouble());
               return ExpansionTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                collapsedShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
                 backgroundColor: Colors.blue[50],
                 collapsedBackgroundColor: Colors.grey[100],
                 iconColor: Colors.blue,
@@ -114,6 +118,10 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                               urusan['realisasi_rill'].toDouble(),
                               urusan['anggaran'].toDouble());
                           return ExpansionTile(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0)),
+                            collapsedShape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0)),
                             collapsedBackgroundColor: Colors.grey[100],
                             iconColor: Colors.blue,
                             title: Text(
@@ -154,6 +162,12 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                           program['realisasi_rill'].toDouble(),
                                           program['anggaran'].toDouble());
                                       return ExpansionTile(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0)),
+                                        collapsedShape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0)),
                                         collapsedBackgroundColor:
                                             Colors.grey[100],
                                         iconColor: Colors.blue,
@@ -204,6 +218,18 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                           kegiatan['anggaran']
                                                               .toDouble());
                                                   return ExpansionTile(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                    collapsedShape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
                                                     collapsedBackgroundColor:
                                                         Colors.grey[100],
                                                     iconColor: Colors.blue,
@@ -267,6 +293,14 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                           'anggaran']
                                                                       .toDouble());
                                                               return ExpansionTile(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0)),
+                                                                collapsedShape:
+                                                                    RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10.0)),
                                                                 collapsedBackgroundColor:
                                                                     Colors.grey[
                                                                         100],
@@ -336,6 +370,8 @@ class DokumenKendaliPageState extends State<DokumenKendaliPage> {
                                                                               persentase =
                                                                               calculatePercentage(rekening['realisasi_rill'].toDouble(), rekening['anggaran'].toDouble());
                                                                           return ListTile(
+                                                                            shape:
+                                                                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                                                             tileColor:
                                                                                 Colors.grey[100],
                                                                             titleTextStyle:

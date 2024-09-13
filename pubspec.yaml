@@ -1,5 +1,5 @@
 name: bafia
-description: Barabai Financial Assistant
+description: Banua Financial Assistant
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -70,6 +70,9 @@ dependencies:
   intro_slider: ^4.2.1
   tutorial_coach_mark: ^1.2.11
   smooth_page_indicator: ^1.2.0+3
+  google_generative_ai: ^0.4.5
+  flutter_markdown: ^0.7.3+1
+  audioplayers: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -102,6 +105,7 @@ flutter:
     - 'android/app/src/main/res/drawable/ic_notification.png'
     - 'assets/icons/'
     - 'assets/images/'
+    - 'assets/sounds/'
     - '.env'
 
   # An image asset can refer to one or more resolution-specific "variants", see

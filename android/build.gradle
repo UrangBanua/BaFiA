@@ -6,7 +6,7 @@ allprojects {
 }
 
 ext {
-    kotlinVersion = "1.8.10"
+    kotlinVersion = "1.7.10"
 }
 
 rootProject.buildDir = "../build"

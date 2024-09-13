@@ -4,8 +4,9 @@ import '../services/local_storage_service.dart';
 import '../services/logger_service.dart';
 
 class NotificationController extends GetxController {
-  var notifications = <Map<String, dynamic>>[].obs;
-  var selectedCategory = 'Semua'.obs;
+  final RxList<Map<String, dynamic>> notifications =
+      <Map<String, dynamic>>[].obs;
+  final Rx<String> selectedCategory = 'Semua'.obs;
 
   @override
   void onInit() {

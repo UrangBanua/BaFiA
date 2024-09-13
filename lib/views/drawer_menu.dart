@@ -29,11 +29,12 @@ class DrawerMenu extends StatelessWidget {
                 ),
                 Obx(() {
                   return FutureBuilder<ImageProvider<Object>>(
-                    future: userController.getProfileImage(
-                        userController.userData['profile_photo']),
+                    future: userController
+                        .getProfileImage1(userController.fotoProfile.value),
                     builder: (context, snapshot) {
+                      Widget profileWidget;
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
+                        profileWidget = Container(
                           padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
                             color: Colors.blue,
@@ -48,7 +49,7 @@ class DrawerMenu extends StatelessWidget {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Container(
+                        profileWidget = Container(
                           padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
                             color: Colors.blue,
@@ -64,7 +65,7 @@ class DrawerMenu extends StatelessWidget {
                           ),
                         );
                       } else if (snapshot.hasData) {
-                        return Container(
+                        profileWidget = Container(
                           padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
                             color: Colors.blue,
@@ -76,7 +77,7 @@ class DrawerMenu extends StatelessWidget {
                           ),
                         );
                       } else {
-                        return Container(
+                        profileWidget = Container(
                           padding: const EdgeInsets.all(2),
                           decoration: const BoxDecoration(
                             color: Colors.blue,
@@ -92,6 +93,30 @@ class DrawerMenu extends StatelessWidget {
                           ),
                         );
                       }
+                      return GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    snapshot.hasData
+                                        ? Image(image: snapshot.data!)
+                                        : const Icon(Icons.person, size: 100),
+                                    const SizedBox(height: 8.0),
+                                    Text(userController
+                                            .userProfile['nama_role'] ??
+                                        ''),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: profileWidget,
+                      );
                     },
                   );
                 }),
